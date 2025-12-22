@@ -8,15 +8,98 @@ const THEME_FILES = {
 
 const DOCS = [
   {
-    id: "api-console",
-    title: "API 콘솔로 액션 블록 실행하기",
-    breadcrumb: "Docs / 시작하기 / API 콘솔",
-    lead: "문서 상세 페이지 시안에 맞춰 오른쪽 인페이지 TOC와 액션 블록을 포함한 예시입니다.",
-    updated: "2024-06-10",
+    id: "page_1",
+    title: "카카오 OAuth 가이드",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth",
+    lead: "GET /api/v1/wiki/nav 예시에 맞춰 좌측 트리와 우측 TOC가 동작하는 대표 문서입니다.",
+    updated: "2024-06-12",
     status: "published",
     nav: [
-      { id: "layout", label: "레이아웃 개요" },
-      { id: "callout", label: "사전 체크리스트" },
+      { id: "overview", label: "요약" },
+      { id: "nav-tree", label: "네비게이션 트리" },
+      { id: "flow", label: "연동 흐름" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "overview",
+        title: "요약",
+        body: `
+          <p class="muted">/api/v1/wiki/nav 응답을 그대로 사용해 좌측 SidebarNav를 렌더링하고, <code>isUsable=false</code>인 항목은 토스트만 띄웁니다.</p>
+          <ul>
+            <li>전체 트리는 카카오 OAuth 가이드 → 개요 → API 콘솔 → 실행 예시 순으로 3뎁스까지 내려갑니다.</li>
+            <li>각 문서는 <code>GET /api/v1/wiki/pages?path=... </code>로 불러온다고 가정하고 MDX를 목업 데이터로 채워 두었습니다.</li>
+            <li>우측 인페이지 TOC는 본문 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
+          </ul>
+        `,
+      },
+      {
+        type: "code",
+        id: "nav-tree",
+        label: "[GET] /api/v1/wiki/nav 예시 (요약)",
+        code: `{"nodes":[{"id":"page_1","title":"카카오 OAuth 가이드","isUsable":true,"children":[{"id":"page_2","title":"개요","isUsable":true},{"id":"page_3","title":"API 콘솔","isUsable":true,"children":[{"id":"page_3_1","title":"실행 예시","isUsable":true},{"id":"page_3_2","title":"SDK 연동 (준비 중)","isUsable":false}]}]}]}]}`,
+      },
+      {
+        type: "section",
+        id: "flow",
+        title: "연동 흐름",
+        body: `
+          <ol>
+            <li>좌측 트리에서 "API 콘솔"을 선택하면 <code>page_3</code>의 MDX를 불러와 중앙 컬럼에 렌더합니다.</li>
+            <li>"실행 예시"와 같이 하위 문서도 같은 패턴으로 불러오며, 상단 드롭다운과 트리가 함께 활성 상태를 갱신합니다.</li>
+            <li>"SDK 연동 (준비 중)"처럼 isUsable=false인 항목은 비활성 상태로 표시하고 토스트로 안내합니다.</li>
+          </ol>
+        `,
+      },
+    ],
+    pager: { prev: "인증 공통", next: "카카오 개요" },
+  },
+  {
+    id: "page_2",
+    title: "개요",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / 개요",
+    lead: "카카오 OAuth 플로우를 간단히 요약하고 필요한 키와 리다이렉트 URI를 정리했습니다.",
+    updated: "2024-06-05",
+    status: "published",
+    nav: [
+      { id: "context", label: "배경" },
+      { id: "setup", label: "사전 준비" },
+      { id: "mdx", label: "MDX 샘플" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "context",
+        title: "배경",
+        body: `<p>카카오 OAuth 인증 흐름과 토큰 교환 과정을 한눈에 보이도록 개요 문서를 구성했습니다.</p>`,
+      },
+      {
+        type: "callout",
+        tone: "success",
+        id: "setup",
+        title: "사전 준비 체크리스트",
+        items: ["REST API 키 발급", "Redirect URI 등록", "동의항목 문구 검토"],
+      },
+      {
+        type: "code",
+        id: "mdx",
+        label: "MDX 본문 예시",
+        code: `# 카카오 OAuth 개요\n\n1. 인가 코드 받기\n2. 액세스 토큰 발급\n3. 사용자 정보 조회`,
+      },
+    ],
+    pager: { prev: "카카오 OAuth", next: "API 콘솔" },
+  },
+  {
+    id: "page_3",
+    title: "API 콘솔",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔",
+    lead: "API 콘솔에서 액션 블록을 실행하고 응답을 확인하는 과정을 담았습니다.",
+    updated: "2024-06-02",
+    status: "published",
+    nav: [
+      { id: "layout", label: "레이아웃" },
       { id: "exec", label: "실행 예시" },
       { id: "action-block", label: "액션 블록" },
       { id: "next", label: "다음 단계" },
@@ -24,37 +107,19 @@ const DOCS = [
     pluginNav: [
       { id: "api-console", label: "API 콘솔", state: "active" },
       { id: "workflow", label: "워크플로 빌더", state: "coming" },
-      { id: "diagram", label: "다이어그램 뷰어", state: "draft" },
     ],
     sections: [
       {
         type: "section",
         id: "layout",
         title: "문서 상세 레이아웃",
-        body: `
-          <p class="muted">좌측에는 전체 문서 트리, 가운데에는 MDX 본문, 우측에는 인페이지 TOC가 스티키로 따라오는 3단 구조입니다.</p>
-          <ul>
-            <li>좌측 SidebarNav는 <code>GET /api/v1/wiki/nav</code> 결과를 트리로 렌더하고, <strong>isUsable=false</strong>인 항목은 비활성 처리합니다.</li>
-            <li>가운데 본문은 <code>GET /api/v1/wiki/pages</code>의 MDX를 렌더하며 헤더/컨텐츠/액션 블록을 포함합니다.</li>
-            <li>우측 인페이지 TOC는 문서 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
-          </ul>
-        `,
-      },
-      {
-        type: "callout",
-        tone: "success",
-        title: "사전 체크리스트",
-        id: "callout",
-        items: ["테넌트별 API Key 발급", "Webhook URL (Slack/Discord) 등록", "액션 실행 권한 확인"],
+        body: `<p class="muted">좌측 트리는 /api/v1/wiki/nav에서 내려준 무한 뎁스 구조를 그대로 보여주고, 오른쪽 TOC는 현재 문서 헤더만 추려서 표시합니다.</p>`,
       },
       {
         type: "section",
         id: "exec",
-        title: "실행 예시와 코드 블록",
-        body: `
-          <p class="muted">문서 내 실행 예시는 코드 블록과 결과 캡처를 나란히 배치해 폭이 부족하지 않도록 중앙 컬럼을 확장했습니다.</p>
-          <p>아래 예시는 API 콘솔 액션을 POST로 실행하는 샘플이며, 요청/응답을 그대로 붙여 넣을 수 있도록 포매팅했습니다.</p>
-        `,
+        title: "실행 예시",
+        body: `<p>POST /api/plugins/execute 로 액션 블록을 호출하는 간단한 예시입니다. 요청/응답을 그대로 복사해 붙여넣을 수 있도록 포맷했습니다.</p>`,
       },
       {
         type: "code",
@@ -70,87 +135,192 @@ const DOCS = [
         type: "list",
         id: "next",
         title: "다음 단계",
-        items: [
-          "SDK 통합 가이드로 코드에 연결",
-          "워크플로 빌더에서 동일 액션을 블록으로 조립",
-          "운영 체크리스트를 참고해 배포 전 검증",
-        ],
+        items: ["실행 로그를 기록하는 webhooks 연결", "동일 액션을 워크플로 빌더에서 재사용", "SDK 예제와 비교"],
       },
     ],
-    pager: { prev: "인증 설정", next: "워크플로 빌더" },
+    pager: { prev: "개요", next: "실행 예시" },
   },
   {
-    id: "sdk-guide",
-    title: "SDK 통합 가이드",
-    breadcrumb: "Docs / SDK / 통합 가이드",
-    lead: "Next.js, NestJS, Spring 예제를 담은 설치/초기화 가이드를 준비 중입니다.",
+    id: "page_3_1",
+    title: "실행 예시",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 실행 예시",
+    lead: "POST 호출 예시와 응답 스니펫을 담은 하위 문서입니다.",
+    updated: "2024-05-28",
+    status: "published",
+    nav: [
+      { id: "sample", label: "샘플 요청" },
+      { id: "response", label: "샘플 응답" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "code",
+        id: "sample",
+        label: "샘플 요청",
+        code: `curl -X POST https://api.guidebook.wiki/v1/demo \\\n+  -H "Authorization: Bearer {token}" \\\n+  -d '{"plugin":"api-console","payload":{"method":"POST","url":"https://kapi.kakao.com/v2/user/me"}}'`,
+      },
+      {
+        type: "code",
+        id: "response",
+        label: "샘플 응답",
+        code: `HTTP/1.1 200 OK\n{\n  "id": 123456789,\n  "kakao_account": {\n    "profile": { "nickname": "가이드북" },\n    "email": "docs@example.com"\n  }\n}`,
+      },
+    ],
+    pager: { prev: "API 콘솔", next: "SDK 연동" },
+  },
+  {
+    id: "page_3_2",
+    title: "SDK 연동 (준비 중)",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / SDK 연동",
+    lead: "SDK 샘플은 곧 업데이트될 예정입니다.",
     updated: "준비 중",
     status: "coming",
     nav: [
-      { id: "install", label: "설치" },
-      { id: "init", label: "초기화" },
+      { id: "placeholder", label: "예정된 내용" },
     ],
     pluginNav: [],
     sections: [
       {
         type: "section",
-        id: "install",
-        title: "설치",
-        body: `<p>npm 패키지와 Gradle/Maven 아티팩트를 예시로 추가할 예정입니다.</p>`,
-      },
-      {
-        type: "section",
-        id: "init",
-        title: "초기화",
-        body: `<p>환경 변수, 테넌트 토큰 설정, 샘플 인보크 코드 등을 포함합니다.</p>`,
+        id: "placeholder",
+        title: "예정된 내용",
+        body: `<p>JavaScript, Kotlin, Spring 예제를 추가해 SDK 초기화와 오류 처리 패턴을 안내할 예정입니다.</p>`,
       },
     ],
-    pager: { prev: "API 콘솔", next: "릴리스 노트" },
+    pager: { prev: "실행 예시", next: "릴리스 노트" },
+  },
+  {
+    id: "ops-release",
+    title: "릴리스 노트",
+    breadcrumb: "Docs / 운영 / 릴리스 노트",
+    lead: "최근 릴리스에서 바뀐 항목을 간단히 요약했습니다.",
+    updated: "2024-05-10",
+    status: "published",
+    nav: [
+      { id: "summary", label: "요약" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "summary",
+        title: "요약",
+        body: `<ul><li>API 콘솔 실행 속도 개선</li><li>위키 검색 가중치 튜닝</li><li>TOC 스크롤 스파이 버그 수정</li></ul>`,
+      },
+    ],
+    pager: { prev: "SDK 연동", next: "릴리스 체크리스트" },
   },
   {
     id: "ops-checklist",
-    title: "운영 체크리스트",
-    breadcrumb: "Docs / 운영 / 체크리스트",
-    lead: "릴리스 전/후 체크리스트와 장애 대응 템플릿을 정리 중입니다.",
-    updated: "초안",
-    status: "draft",
+    title: "릴리스 체크리스트",
+    breadcrumb: "Docs / 운영 / 릴리스 체크리스트",
+    lead: "배포 전/후 체크리스트는 준비 중입니다.",
+    updated: "준비 중",
+    status: "coming",
     nav: [
-      { id: "release", label: "릴리스" },
-      { id: "incident", label: "장애 대응" },
+      { id: "incoming", label: "예정된 섹션" },
     ],
     pluginNav: [],
     sections: [
       {
         type: "section",
-        id: "release",
-        title: "릴리스",
-        body: `<p>릴리스 플랜, 롤백 체크포인트, 스모크 테스트 목록을 여기에 담습니다.</p>`,
-      },
-      {
-        type: "section",
-        id: "incident",
-        title: "장애 대응",
-        body: `<p>장애 단계별 커뮤니케이션 채널, 핸드오버 템플릿, SLA 측정 지표를 추가합니다.</p>`,
+        id: "incoming",
+        title: "예정된 섹션",
+        body: `<p>릴리스 전후 점검표, 롤백 기준, smoke test 템플릿을 추가합니다.</p>`,
       },
     ],
-    pager: { prev: "SDK", next: "부록" },
+    pager: { prev: "릴리스 노트", next: "API 용어집" },
+  },
+  {
+    id: "glossary",
+    title: "API 용어집",
+    breadcrumb: "Docs / 부록 / API 용어집",
+    lead: "자주 등장하는 필드와 상태 코드를 정리했습니다.",
+    updated: "2024-04-22",
+    status: "published",
+    nav: [
+      { id: "terms", label: "주요 용어" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "terms",
+        title: "주요 용어",
+        body: `<ul><li><strong>isUsable</strong>: 문서 준비 상태를 나타내는 boolean</li><li><strong>gateType</strong>: 권한/노출 조건</li><li><strong>fullPath</strong>: 문서의 고유 경로 (slug)</li></ul>`,
+      },
+    ],
+    pager: { prev: "릴리스 체크리스트", next: "에러 코드" },
+  },
+  {
+    id: "glossary-errors",
+    title: "에러 코드",
+    breadcrumb: "Docs / 부록 / API 용어집 / 에러 코드",
+    lead: "위키와 API에서 공통으로 쓰는 에러 코드를 모았습니다.",
+    updated: "2024-04-18",
+    status: "published",
+    nav: [
+      { id: "codes", label: "공통 코드" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "code",
+        id: "codes",
+        label: "공통 에러 코드",
+        code: `{
+  "RESTRICTED": "권한이 부족합니다",
+  "NOT_FOUND": "문서를 찾을 수 없습니다",
+  "NOT_USABLE": "준비 중인 문서입니다"
+}`,
+      },
+    ],
+    pager: { prev: "API 용어집", next: "끝" },
   },
 ];
 
 const NAV_TREE = [
   {
-    label: "시작하기",
+    label: "인증",
     isUsable: true,
     children: [
-      { label: "API 콘솔", docId: "api-console", isUsable: true },
-      { label: "SDK 통합", docId: "sdk-guide", isUsable: false },
+      {
+        label: "카카오 OAuth 가이드",
+        docId: "page_1",
+        isUsable: true,
+        children: [
+          { label: "개요", docId: "page_2", isUsable: true },
+          {
+            label: "API 콘솔",
+            docId: "page_3",
+            isUsable: true,
+            children: [
+              { label: "실행 예시", docId: "page_3_1", isUsable: true },
+              { label: "SDK 연동 (준비 중)", docId: "page_3_2", isUsable: false },
+            ],
+          },
+        ],
+      },
     ],
   },
   {
     label: "운영",
     isUsable: true,
     children: [
-      { label: "운영 체크리스트", docId: "ops-checklist", isUsable: false },
+      { label: "릴리스 노트", docId: "ops-release", isUsable: true },
+      { label: "릴리스 체크리스트", docId: "ops-checklist", isUsable: false },
+    ],
+  },
+  {
+    label: "부록",
+    isUsable: true,
+    children: [
+      {
+        label: "API 용어집",
+        docId: "glossary",
+        isUsable: true,
+        children: [{ label: "에러 코드", docId: "glossary-errors", isUsable: true }],
+      },
     ],
   },
 ];
