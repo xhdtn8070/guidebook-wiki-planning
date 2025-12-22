@@ -285,6 +285,7 @@ const INLINE_THEME_PRESETS = {
 };
 
 const select = document.querySelector("#theme-select");
+const themeChip = document.querySelector("#theme-chip");
 const params = new URLSearchParams(window.location.search);
 const initial = params.get("theme");
 
@@ -302,6 +303,7 @@ select.addEventListener("change", (event) => {
 
 window.addEventListener("DOMContentLoaded", () => {
   applyThemeFromSource(select.value);
+  wireInteractions();
 });
 
 async function applyThemeFromSource(themeName) {
@@ -310,19 +312,21 @@ async function applyThemeFromSource(themeName) {
     const res = await fetch(path);
     if (!res.ok) throw new Error(`failed to load ${path}`);
     const theme = await res.json();
-    applyTheme(theme);
+    applyTheme(theme, themeName);
   } catch (err) {
     console.warn(`fetch theme failed for ${themeName}, fallback to inline preset`, err);
     const fallback = INLINE_THEME_PRESETS[themeName];
     if (fallback) {
-      applyTheme(fallback);
+      applyTheme(fallback, themeName);
     }
   }
 }
 
-function applyTheme(theme) {
+function applyTheme(theme, themeKey) {
   const root = document.documentElement;
   const { palette, font, layout, hero, components } = theme;
+
+  root.dataset.theme = themeKey;
 
   root.style.setProperty("--color-background", palette.background);
   root.style.setProperty("--color-surface", palette.surface);
@@ -341,45 +345,178 @@ function applyTheme(theme) {
   root.style.setProperty("--font-body", font.body);
   root.style.setProperty("--font-mono", font.monospace);
 
-  applyComponentOverrides(components);
+  applyComponentOverrides(components, hero);
+  if (themeChip) {
+    themeChip.textContent = theme.name || themeKey;
+  }
 }
 
-function applyComponentOverrides(components) {
+function applyComponentOverrides(components, heroTheme) {
   const topbar = document.querySelector(".topbar");
-  topbar.style.background = components.topBar.background;
-  topbar.style.borderColor = components.topBar.border;
+  if (topbar && components.topBar) {
+    topbar.style.background = components.topBar.background;
+    topbar.style.borderColor = components.topBar.border;
+  }
 
   const sidebar = document.querySelector(".sidebar");
-  sidebar.style.background = components.sidebar.background;
-  sidebar.style.borderColor = components.sidebar.border;
+  if (sidebar && components.sidebar) {
+    sidebar.style.background = components.sidebar.background;
+    sidebar.style.borderColor = components.sidebar.border;
+  }
 
   document.querySelectorAll(".card, .panel, .auth-card, .plugin-block").forEach((card) => {
-    card.style.background = components.card.background;
-    card.style.borderColor = components.card.border;
+    card.style.background = components.card?.background;
+    card.style.borderColor = components.card?.border;
   });
 
   document.querySelectorAll(".btn.primary").forEach((btn) => {
-    btn.style.background = components.button.primaryBackground;
-    btn.style.color = components.button.primaryText;
-    btn.style.boxShadow = components.button.shadow;
+    btn.style.background = components.button?.primaryBackground;
+    btn.style.color = components.button?.primaryText;
+    btn.style.boxShadow = components.button?.shadow;
   });
 
   document.querySelectorAll(".btn.ghost").forEach((btn) => {
-    btn.style.borderColor = components.button.ghostBorder;
-    btn.style.color = components.button.ghostText;
-    btn.style.background = components.button.ghostBackground;
+    btn.style.borderColor = components.button?.ghostBorder;
+    btn.style.color = components.button?.ghostText;
+    btn.style.background = components.button?.ghostBackground;
   });
 
   document.querySelectorAll(".btn.text").forEach((btn) => {
-    btn.style.color = components.button.text;
+    btn.style.color = components.button?.text;
   });
 
   document.querySelectorAll(".code-block").forEach((block) => {
-    block.style.background = components.codeBlock.background;
-    block.style.color = components.codeBlock.text;
-    block.style.borderColor = components.codeBlock.border;
+    block.style.background = components.codeBlock?.background;
+    block.style.color = components.codeBlock?.text;
+    block.style.borderColor = components.codeBlock?.border;
   });
 
-  const hero = document.querySelector(".hero");
-  if (hero) hero.style.background = components.heroBackground || getComputedStyle(document.documentElement).getPropertyValue("--hero-bg");
+  const heroEl = document.querySelector(".hero");
+  if (heroEl) heroEl.style.background = components.heroBackground || heroTheme?.background || getComputedStyle(document.documentElement).getPropertyValue("--hero-bg");
+  const overlay = document.querySelector(".hero-overlay");
+  if (overlay) {
+    const overlayOpacity = heroTheme?.overlayOpacity ?? getComputedStyle(document.documentElement).getPropertyValue("--hero-overlay-opacity");
+    overlay.style.opacity = overlayOpacity;
+  }
+}
+
+function wireInteractions() {
+  setupAuthModal();
+  setupPluginDemo();
+  setupFlowDemo();
+  setupSearchPreview();
+}
+
+function setupAuthModal() {
+  const modal = document.querySelector("#auth-modal");
+  const openers = [
+    document.querySelector("#login-trigger"),
+    document.querySelector("#cta-login"),
+  ].filter(Boolean);
+  const closeBtn = document.querySelector("#auth-close");
+  const backdrop = modal?.querySelector(".modal-backdrop");
+
+  const open = () => {
+    modal?.classList.add("open");
+    modal?.setAttribute("aria-hidden", "false");
+    document.body.classList.add("no-scroll");
+  };
+  const close = () => {
+    modal?.classList.remove("open");
+    modal?.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("no-scroll");
+  };
+
+  openers.forEach((btn) => btn.addEventListener("click", open));
+  closeBtn?.addEventListener("click", close);
+  backdrop?.addEventListener("click", close);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+  document.querySelector("#email-login")?.addEventListener("click", () => {
+    const log = document.querySelector("#plugin-log");
+    if (log) {
+      log.textContent = "이메일 로그인 모킹: 세션 생성 → 즐겨찾기 초기화";
+    }
+    close();
+  });
+}
+
+function setupPluginDemo() {
+  const log = document.querySelector("#plugin-log");
+  if (!log) return;
+
+  const runButton = document.querySelector("#plugin-run");
+  const sampleButton = document.querySelector("#plugin-sample");
+  const detailButton = document.querySelector("#plugin-detail");
+
+  const mockResult = {
+    requestId: "demo-req-1042",
+    status: "success",
+    durationMs: 182,
+    output: {
+      message: "샘플 워크플로 완료",
+      nextAction: "슬랙 웹훅 전송",
+    },
+  };
+
+  runButton?.addEventListener("click", () => {
+    log.textContent = "실행 중... API 호출/로깅 모킹";
+    setTimeout(() => {
+      log.textContent = `${mockResult.requestId} · ${mockResult.status} (${mockResult.durationMs}ms) → ${mockResult.output.message}`;
+    }, 420);
+  });
+
+  sampleButton?.addEventListener("click", () => {
+    log.textContent = "샘플 로드: POST /api/plugins/execute { body, headers }";
+  });
+
+  detailButton?.addEventListener("click", () => {
+    log.innerHTML = "<strong>액션 설명</strong> · 입력 검증 → 실행 → 결과 스트림 → 로그 보관";
+  });
+}
+
+function setupFlowDemo() {
+  const stepsEl = document.querySelector("#flow-steps");
+  const play = document.querySelector("#flow-play");
+  if (!stepsEl || !play) return;
+
+  const steps = [
+    "문서 홈 진입 · Onboarding 링크 노출",
+    "SidebarNav로 API 콘솔 문서 이동",
+    "ActionBlock에서 POST 실행 → 결과 로그",
+    "BottomPager로 다음 문서 이동",
+  ];
+
+  const render = () => {
+    stepsEl.innerHTML = steps.map((text, idx) => `<li><span class="step-index">${idx + 1}</span>${text}</li>`).join("");
+  };
+
+  play.addEventListener("click", render);
+  render();
+}
+
+function setupSearchPreview() {
+  const preview = document.querySelector("#search-preview");
+  const play = document.querySelector("#search-play");
+  if (!preview || !play) return;
+
+  const results = [
+    { title: "카카오 OAuth 연동", tags: ["로그인", "OAuth"], excerpt: "Redirect URI, 동의창 문구" },
+    { title: "위키 검색 API", tags: ["Search", "API"], excerpt: "/api/wiki/search 와 정렬 옵션" },
+    { title: "플러그인 실행", tags: ["ActionBlock", "Plugin"], excerpt: "문서 내 POST 호출 예시" },
+  ];
+
+  const render = () => {
+    preview.innerHTML = results
+      .map(
+        (r) => `<div class="result"><div class="result-title">${r.title}</div><div class="result-tags">${r.tags
+          .map((t) => `<span class="tag">${t}</span>`)
+          .join("")}</div><p class="muted">${r.excerpt}</p></div>`
+      )
+      .join("");
+  };
+
+  play.addEventListener("click", render);
+  render();
 }
