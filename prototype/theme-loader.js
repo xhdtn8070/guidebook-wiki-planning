@@ -6,6 +6,82 @@ const THEME_FILES = {
   "gradient-pulse": "data/gradient-pulse.json",
 };
 
+const DOCS = [
+  {
+    id: "api-console",
+    title: "API 콘솔을 이용해 샘플 워크플로 실행하기",
+    breadcrumb: "Docs / 플러그인 / API 콘솔 실행",
+    lead: "ActionBlock 구성과 요청/응답 예시를 포함한 문서 상세 페이지 시안입니다.",
+    updated: "2024-06-01",
+    status: "published",
+    nav: [
+      { id: "prep", label: "사전 준비" },
+      { id: "run", label: "실행 예시" },
+      { id: "block", label: "플러그인 블록" },
+      { id: "next", label: "다음 단계" },
+    ],
+    pluginNav: [
+      { id: "api-console", label: "API 콘솔", state: "active" },
+      { id: "workflow", label: "워크플로 빌더", state: "coming" },
+      { id: "diagram", label: "다이어그램 뷰어", state: "draft" },
+    ],
+    sections: [
+      {
+        type: "callout",
+        tone: "success",
+        title: "사전 준비",
+        id: "prep",
+        items: ["테넌트별 API Key 발급", "Webhook URL (Slack/Discord) 등록", "액션 실행 권한 확인"],
+      },
+      {
+        type: "code",
+        id: "run",
+        label: "요청 예시",
+        code: `POST /api/plugins/execute\nAuthorization: Bearer {token}\n{\n  "plugin": "api-console",\n  "payload": {\n    "method": "POST",\n    "url": "https://api.guidebook.wiki/v1/demo",\n    "body": { "preview": true }\n  }\n}`,
+      },
+      {
+        type: "plugin",
+        id: "block",
+      },
+      {
+        type: "list",
+        id: "next",
+        title: "결과/추가 리소스",
+        items: ["실행 로그는 7일 보관", "Slack 웹훅으로 결과 전송", "워크플로 빌더 베타 안내"],
+      },
+    ],
+    pager: { prev: "인증 설정", next: "워크플로 빌더" },
+  },
+  {
+    id: "sdk-guide",
+    title: "SDK 통합 가이드",
+    breadcrumb: "Docs / SDK / 통합 가이드",
+    lead: "다중 언어 SDK 설치/초기화 안내를 준비 중입니다.",
+    updated: "준비 중",
+    status: "coming",
+    nav: [
+      { id: "install", label: "설치" },
+      { id: "init", label: "초기화" },
+    ],
+    pluginNav: [],
+    pager: { prev: "API 콘솔", next: "릴리스 노트" },
+  },
+  {
+    id: "ops-checklist",
+    title: "운영 체크리스트",
+    breadcrumb: "Docs / 운영 / 체크리스트",
+    lead: "릴리스 전후 체크리스트와 장애 대응 템플릿을 정리 중입니다.",
+    updated: "초안", 
+    status: "draft",
+    nav: [
+      { id: "release", label: "릴리스" },
+      { id: "incident", label: "장애 대응" },
+    ],
+    pluginNav: [],
+    pager: { prev: "SDK", next: "부록" },
+  },
+];
+
 const INLINE_THEME_PRESETS = {
   "gradient-pulse": {
     "name": "Gradient Pulse",
@@ -18,6 +94,28 @@ const INLINE_THEME_PRESETS = {
       "border": "rgba(255, 255, 255, 0.2)",
       "text": "#f8fafc",
       "muted": "#cbd5e1"
+    },
+    "paletteModes": {
+      "light": {
+        "primary": "#f97316",
+        "secondary": "#6366f1",
+        "accent": "#22c55e",
+        "background": "#fff7ed",
+        "surface": "#ffffff",
+        "border": "#ffe4cc",
+        "text": "#1f2937",
+        "muted": "#4b5563"
+      },
+      "dark": {
+        "primary": "#f97316",
+        "secondary": "#6366f1",
+        "accent": "#22c55e",
+        "background": "#0f172a",
+        "surface": "rgba(255, 255, 255, 0.12)",
+        "border": "rgba(255, 255, 255, 0.2)",
+        "text": "#f8fafc",
+        "muted": "#cbd5e1"
+      }
     },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
@@ -74,6 +172,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#e2e8f0",
       "muted": "#94a3b8"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#7c3aed",
+        "secondary": "#22d3ee",
+        "accent": "#f472b6",
+        "background": "#f5f7fb",
+        "surface": "#ffffff",
+        "border": "#e5e7eb",
+        "text": "#0f172a",
+        "muted": "#475569"
+      },
+      "dark": {
+        "primary": "#7c3aed",
+        "secondary": "#22d3ee",
+        "accent": "#f472b6",
+        "background": "#0b1220",
+        "surface": "#0f172a",
+        "border": "#1e293b",
+        "text": "#e2e8f0",
+        "muted": "#94a3b8"
+      }
+    },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
       "body": "'Inter', 'Pretendard', sans-serif",
@@ -128,6 +248,28 @@ const INLINE_THEME_PRESETS = {
       "border": "#d1dee6",
       "text": "#0f172a",
       "muted": "#4b5563"
+    },
+    "paletteModes": {
+      "light": {
+        "primary": "#2a9d8f",
+        "secondary": "#264653",
+        "accent": "#e9c46a",
+        "background": "#eef3f6",
+        "surface": "#ffffff",
+        "border": "#d1dee6",
+        "text": "#0f172a",
+        "muted": "#4b5563"
+      },
+      "dark": {
+        "primary": "#2dd4bf",
+        "secondary": "#0ea5e9",
+        "accent": "#e9c46a",
+        "background": "#0f172a",
+        "surface": "#111827",
+        "border": "#1f2937",
+        "text": "#e5e7eb",
+        "muted": "#94a3b8"
+      }
     },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
@@ -184,6 +326,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#3c342c",
       "muted": "#7a6f63"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#ef476f",
+        "secondary": "#ffd166",
+        "accent": "#06d6a0",
+        "background": "#faf7f0",
+        "surface": "#ffffff",
+        "border": "#e8e2d2",
+        "text": "#3c342c",
+        "muted": "#7a6f63"
+      },
+      "dark": {
+        "primary": "#f47b94",
+        "secondary": "#ffd166",
+        "accent": "#06d6a0",
+        "background": "#2d2620",
+        "surface": "#362e28",
+        "border": "#4a3f36",
+        "text": "#f6eee1",
+        "muted": "#d6c5b5"
+      }
+    },
     "font": {
       "heading": "'Recoleta', 'Pretendard', serif",
       "body": "'Work Sans', 'Pretendard', sans-serif",
@@ -239,6 +403,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#073642",
       "muted": "#586e75"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#268bd2",
+        "secondary": "#2aa198",
+        "accent": "#b58900",
+        "background": "#fdf6e3",
+        "surface": "#fffdf5",
+        "border": "#e7d8b1",
+        "text": "#073642",
+        "muted": "#586e75"
+      },
+      "dark": {
+        "primary": "#5fb3d9",
+        "secondary": "#3ed2c5",
+        "accent": "#e0c060",
+        "background": "#002b36",
+        "surface": "#073642",
+        "border": "#0a4c5b",
+        "text": "#fdf6e3",
+        "muted": "#93a1a1"
+      }
+    },
     "font": {
       "heading": "'Source Sans Pro', 'Pretendard', sans-serif",
       "body": "'Source Sans Pro', 'Pretendard', sans-serif",
@@ -285,57 +471,113 @@ const INLINE_THEME_PRESETS = {
 };
 
 const select = document.querySelector("#theme-select");
+const modeSelect = document.querySelector("#mode-select");
 const themeChip = document.querySelector("#theme-chip");
 const params = new URLSearchParams(window.location.search);
 const initial = params.get("theme");
+const savedMode = params.get("mode") || localStorage.getItem("wiki-color-mode") || "system";
+const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+let currentTheme = select?.value || "nordic-tech";
+let currentMode = savedMode;
 
 if (initial && THEME_FILES[initial]) {
-  select.value = initial;
+  currentTheme = initial;
 }
 
-select.addEventListener("change", (event) => {
+if (select) {
+  select.value = currentTheme;
+}
+
+if (modeSelect) {
+  modeSelect.value = currentMode;
+}
+
+select?.addEventListener("change", (event) => {
   const theme = event.target.value;
-  applyThemeFromSource(theme);
-  const nextUrl = new URL(window.location.href);
-  nextUrl.searchParams.set("theme", theme);
-  window.history.replaceState({}, "", nextUrl.toString());
+  currentTheme = theme;
+  applyThemeFromSource(theme, currentMode);
+  updateUrlParam("theme", theme);
+});
+
+modeSelect?.addEventListener("change", (event) => {
+  const mode = event.target.value;
+  currentMode = mode;
+  persistMode(mode);
+  updateUrlParam("mode", mode);
+  applyThemeFromSource(currentTheme, mode);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  applyThemeFromSource(select.value);
+  applyThemeFromSource(currentTheme, currentMode);
   wireInteractions();
 });
 
-async function applyThemeFromSource(themeName) {
+mediaQuery.addEventListener("change", () => {
+  if (currentMode === "system") {
+    applyThemeFromSource(currentTheme, currentMode);
+  }
+});
+
+function updateUrlParam(key, value) {
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set(key, value);
+  window.history.replaceState({}, "", nextUrl.toString());
+}
+
+function persistMode(mode) {
+  localStorage.setItem("wiki-color-mode", mode);
+}
+
+function getEffectiveMode(mode) {
+  if (mode === "system") return mediaQuery.matches ? "dark" : "light";
+  return mode;
+}
+
+function getModeLabel(mode) {
+  switch (mode) {
+    case "light":
+      return "라이트";
+    case "dark":
+      return "다크";
+    default:
+      return "오토";
+  }
+}
+
+async function applyThemeFromSource(themeName, modePreference = currentMode) {
   const path = THEME_FILES[themeName];
   try {
     const res = await fetch(path);
     if (!res.ok) throw new Error(`failed to load ${path}`);
     const theme = await res.json();
-    applyTheme(theme, themeName);
+    applyTheme(theme, themeName, modePreference);
   } catch (err) {
     console.warn(`fetch theme failed for ${themeName}, fallback to inline preset`, err);
     const fallback = INLINE_THEME_PRESETS[themeName];
     if (fallback) {
-      applyTheme(fallback, themeName);
+      applyTheme(fallback, themeName, modePreference);
     }
   }
 }
 
-function applyTheme(theme, themeKey) {
+function applyTheme(theme, themeKey, modePreference = currentMode) {
   const root = document.documentElement;
-  const { palette, font, layout, hero, components } = theme;
+  const { paletteModes = {}, palette, font, layout, hero, components } = theme;
+  const effectiveMode = getEffectiveMode(modePreference);
+  const paletteSet = paletteModes[effectiveMode] || paletteModes.light || palette;
 
   root.dataset.theme = themeKey;
+  root.dataset.colorMode = effectiveMode;
 
-  root.style.setProperty("--color-background", palette.background);
-  root.style.setProperty("--color-surface", palette.surface);
-  root.style.setProperty("--color-border", palette.border);
-  root.style.setProperty("--color-primary", palette.primary);
-  root.style.setProperty("--color-secondary", palette.secondary);
-  root.style.setProperty("--color-accent", palette.accent);
-  root.style.setProperty("--color-text", palette.text);
-  root.style.setProperty("--color-muted", palette.muted);
+  root.style.setProperty("--color-background", paletteSet.background || palette?.background);
+  root.style.setProperty("--color-surface", paletteSet.surface || palette?.surface);
+  root.style.setProperty("--color-border", paletteSet.border || palette?.border);
+  root.style.setProperty("--color-primary", paletteSet.primary || palette?.primary);
+  root.style.setProperty("--color-secondary", paletteSet.secondary || palette?.secondary);
+  root.style.setProperty("--color-accent", paletteSet.accent || palette?.accent);
+  root.style.setProperty("--color-text", paletteSet.text || palette?.text);
+  root.style.setProperty("--color-muted", paletteSet.muted || palette?.muted);
   root.style.setProperty("--shadow", layout.shadow);
   root.style.setProperty("--radius", layout.radius);
   root.style.setProperty("--spacing", layout.spacing);
@@ -347,7 +589,7 @@ function applyTheme(theme, themeKey) {
 
   applyComponentOverrides(components, hero);
   if (themeChip) {
-    themeChip.textContent = theme.name || themeKey;
+    themeChip.textContent = `${theme.name || themeKey} · ${getModeLabel(modePreference)}`;
   }
 }
 
@@ -376,8 +618,9 @@ function applyComponentOverrides(components, heroTheme) {
   });
 
   document.querySelectorAll(".btn.ghost").forEach((btn) => {
+    const ghostText = components.button?.ghostText || getComputedStyle(document.documentElement).getPropertyValue("--color-text");
     btn.style.borderColor = components.button?.ghostBorder;
-    btn.style.color = components.button?.ghostText;
+    btn.style.color = ghostText;
     btn.style.background = components.button?.ghostBackground;
   });
 
@@ -401,45 +644,44 @@ function applyComponentOverrides(components, heroTheme) {
 }
 
 function wireInteractions() {
-  setupAuthModal();
+  setupNavDocsDropdown();
+  setupDocExperience();
+  setupLoginLinks();
+  hydrateRedirectChip();
   setupPluginDemo();
   setupFlowDemo();
   setupSearchPreview();
 }
 
-function setupAuthModal() {
-  const modal = document.querySelector("#auth-modal");
-  const openers = [
-    document.querySelector("#login-trigger"),
-    document.querySelector("#cta-login"),
-  ].filter(Boolean);
-  const closeBtn = document.querySelector("#auth-close");
-  const backdrop = modal?.querySelector(".modal-backdrop");
+function setupLoginLinks() {
+  const redirect = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
+  const loginUrl = `login.html?redirect=${redirect}`;
+  const docsUrl = "docs.html";
 
-  const open = () => {
-    modal?.classList.add("open");
-    modal?.setAttribute("aria-hidden", "false");
-    document.body.classList.add("no-scroll");
-  };
-  const close = () => {
-    modal?.classList.remove("open");
-    modal?.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("no-scroll");
-  };
-
-  openers.forEach((btn) => btn.addEventListener("click", open));
-  closeBtn?.addEventListener("click", close);
-  backdrop?.addEventListener("click", close);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") close();
-  });
-  document.querySelector("#email-login")?.addEventListener("click", () => {
-    const log = document.querySelector("#plugin-log");
-    if (log) {
-      log.textContent = "이메일 로그인 모킹: 세션 생성 → 즐겨찾기 초기화";
+  ["#login-trigger", "#cta-login"].forEach((selector) => {
+    const btn = document.querySelector(selector);
+    if (btn) {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.location.href = loginUrl;
+      });
     }
-    close();
   });
+
+  document.querySelector("#docs-btn")?.addEventListener("click", () => {
+    window.location.href = docsUrl;
+  });
+
+  document.querySelector("#start-btn")?.addEventListener("click", () => {
+    window.location.href = docsUrl;
+  });
+}
+
+function hydrateRedirectChip() {
+  const chip = document.querySelector("#redirect-chip");
+  if (!chip) return;
+  const redirect = params.get("redirect") || "/";
+  chip.textContent = `redirect=${redirect}`;
 }
 
 function setupPluginDemo() {
@@ -519,4 +761,181 @@ function setupSearchPreview() {
 
   play.addEventListener("click", render);
   render();
+}
+
+function setupNavDocsDropdown() {
+  const menu = document.querySelector("#nav-doc-menu");
+  const toggle = document.querySelector("#nav-docs .dropdown-toggle");
+  if (!menu || !toggle) return;
+
+  const renderItems = () => {
+    menu.innerHTML = DOCS.map((doc) => {
+      const state = doc.status;
+      const stateLabel = state === "published" ? "바로가기" : "준비중";
+      return `<a href="docs.html?doc=${doc.id}" class="nav-item" data-state="${state}">
+        <span>${doc.title}</span>
+        <span class="nav-pill">${stateLabel}</span>
+      </a>`;
+    }).join("");
+  };
+
+  renderItems();
+
+  toggle.addEventListener("click", (e) => {
+    e.preventDefault();
+    const isOpen = menu.classList.toggle("active");
+    toggle.setAttribute("aria-expanded", String(isOpen));
+  });
+
+  menu.addEventListener("click", (event) => {
+    const target = event.target.closest(".nav-item");
+    if (!target) return;
+    const state = target.dataset.state;
+    if (state && state !== "published") {
+      event.preventDefault();
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+    }
+  });
+}
+
+function setupDocExperience() {
+  const select = document.querySelector("#doc-select");
+  const navList = document.querySelector("#doc-nav");
+  if (!select || !navList) return;
+
+  const defaultDoc = params.get("doc") || DOCS[0]?.id;
+
+  const renderOptions = () => {
+    select.innerHTML = DOCS.map((doc) => `<option value="${doc.id}">${doc.title}</option>`).join("");
+  };
+
+  const renderNav = (doc) => {
+    navList.innerHTML = doc.nav
+      ?.map((item) => `<li data-id="${item.id}">${item.label}</li>`)
+      .join("") || "";
+
+    const pluginNav = document.querySelector("#plugin-nav");
+    if (pluginNav) {
+      pluginNav.innerHTML = doc.pluginNav
+        ?.map(
+          (item) =>
+            `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
+              item.state !== "active" ? " · 준비중" : ""
+            }</li>`
+        )
+        .join("") || "";
+    }
+  };
+
+  const renderDoc = (docId) => {
+    const doc = DOCS.find((d) => d.id === docId) || DOCS[0];
+    if (!doc) return;
+
+    select.value = doc.id;
+    renderNav(doc);
+
+    const breadcrumb = document.querySelector("#breadcrumb");
+    const updated = document.querySelector("#doc-updated");
+    const title = document.querySelector("#doc-title");
+    const lead = document.querySelector("#doc-lead");
+    const body = document.querySelector("#doc-body");
+    const pager = document.querySelector("#pager");
+    const status = document.querySelector("#doc-status");
+
+    if (breadcrumb) breadcrumb.textContent = doc.breadcrumb;
+    if (updated) updated.textContent = `업데이트 · ${doc.updated}`;
+    if (title) title.textContent = doc.title;
+    if (lead) lead.textContent = doc.lead;
+    if (status) {
+      status.textContent = doc.status === "published" ? "발행" : "준비중";
+      status.dataset.state = doc.status;
+    }
+
+    const content = doc.sections
+      ?.map((section) => {
+        if (section.type === "callout") {
+          return `<section class="callout success" id="${section.id}">
+            <p class="callout-title">${section.title}</p>
+            <ul>${section.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>`;
+        }
+        if (section.type === "code") {
+          return `<section class="code-block" aria-label="${section.label}" id="${section.id}">
+            <pre><code>${section.code}</code></pre>
+          </section>`;
+        }
+        if (section.type === "plugin") {
+          return `<div class="plugin-block" id="${section.id}">
+            <div class="plugin-header">
+              <span class="pill ghost">API Console</span>
+              <span class="tag">POST /api/plugins/execute</span>
+            </div>
+            <div class="plugin-body">
+              <div class="field">
+                <label>API URL</label>
+                <input type="text" value="https://api.guidebook.wiki/v1/demo" />
+              </div>
+              <div class="field">
+                <label>Authorization</label>
+                <select>
+                  <option>Bearer 토큰</option>
+                  <option>API Key</option>
+                </select>
+              </div>
+              <div class="plugin-actions">
+                <button class="btn primary" id="plugin-run">실행</button>
+                <button class="btn ghost" id="plugin-sample">샘플 로드</button>
+                <button class="btn text" id="plugin-detail">액션 설명 보기 →</button>
+              </div>
+              <div class="plugin-log" id="plugin-log" aria-live="polite"></div>
+            </div>
+          </div>`;
+        }
+        if (section.type === "list") {
+          return `<section id="${section.id}">
+            <h4>${section.title}</h4>
+            <ul>${section.items.map((item) => `<li>${item}</li>`).join("")}</ul>
+          </section>`;
+        }
+        return "";
+      })
+      .join("");
+
+    if (body) {
+      body.innerHTML = content || "";
+      body.classList.toggle("inactive", doc.status !== "published");
+    }
+
+    if (pager) {
+      const prev = doc.pager?.prev ? `<a href="#" class="pager-link">← 이전: ${doc.pager.prev}</a>` : "";
+      const next = doc.pager?.next ? `<a href="#" class="pager-link">다음: ${doc.pager.next} →</a>` : "";
+      pager.innerHTML = `${prev}${next}`;
+      pager.classList.toggle("inactive", doc.status !== "published");
+    }
+
+    if (doc.status !== "published") {
+      showToast("준비 중인 문서입니다. 연결되면 자동으로 안내합니다.");
+    }
+
+    setupPluginDemo();
+  };
+
+  renderOptions();
+  renderDoc(defaultDoc);
+
+  select.addEventListener("change", (event) => {
+    const value = event.target.value;
+    params.set("doc", value);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
+    renderDoc(value);
+  });
+}
+
+function showToast(message) {
+  const toast = document.querySelector("#doc-toast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("active");
+  setTimeout(() => toast.classList.remove("active"), 2400);
 }

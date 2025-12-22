@@ -10,6 +10,28 @@
     "text": "#3c342c",
     "muted": "#7a6f63"
   },
+  "paletteModes": {
+    "light": {
+      "primary": "#ef476f",
+      "secondary": "#ffd166",
+      "accent": "#06d6a0",
+      "background": "#faf7f0",
+      "surface": "#ffffff",
+      "border": "#e8e2d2",
+      "text": "#3c342c",
+      "muted": "#7a6f63"
+    },
+    "dark": {
+      "primary": "#f47b94",
+      "secondary": "#ffd166",
+      "accent": "#06d6a0",
+      "background": "#2d2620",
+      "surface": "#362e28",
+      "border": "#4a3f36",
+      "text": "#f6eee1",
+      "muted": "#d6c5b5"
+    }
+  },
   "font": {
     "heading": "'Recoleta', 'Pretendard', serif",
     "body": "'Work Sans', 'Pretendard', sans-serif",

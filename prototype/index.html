@@ -23,13 +23,20 @@
           </div>
         </div>
         <div class="controls">
+          <nav class="primary-nav" aria-label="주요 내비게이션">
+            <a href="index.html" class="nav-link active">메인</a>
+            <div class="nav-dropdown" id="nav-docs">
+              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">Docs</button>
+              <div class="nav-menu" id="nav-doc-menu" aria-label="문서 선택"></div>
+            </div>
+          </nav>
           <div class="search">
             <input type="search" placeholder="문서 검색 /search" aria-label="문서 검색" />
             <button class="btn compact">⌘K</button>
           </div>
           <label class="theme-switcher" for="theme-select">
-            <span>테마</span>
-            <select id="theme-select" aria-label="테마 선택">
+            <span>테넌트 테마</span>
+            <select id="theme-select" aria-label="테넌트 테마 선택">
               <option value="nordic-tech">Nordic Tech</option>
               <option value="solarized-playbook">Solarized Playbook</option>
               <option value="midnight-console">Midnight Console</option>
@@ -37,33 +44,20 @@
               <option value="gradient-pulse">Gradient Pulse</option>
             </select>
           </label>
-          <div class="theme-chip" id="theme-chip">Nordic Tech</div>
-          <button class="btn ghost link" id="login-trigger">로그인</button>
+          <label class="theme-switcher" for="mode-select">
+            <span>모드</span>
+            <select id="mode-select" aria-label="컬러 모드 선택">
+              <option value="system">오토</option>
+              <option value="light">라이트</option>
+              <option value="dark">다크</option>
+            </select>
+          </label>
+          <div class="theme-chip" id="theme-chip">Nordic Tech · 오토</div>
+          <button class="btn ghost" id="login-trigger">로그인</button>
         </div>
       </header>
 
-      <div class="layout">
-        <aside class="sidebar">
-          <div class="sidebar-title">문서 네비게이션</div>
-          <nav>
-            <ul>
-              <li class="active">개요</li>
-              <li>디자인 시스템</li>
-              <li>API 통합</li>
-              <li>릴리스 노트</li>
-              <li>지원 센터</li>
-            </ul>
-          </nav>
-          <div class="sidebar-section">
-            <div class="sidebar-subtitle">플러그인 블록</div>
-            <ul>
-              <li>API 콘솔</li>
-              <li>워크플로 빌더</li>
-              <li>다이어그램 뷰어</li>
-            </ul>
-          </div>
-        </aside>
-
+      <div class="layout home">
         <main class="content">
           <section class="hero">
             <div class="hero-overlay"></div>
@@ -75,8 +69,8 @@
                 있도록 구성했습니다.
               </p>
               <div class="hero-actions">
-                <button class="btn primary">시작하기</button>
-                <button class="btn ghost">문서 바로가기</button>
+                <button class="btn primary" id="start-btn">시작하기</button>
+                <button class="btn ghost" id="docs-btn">문서 바로가기</button>
                 <button class="btn ghost link" id="cta-login">로그인/회원가입 보기</button>
               </div>
             </div>
@@ -210,43 +204,6 @@
         </main>
       </div>
     </div>
-
-    <div class="modal" id="auth-modal" aria-hidden="true">
-      <div class="modal-backdrop"></div>
-      <div class="modal-body" role="dialog" aria-modal="true" aria-labelledby="auth-title">
-        <div class="modal-header">
-          <div>
-            <p class="pill ghost">회원</p>
-            <h3 id="auth-title">로그인/회원가입</h3>
-          </div>
-          <button class="btn compact ghost" id="auth-close">닫기</button>
-        </div>
-        <div class="auth-card">
-          <p class="muted">API 플레이북 사용을 위해 Kakao 계정으로 빠르게 진입</p>
-          <div class="auth-buttons">
-            <button class="btn kakao">5초 만에 카카오로 시작하기</button>
-            <button class="btn kakao ghost">다른 카카오계정으로 시작하기</button>
-          </div>
-          <div class="divider">또는</div>
-          <div class="form-grid">
-            <label class="field">
-              <span>이메일</span>
-              <input type="email" placeholder="guidebook@company.com" />
-            </label>
-            <label class="field">
-              <span>비밀번호</span>
-              <input type="password" placeholder="●●●●●●●●" />
-            </label>
-            <button class="btn primary" id="email-login">이메일로 계속</button>
-          </div>
-          <div class="banner-placeholder">배너 공간 · 위키 공지 및 배포 노트</div>
-        </div>
-        <div class="auth-meta">
-          <p class="muted">첫 로그인 시 즐겨찾기/최근 본 문서를 자동 저장하는 플로우를 함께 시연합니다.</p>
-        </div>
-      </div>
-    </div>
-
     <script src="theme-loader.js" type="module"></script>
   </body>
 </html>

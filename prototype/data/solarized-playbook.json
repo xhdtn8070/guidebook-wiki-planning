@@ -10,6 +10,28 @@
     "text": "#073642",
     "muted": "#586e75"
   },
+  "paletteModes": {
+    "light": {
+      "primary": "#268bd2",
+      "secondary": "#2aa198",
+      "accent": "#b58900",
+      "background": "#fdf6e3",
+      "surface": "#fffdf5",
+      "border": "#e7d8b1",
+      "text": "#073642",
+      "muted": "#586e75"
+    },
+    "dark": {
+      "primary": "#5fb3d9",
+      "secondary": "#3ed2c5",
+      "accent": "#e0c060",
+      "background": "#002b36",
+      "surface": "#073642",
+      "border": "#0a4c5b",
+      "text": "#fdf6e3",
+      "muted": "#93a1a1"
+    }
+  },
   "font": {
     "heading": "'Source Sans Pro', 'Pretendard', sans-serif",
     "body": "'Source Sans Pro', 'Pretendard', sans-serif",

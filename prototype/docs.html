@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guidebook Wiki – Docs Preview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">G</span>
+          <div class="brand-copy">
+            <strong>Guidebook Wiki</strong>
+            <span class="brand-sub">API 실전 플레이북</span>
+          </div>
+        </div>
+        <div class="controls">
+          <nav class="primary-nav" aria-label="주요 내비게이션">
+            <a href="index.html" class="nav-link">메인</a>
+            <div class="nav-dropdown" id="nav-docs">
+              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">Docs</button>
+              <div class="nav-menu" id="nav-doc-menu" aria-label="문서 선택"></div>
+            </div>
+          </nav>
+          <div class="search">
+            <input type="search" placeholder="문서 검색 /search" aria-label="문서 검색" />
+            <button class="btn compact">⌘K</button>
+          </div>
+          <label class="theme-switcher" for="theme-select">
+            <span>테넌트 테마</span>
+            <select id="theme-select" aria-label="테넌트 테마 선택">
+              <option value="nordic-tech">Nordic Tech</option>
+              <option value="solarized-playbook">Solarized Playbook</option>
+              <option value="midnight-console">Midnight Console</option>
+              <option value="paper-notebook">Paper Notebook</option>
+              <option value="gradient-pulse">Gradient Pulse</option>
+            </select>
+          </label>
+          <label class="theme-switcher" for="mode-select">
+            <span>모드</span>
+            <select id="mode-select" aria-label="컬러 모드 선택">
+              <option value="system">오토</option>
+              <option value="light">라이트</option>
+              <option value="dark">다크</option>
+            </select>
+          </label>
+          <div class="theme-chip" id="theme-chip">Nordic Tech · 오토</div>
+          <button class="btn ghost" id="login-trigger">로그인</button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <div class="sidebar-title">문서 네비게이션</div>
+          <nav>
+            <ul id="doc-nav"></ul>
+          </nav>
+          <div class="sidebar-section">
+            <div class="sidebar-subtitle">플러그인 블록</div>
+            <ul id="plugin-nav"></ul>
+          </div>
+        </aside>
+
+        <main class="content doc-content">
+          <div class="doc-switcher">
+            <div class="doc-select">
+              <label for="doc-select">Docs</label>
+              <select id="doc-select" aria-label="문서 선택"></select>
+            </div>
+            <div class="doc-status" id="doc-status"></div>
+          </div>
+
+          <div class="breadcrumb" id="breadcrumb">Docs</div>
+          <header class="doc-header">
+            <div>
+              <p class="pill ghost" id="doc-updated">업데이트 · -</p>
+              <h1 id="doc-title">문서 제목</h1>
+              <p class="lead" id="doc-lead">문서 설명</p>
+            </div>
+            <div class="doc-actions">
+              <button class="btn primary" id="doc-edit">이 문서 수정</button>
+              <button class="btn ghost" id="doc-fav">즐겨찾기</button>
+            </div>
+          </header>
+
+          <article class="doc-body" id="doc-body"></article>
+
+          <nav class="bottom-pager" aria-label="문서 페이지 이동" id="pager"></nav>
+        </main>
+      </div>
+
+      <div class="toast" id="doc-toast" role="status" aria-live="polite"></div>
+    </div>
+
+    <script src="theme-loader.js" type="module"></script>
+  </body>
+</html>

@@ -1,9 +1,12 @@
 # Prototype Preview
 
-단일 HTML 시안(`index.html`)과 5개의 테마 JSON(`data/*.json`)을 바꿔 끼우는 구조입니다. 쿼리스트링 `?theme=` 혹은 셀렉트 박스로 테마를 전환하며, 도큐사우루스 느낌의 위키 홈 + 문서/검색/플러그인 섹션을 하나의 페이지 안에서 프리뷰합니다.
+단일 HTML 시안(`index.html`, `docs.html`, `login.html`)과 5개의 테마 JSON(`data/*.json`)을 바꿔 끼우는 구조입니다. 쿼리스트링 `?theme=` 혹은 셀렉트 박스로
+테마를 전환하며, 홈/Docs/카카오 전용 로그인 흐름과 문서 드롭다운, 목데이터 기반 문서 스위처를 함께 프리뷰합니다.
 
 ## 파일
-- `index.html`: 공통 마크업. 헤더/사이드바/히어로 + 로그인/배너 카드, 문서·검색·플러그인 섹션을 포함합니다.
+- `index.html`: 소개 전용 랜딩. 상단 Docs 드롭다운(다중 문서 세트)과 CTA 위주 섹션만 배치합니다.
+- `docs.html`: 문서 상세 페이지 시안. 문서 드롭다운/SidebarNav를 목데이터로 렌더링하고, 준비 중인 문서는 토스트와 비활성 상태로 안내합니다.
+- `login.html`: 카카오 전용 전체 페이지 로그인 시안. redirect 파라미터 칩 + 카카오 버튼만 포함합니다.
 - `styles.css`: CSS 변수 기반 기본 스타일 및 카카오 로그인 버튼/배너/플러그인 카드 스타일.
 - `theme-loader.js`: 테마 JSON을 로드해 CSS 변수와 컴포넌트 스타일에 반영. file:// 로 열릴 때 fetch가 막히면 인라인 프리셋으로 폴백합니다.
 - `data/*.json`: 테마 데이터. `palette`, `font`, `layout`, `hero`, `components` 키를 공유합니다.
