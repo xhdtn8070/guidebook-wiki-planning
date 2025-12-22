@@ -16,6 +16,19 @@
     - 위키 플랫폼과 그 위에서 운영할 **API 실전 플레이북**의 관계를 명확히 하며,
     - 프론트/백엔드를 AI 혹은 다른 개발자가 맡아도 이해할 수 있는 기준 문서로 사용한다.
 
+## 0-1. 추천 읽기 순서
+
+1. 이 문서(guidebook-wiki-planning.md)에서 비전과 문제 정의, 전체 구조를 파악한다.
+2. `guidebook-wiki-layout-and-common-component.md`에서 핵심 레이아웃/공통 컴포넌트를 확인한다.
+3. 프론트엔드 설계는 `guidebook-wiki-frontend-planning-nextjs.md` → `guidebook-wiki-frontend-planning-codex.md` 순으로 읽는다.
+4. 백엔드 API 초안(`guidebook-wiki-backend-draft.md`)과 DB 설계(`guidebook-wiki-database-planning-postgresql.md`)를 함께 보며 엔드포인트와 스키마를 매칭한다.
+
+## 0-2. 우선 개선 포인트 (v1 기준)
+
+- **테넌트/광고/권한 정합성**: 백엔드 API와 DB 설계에서 `X-Tenant`, 광고 슬롯, 권한 정책이 일관되게 표현되는지 점검 필요.
+- **플러그인(Action/Plugin Block) UX**: 레이아웃/프론트 설계에서 플러그인 배치·실행 흐름을 더 구체화(예: 실행 영역/권한 UI 패턴)하면 개발 착수 시 혼선을 줄일 수 있음.
+- **검색·개인화 우선순위**: 엘라스틱서치 연동, 맞춤 추천 등은 후순위로 두되, API/DB에 향후 확장 포인트(예: 사용자 히스토리 테이블) 메모가 필요.
+
 ---
 
 # 1. 우리가 만들고 싶은 것

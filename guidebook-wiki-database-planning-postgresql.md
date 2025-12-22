@@ -1,4 +1,6 @@
 # Guidebook Wiki DB 설계 v1 (PostgreSQL)
+
+> **읽기 가이드:** API 흐름은 `guidebook-wiki-planning.md`와 `guidebook-wiki-backend-draft.md`를 먼저 보고, 프론트/레이아웃 요구사항은 `guidebook-wiki-frontend-planning-nextjs.md`와 `guidebook-wiki-layout-and-common-component.md`를 참고한다.
 ## 0. 공통 설계 규칙
 
 ### 0.1. 공통 컬럼
