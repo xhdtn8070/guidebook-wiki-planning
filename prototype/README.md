@@ -4,6 +4,8 @@
 
 ## 파일
 - `index.html`: 공통 마크업. 헤더/사이드바/히어로 + 로그인/배너 카드, 문서·검색·플러그인 섹션을 포함합니다.
+- `docs.html`: 문서 상세 페이지 시안. SidebarNav + Breadcrumb + ActionBlock(플러그인 실행) 레이아웃.
+- `login.html`: 전체 페이지 로그인/회원가입 시안. redirect 파라미터 칩, 소셜/이메일 로그인 버튼 포함.
 - `styles.css`: CSS 변수 기반 기본 스타일 및 카카오 로그인 버튼/배너/플러그인 카드 스타일.
 - `theme-loader.js`: 테마 JSON을 로드해 CSS 변수와 컴포넌트 스타일에 반영. file:// 로 열릴 때 fetch가 막히면 인라인 프리셋으로 폴백합니다.
 - `data/*.json`: 테마 데이터. `palette`, `font`, `layout`, `hero`, `components` 키를 공유합니다.

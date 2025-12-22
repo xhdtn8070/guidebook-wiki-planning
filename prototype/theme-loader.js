@@ -19,6 +19,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#f8fafc",
       "muted": "#cbd5e1"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#f97316",
+        "secondary": "#6366f1",
+        "accent": "#22c55e",
+        "background": "#fff7ed",
+        "surface": "#ffffff",
+        "border": "#ffe4cc",
+        "text": "#1f2937",
+        "muted": "#4b5563"
+      },
+      "dark": {
+        "primary": "#f97316",
+        "secondary": "#6366f1",
+        "accent": "#22c55e",
+        "background": "#0f172a",
+        "surface": "rgba(255, 255, 255, 0.12)",
+        "border": "rgba(255, 255, 255, 0.2)",
+        "text": "#f8fafc",
+        "muted": "#cbd5e1"
+      }
+    },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
       "body": "'Inter', 'Pretendard', sans-serif",
@@ -73,6 +95,28 @@ const INLINE_THEME_PRESETS = {
       "border": "#1e293b",
       "text": "#e2e8f0",
       "muted": "#94a3b8"
+    },
+    "paletteModes": {
+      "light": {
+        "primary": "#7c3aed",
+        "secondary": "#22d3ee",
+        "accent": "#f472b6",
+        "background": "#f5f7fb",
+        "surface": "#ffffff",
+        "border": "#e5e7eb",
+        "text": "#0f172a",
+        "muted": "#475569"
+      },
+      "dark": {
+        "primary": "#7c3aed",
+        "secondary": "#22d3ee",
+        "accent": "#f472b6",
+        "background": "#0b1220",
+        "surface": "#0f172a",
+        "border": "#1e293b",
+        "text": "#e2e8f0",
+        "muted": "#94a3b8"
+      }
     },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
@@ -129,6 +173,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#0f172a",
       "muted": "#4b5563"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#2a9d8f",
+        "secondary": "#264653",
+        "accent": "#e9c46a",
+        "background": "#eef3f6",
+        "surface": "#ffffff",
+        "border": "#d1dee6",
+        "text": "#0f172a",
+        "muted": "#4b5563"
+      },
+      "dark": {
+        "primary": "#2dd4bf",
+        "secondary": "#0ea5e9",
+        "accent": "#e9c46a",
+        "background": "#0f172a",
+        "surface": "#111827",
+        "border": "#1f2937",
+        "text": "#e5e7eb",
+        "muted": "#94a3b8"
+      }
+    },
     "font": {
       "heading": "'Inter', 'Pretendard', sans-serif",
       "body": "'Inter', 'Pretendard', sans-serif",
@@ -183,6 +249,28 @@ const INLINE_THEME_PRESETS = {
       "border": "#e8e2d2",
       "text": "#3c342c",
       "muted": "#7a6f63"
+    },
+    "paletteModes": {
+      "light": {
+        "primary": "#ef476f",
+        "secondary": "#ffd166",
+        "accent": "#06d6a0",
+        "background": "#faf7f0",
+        "surface": "#ffffff",
+        "border": "#e8e2d2",
+        "text": "#3c342c",
+        "muted": "#7a6f63"
+      },
+      "dark": {
+        "primary": "#f47b94",
+        "secondary": "#ffd166",
+        "accent": "#06d6a0",
+        "background": "#2d2620",
+        "surface": "#362e28",
+        "border": "#4a3f36",
+        "text": "#f6eee1",
+        "muted": "#d6c5b5"
+      }
     },
     "font": {
       "heading": "'Recoleta', 'Pretendard', serif",
@@ -239,6 +327,28 @@ const INLINE_THEME_PRESETS = {
       "text": "#073642",
       "muted": "#586e75"
     },
+    "paletteModes": {
+      "light": {
+        "primary": "#268bd2",
+        "secondary": "#2aa198",
+        "accent": "#b58900",
+        "background": "#fdf6e3",
+        "surface": "#fffdf5",
+        "border": "#e7d8b1",
+        "text": "#073642",
+        "muted": "#586e75"
+      },
+      "dark": {
+        "primary": "#5fb3d9",
+        "secondary": "#3ed2c5",
+        "accent": "#e0c060",
+        "background": "#002b36",
+        "surface": "#073642",
+        "border": "#0a4c5b",
+        "text": "#fdf6e3",
+        "muted": "#93a1a1"
+      }
+    },
     "font": {
       "heading": "'Source Sans Pro', 'Pretendard', sans-serif",
       "body": "'Source Sans Pro', 'Pretendard', sans-serif",
@@ -285,57 +395,113 @@ const INLINE_THEME_PRESETS = {
 };
 
 const select = document.querySelector("#theme-select");
+const modeSelect = document.querySelector("#mode-select");
 const themeChip = document.querySelector("#theme-chip");
 const params = new URLSearchParams(window.location.search);
 const initial = params.get("theme");
+const savedMode = params.get("mode") || localStorage.getItem("wiki-color-mode") || "system";
+const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+let currentTheme = select?.value || "nordic-tech";
+let currentMode = savedMode;
 
 if (initial && THEME_FILES[initial]) {
-  select.value = initial;
+  currentTheme = initial;
 }
 
-select.addEventListener("change", (event) => {
+if (select) {
+  select.value = currentTheme;
+}
+
+if (modeSelect) {
+  modeSelect.value = currentMode;
+}
+
+select?.addEventListener("change", (event) => {
   const theme = event.target.value;
-  applyThemeFromSource(theme);
-  const nextUrl = new URL(window.location.href);
-  nextUrl.searchParams.set("theme", theme);
-  window.history.replaceState({}, "", nextUrl.toString());
+  currentTheme = theme;
+  applyThemeFromSource(theme, currentMode);
+  updateUrlParam("theme", theme);
+});
+
+modeSelect?.addEventListener("change", (event) => {
+  const mode = event.target.value;
+  currentMode = mode;
+  persistMode(mode);
+  updateUrlParam("mode", mode);
+  applyThemeFromSource(currentTheme, mode);
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  applyThemeFromSource(select.value);
+  applyThemeFromSource(currentTheme, currentMode);
   wireInteractions();
 });
 
-async function applyThemeFromSource(themeName) {
+mediaQuery.addEventListener("change", () => {
+  if (currentMode === "system") {
+    applyThemeFromSource(currentTheme, currentMode);
+  }
+});
+
+function updateUrlParam(key, value) {
+  const nextUrl = new URL(window.location.href);
+  nextUrl.searchParams.set(key, value);
+  window.history.replaceState({}, "", nextUrl.toString());
+}
+
+function persistMode(mode) {
+  localStorage.setItem("wiki-color-mode", mode);
+}
+
+function getEffectiveMode(mode) {
+  if (mode === "system") return mediaQuery.matches ? "dark" : "light";
+  return mode;
+}
+
+function getModeLabel(mode) {
+  switch (mode) {
+    case "light":
+      return "라이트";
+    case "dark":
+      return "다크";
+    default:
+      return "오토";
+  }
+}
+
+async function applyThemeFromSource(themeName, modePreference = currentMode) {
   const path = THEME_FILES[themeName];
   try {
     const res = await fetch(path);
     if (!res.ok) throw new Error(`failed to load ${path}`);
     const theme = await res.json();
-    applyTheme(theme, themeName);
+    applyTheme(theme, themeName, modePreference);
   } catch (err) {
     console.warn(`fetch theme failed for ${themeName}, fallback to inline preset`, err);
     const fallback = INLINE_THEME_PRESETS[themeName];
     if (fallback) {
-      applyTheme(fallback, themeName);
+      applyTheme(fallback, themeName, modePreference);
     }
   }
 }
 
-function applyTheme(theme, themeKey) {
+function applyTheme(theme, themeKey, modePreference = currentMode) {
   const root = document.documentElement;
-  const { palette, font, layout, hero, components } = theme;
+  const { paletteModes = {}, palette, font, layout, hero, components } = theme;
+  const effectiveMode = getEffectiveMode(modePreference);
+  const paletteSet = paletteModes[effectiveMode] || paletteModes.light || palette;
 
   root.dataset.theme = themeKey;
+  root.dataset.colorMode = effectiveMode;
 
-  root.style.setProperty("--color-background", palette.background);
-  root.style.setProperty("--color-surface", palette.surface);
-  root.style.setProperty("--color-border", palette.border);
-  root.style.setProperty("--color-primary", palette.primary);
-  root.style.setProperty("--color-secondary", palette.secondary);
-  root.style.setProperty("--color-accent", palette.accent);
-  root.style.setProperty("--color-text", palette.text);
-  root.style.setProperty("--color-muted", palette.muted);
+  root.style.setProperty("--color-background", paletteSet.background || palette?.background);
+  root.style.setProperty("--color-surface", paletteSet.surface || palette?.surface);
+  root.style.setProperty("--color-border", paletteSet.border || palette?.border);
+  root.style.setProperty("--color-primary", paletteSet.primary || palette?.primary);
+  root.style.setProperty("--color-secondary", paletteSet.secondary || palette?.secondary);
+  root.style.setProperty("--color-accent", paletteSet.accent || palette?.accent);
+  root.style.setProperty("--color-text", paletteSet.text || palette?.text);
+  root.style.setProperty("--color-muted", paletteSet.muted || palette?.muted);
   root.style.setProperty("--shadow", layout.shadow);
   root.style.setProperty("--radius", layout.radius);
   root.style.setProperty("--spacing", layout.spacing);
@@ -347,7 +513,7 @@ function applyTheme(theme, themeKey) {
 
   applyComponentOverrides(components, hero);
   if (themeChip) {
-    themeChip.textContent = theme.name || themeKey;
+    themeChip.textContent = `${theme.name || themeKey} · ${getModeLabel(modePreference)}`;
   }
 }
 
@@ -401,45 +567,42 @@ function applyComponentOverrides(components, heroTheme) {
 }
 
 function wireInteractions() {
-  setupAuthModal();
+  setupLoginLinks();
+  hydrateRedirectChip();
   setupPluginDemo();
   setupFlowDemo();
   setupSearchPreview();
 }
 
-function setupAuthModal() {
-  const modal = document.querySelector("#auth-modal");
-  const openers = [
-    document.querySelector("#login-trigger"),
-    document.querySelector("#cta-login"),
-  ].filter(Boolean);
-  const closeBtn = document.querySelector("#auth-close");
-  const backdrop = modal?.querySelector(".modal-backdrop");
+function setupLoginLinks() {
+  const redirect = encodeURIComponent(`${window.location.pathname}${window.location.search}`);
+  const loginUrl = `login.html?redirect=${redirect}`;
+  const docsUrl = "docs.html";
 
-  const open = () => {
-    modal?.classList.add("open");
-    modal?.setAttribute("aria-hidden", "false");
-    document.body.classList.add("no-scroll");
-  };
-  const close = () => {
-    modal?.classList.remove("open");
-    modal?.setAttribute("aria-hidden", "true");
-    document.body.classList.remove("no-scroll");
-  };
-
-  openers.forEach((btn) => btn.addEventListener("click", open));
-  closeBtn?.addEventListener("click", close);
-  backdrop?.addEventListener("click", close);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") close();
-  });
-  document.querySelector("#email-login")?.addEventListener("click", () => {
-    const log = document.querySelector("#plugin-log");
-    if (log) {
-      log.textContent = "이메일 로그인 모킹: 세션 생성 → 즐겨찾기 초기화";
+  ["#login-trigger", "#cta-login"].forEach((selector) => {
+    const btn = document.querySelector(selector);
+    if (btn) {
+      btn.addEventListener("click", (event) => {
+        event.preventDefault();
+        window.location.href = loginUrl;
+      });
     }
-    close();
   });
+
+  document.querySelector("#docs-btn")?.addEventListener("click", () => {
+    window.location.href = docsUrl;
+  });
+
+  document.querySelector("#start-btn")?.addEventListener("click", () => {
+    window.location.href = docsUrl;
+  });
+}
+
+function hydrateRedirectChip() {
+  const chip = document.querySelector("#redirect-chip");
+  if (!chip) return;
+  const redirect = params.get("redirect") || "/";
+  chip.textContent = `redirect=${redirect}`;
 }
 
 function setupPluginDemo() {
