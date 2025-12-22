@@ -1,0 +1,55 @@
+{
+  "name": "Gradient Pulse",
+  "palette": {
+    "primary": "#f97316",
+    "secondary": "#6366f1",
+    "accent": "#22c55e",
+    "background": "#0f172a",
+    "surface": "rgba(255, 255, 255, 0.12)",
+    "border": "rgba(255, 255, 255, 0.2)",
+    "text": "#f8fafc",
+    "muted": "#cbd5e1"
+  },
+  "font": {
+    "heading": "'Inter', 'Pretendard', sans-serif",
+    "body": "'Inter', 'Pretendard', sans-serif",
+    "monospace": "'Space Mono', 'Fira Code', monospace"
+  },
+  "layout": {
+    "radius": "18px",
+    "shadow": "0 16px 48px rgba(249, 115, 22, 0.3)",
+    "spacing": "18px"
+  },
+  "hero": {
+    "background": "linear-gradient(135deg, #f97316 0%, #6366f1 50%, #22c55e 100%)",
+    "overlayOpacity": 0.18
+  },
+  "components": {
+    "topBar": {
+      "background": "rgba(0, 0, 0, 0.4)",
+      "border": "rgba(255, 255, 255, 0.2)"
+    },
+    "sidebar": {
+      "background": "rgba(15, 23, 42, 0.7)",
+      "border": "rgba(255, 255, 255, 0.2)"
+    },
+    "card": {
+      "background": "rgba(255, 255, 255, 0.08)",
+      "border": "rgba(255, 255, 255, 0.12)"
+    },
+    "button": {
+      "primaryBackground": "linear-gradient(135deg, #f97316, #ef4444)",
+      "primaryText": "#0f172a",
+      "ghostBackground": "rgba(255, 255, 255, 0.08)",
+      "ghostBorder": "rgba(255, 255, 255, 0.32)",
+      "ghostText": "#f8fafc",
+      "text": "#f97316",
+      "shadow": "0 18px 40px rgba(249, 115, 22, 0.45)"
+    },
+    "codeBlock": {
+      "background": "rgba(15, 23, 42, 0.9)",
+      "text": "#e5e7eb",
+      "border": "rgba(255, 255, 255, 0.16)"
+    }
+  }
+}

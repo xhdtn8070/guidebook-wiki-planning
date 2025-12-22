@@ -1,0 +1,55 @@
+{
+  "name": "Nordic Tech",
+  "palette": {
+    "primary": "#2a9d8f",
+    "secondary": "#264653",
+    "accent": "#e9c46a",
+    "background": "#eef3f6",
+    "surface": "#ffffff",
+    "border": "#d1dee6",
+    "text": "#0f172a",
+    "muted": "#4b5563"
+  },
+  "font": {
+    "heading": "'Inter', 'Pretendard', sans-serif",
+    "body": "'Inter', 'Pretendard', sans-serif",
+    "monospace": "'Space Mono', 'Fira Code', monospace"
+  },
+  "layout": {
+    "radius": "14px",
+    "shadow": "0 12px 40px rgba(38, 70, 83, 0.12)",
+    "spacing": "18px"
+  },
+  "hero": {
+    "background": "linear-gradient(135deg, #c6f0ef 0%, #e8f5f5 40%, #f7fbff 100%)",
+    "overlayOpacity": 0.28
+  },
+  "components": {
+    "topBar": {
+      "background": "rgba(255,255,255,0.92)",
+      "border": "#d1dee6"
+    },
+    "sidebar": {
+      "background": "rgba(255,255,255,0.96)",
+      "border": "#d1dee6"
+    },
+    "card": {
+      "background": "#ffffff",
+      "border": "#d1dee6"
+    },
+    "button": {
+      "primaryBackground": "#2a9d8f",
+      "primaryText": "#ffffff",
+      "ghostBackground": "rgba(42, 157, 143, 0.12)",
+      "ghostBorder": "rgba(42, 157, 143, 0.45)",
+      "ghostText": "#0f172a",
+      "text": "#2a9d8f",
+      "shadow": "0 12px 30px rgba(42, 157, 143, 0.35)"
+    },
+    "codeBlock": {
+      "background": "#0f172a",
+      "text": "#d1e9ff",
+      "border": "#19324a"
+    }
+  }
+}
