@@ -1,4 +1,6 @@
 # Guidebook Backend API v1 (Draft)
+
+> **읽기 가이드:** 플랫폼 비전과 프론트 IA는 `guidebook-wiki-planning.md`와 `guidebook-wiki-frontend-planning-nextjs.md`를 먼저 확인하고, DB 스키마는 `guidebook-wiki-database-planning-postgresql.md`와 함께 보면 필드/엔티티 정합성을 점검하기 쉽다.
 - 서비스: **Guidebook Wiki**
 - 베이스 URL 예시:
     - `https://api.guidebook.wiki/api/v1/...`

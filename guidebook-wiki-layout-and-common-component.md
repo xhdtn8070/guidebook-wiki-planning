@@ -1,4 +1,6 @@
 # 0. 전역 레이아웃 & 공통 컴포넌트
+
+> **읽기 가이드:** 먼저 `guidebook-wiki-planning.md`로 전체 방향을 확인하고, 이후 프론트엔드 설계(`guidebook-wiki-frontend-planning-nextjs.md`)를 보기 전에 본 문서로 UI 공통 요소를 정리한다.
 ## 0-1. 전역 레이아웃 구조
 
 ```

@@ -1,4 +1,6 @@
 # Guidebook Frontend 설계 v1 (Next.js BFF + 위키 UI)
+
+> **읽기 가이드:** `guidebook-wiki-planning.md` → `guidebook-wiki-layout-and-common-component.md` 순으로 전체 방향과 UI 공통 요소를 본 뒤, 이 문서에서 IA/플로우를 확인하고, 구현 세부는 `guidebook-wiki-frontend-planning-codex.md`에서 이어서 본다.
 ## 0. 개요
 
 - 레포: `guidebook-frontend`

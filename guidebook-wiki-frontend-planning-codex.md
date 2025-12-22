@@ -1,4 +1,6 @@
 # Guidebook Frontend 구현 가이드 (Codex용)
+
+> **읽기 가이드:** IA와 사용자 플로우는 `guidebook-wiki-frontend-planning-nextjs.md`에서 먼저 확인하고, 본 문서에서는 실제 폴더 구조/코딩 규칙/환경 변수를 참고한다.
 ## 1. 기술 스택 & 기본 규칙
 
 - 프레임워크: **Next.js (App Router)**
