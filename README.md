@@ -19,6 +19,14 @@
 - **guidebook-wiki-backend-draft.md**: API 규격 초안(인증, 위키, 플러그인, 검색, 알림 등)과 공통 정책.
 - **guidebook-wiki-database-planning-postgresql.md**: PostgreSQL 스키마 초안, 테넌트·문서·버전·광고 테이블 설계.
 
+## 프리뷰 실행 (Node.js / Docker)
+- **Node.js(LTS) 단일 명령**: `node prototype/dev-server.js`
+  - 기본 포트는 `4173`이며 `PORT` 환경 변수로 변경 가능합니다.
+  - 서버가 뜨면 `http://localhost:4173`에서 저장소 루트에 있는 Markdown 파일을 선택해 볼 수 있습니다.
+- **Docker Compose 단일 명령**: `docker compose up --build prototype-preview`
+  - `docker-compose.yml`의 `prototype-preview` 서비스가 동일한 포트(`4173`)를 외부로 노출합니다.
+  - 다른 포트를 쓰려면 `PORT` 환경 변수와 `ports` 매핑을 함께 수정하세요.
+
 ## 사용 방법
 - 새로운 내용이 생기면 기존 문서의 관련 섹션을 업데이트하거나, README에 새 파일을 추가로 연결해 주세요.
 - 백엔드/프론트엔드/데이터베이스 문서를 변경할 때는 서로의 의존 관계(테넌트 코드, 권한/광고/플러그인 모델)를 함께 검증해 일관성을 유지합니다.
