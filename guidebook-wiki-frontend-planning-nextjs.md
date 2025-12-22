@@ -71,7 +71,7 @@ sequenceDiagram
     - `/` : 테넌트별 홈 (예: API 플레이북 홈)
     - `/docs/[...slug]` : 위키 문서 상세
     - `/search` : 검색 화면
-    - `/auth/*` : 로그인 콜백 등
+    - `/auth/login`, `/auth/callback` : 로그인 화면 + OAuth 콜백 처리
 2. **Admin 영역**
     - `/admin` : 어드민 대시보드 (간단)
     - `/admin/pages` : 문서 리스트/트리
@@ -91,6 +91,8 @@ app/
   search/
     page.tsx               # /search
   auth/
+    login/
+      page.tsx             # /auth/login (전체 페이지 로그인)
     callback/
       page.tsx             # OAuth 콜백 처리
   admin/
@@ -162,7 +164,23 @@ app/
 
 ---
 
-### 2-2-4. `/auth/callback` (OAuth 콜백 후 처리)
+### 2-2-4. `/auth/login` (전체 페이지 로그인)
+
+- 역할:
+    - 모달/팝업 없이 **전체 페이지에서 로그인** 진행.
+    - 이메일/비밀번호 폼 + 소셜 로그인 버튼(예: Google, GitHub)을 모두 제공.
+- 플로우:
+    1. TopBar 로그인 버튼 클릭 → `/auth/login?redirect=현재경로`로 이동.
+    2. 폼 로그인 또는 소셜 버튼 클릭 → 외부 OAuth → 백엔드 콜백 → `/auth/callback?token=...&redirect=...`으로 리다이렉트.
+    3. 콜백 페이지에서 토큰 저장 후 redirect 처리.
+- UI 포인트:
+    - 실패 시 폼 에러 메시지 노출.
+    - (옵션) 가입/비밀번호 찾기 링크.
+    - 상단에는 TopBar + ThemeToggle 유지.
+
+---
+
+### 2-2-5. `/auth/callback` (OAuth 콜백 후 처리)
 
 - 플로우:
     1. 사용자가 OAuth 로그인 → 외부 인증 화면 → 백엔드 콜백 → 다시 `/auth/callback?token=...&tenant=...`로 리다이렉트 된다고 가정.
@@ -173,7 +191,7 @@ app/
 
 ---
 
-### 2-2-5. `/admin` & `/admin/pages` (어드민 목록/트리)
+### 2-2-6. `/admin` & `/admin/pages` (어드민 목록/트리)
 
 - 역할:
     - 테넌트 어드민/에디터용 화면.
@@ -186,7 +204,7 @@ app/
 
 ---
 
-### 2-2-6. `/admin/pages/new` (문서 생성)
+### 2-2-7. `/admin/pages/new` (문서 생성)
 
 - 역할:
     - MDXEditor를 통해 새 문서를 생성.
@@ -202,7 +220,7 @@ app/
 
 ---
 
-### 2-2-7. `/admin/pages/[pageId]/edit` (문서 수정)
+### 2-2-8. `/admin/pages/[pageId]/edit` (문서 수정)
 
 - 역할:
     - 기존 문서를 불러와 MDXEditor로 수정
@@ -212,7 +230,7 @@ app/
 
 ---
 
-### 2-2-8. `/admin/plugins` (플러그인 설정 리스트/관리)
+### 2-2-9. `/admin/plugins` (플러그인 설정 리스트/관리)
 
 - 역할:
     - 플러그인 config 리스트
@@ -284,6 +302,8 @@ function getTenantFromHost(host: string): string {
 ## 4-1. 토큰 저장 방식
 
 전제: **쿠키를 지양**하고, **헤더 기반**으로 간다.
+
+- 로그인 진입 흐름: `TopBar 로그인 버튼` → `/auth/login?redirect=...` → 외부 OAuth → `/auth/callback?token=...&redirect=...` → 토큰 저장 후 redirect.
 
 - 클라이언트:
     - `/auth/callback`에서 받은 JWT를 `localStorage` 혹은 `sessionStorage`에 저장
