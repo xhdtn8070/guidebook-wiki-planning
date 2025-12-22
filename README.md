@@ -11,6 +11,9 @@
 
 각 파일 상단에도 선행/후행 문서 안내를 추가했으니 필요한 부분만 찾아볼 때 참고하세요.
 
+## 프로토타입 미리보기
+- `npm run preview` 명령으로 `prototype/` 폴더를 정적 서버로 실행한 뒤 브라우저에서 `http://localhost:4173/`로 접속하면 테마 기반 위키 프로토타입을 확인할 수 있습니다(추가 의존성 없음).
+
 ## 문서 개요
 - **guidebook-wiki-planning.md**: 서비스 비전, 문제 정의, 도메인/레포 구조, 전체 아키텍처 개요.
 - **guidebook-wiki-layout-and-common-component.md**: 공통 레이아웃, 내비게이션, 광고/위젯/권한 UI 패턴.

@@ -1,0 +1,9 @@
+{
+  "name": "guidebook-wiki-planning",
+  "private": true,
+  "scripts": {
+    "preview": "node prototype/dev-server.js",
+    "test": "node -e \"console.log('No automated tests configured for this prototype.');\"",
+    "lint": "node -e \"console.log('No lint configuration for this prototype.');\""
+  }
+}
