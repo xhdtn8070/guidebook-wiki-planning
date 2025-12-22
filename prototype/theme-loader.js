@@ -82,6 +82,12 @@ const DOCS = [
   },
 ];
 
+const NAV_TREE = [
+  { label: "API 콘솔", docId: "api-console", isUsable: true },
+  { label: "SDK 통합 가이드", docId: "sdk-guide", isUsable: false },
+  { label: "운영 체크리스트", docId: "ops-checklist", isUsable: false },
+];
+
 const INLINE_THEME_PRESETS = {
   "gradient-pulse": {
     "name": "Gradient Pulse",
@@ -480,6 +486,7 @@ const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 let currentTheme = select?.value || "nordic-tech";
 let currentMode = savedMode;
+let currentTocObserver = null;
 
 if (initial && THEME_FILES[initial]) {
   currentTheme = initial;
@@ -803,36 +810,102 @@ function setupDocExperience() {
   const navList = document.querySelector("#doc-nav");
   if (!select || !navList) return;
 
-  const defaultDoc = params.get("doc") || DOCS[0]?.id;
+  const navMap = new Map(NAV_TREE.map((item) => [item.docId, item]));
+  const fallbackDoc = NAV_TREE.find((item) => item.isUsable)?.docId || DOCS[0]?.id;
+  const defaultDoc = params.get("doc") || fallbackDoc;
 
   const renderOptions = () => {
-    select.innerHTML = DOCS.map((doc) => `<option value="${doc.id}">${doc.title}</option>`).join("");
+    select.innerHTML = NAV_TREE.map(
+      (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
+        item.isUsable ? "" : " · 준비중"
+      }</option>`
+    ).join("");
   };
 
-  const renderNav = (doc) => {
-    navList.innerHTML = doc.nav
-      ?.map((item) => `<li data-id="${item.id}">${item.label}</li>`)
-      .join("") || "";
+  const renderNavTree = (activeId) => {
+    navList.innerHTML = NAV_TREE.map(
+      (item) =>
+        `<li data-doc="${item.docId}" class="${item.docId === activeId ? "active" : ""} ${
+          item.isUsable ? "" : "disabled"
+        }">${item.label}${item.isUsable ? "" : " · 준비중"}</li>`
+    ).join("");
+  };
 
+  const renderPluginNav = (doc) => {
     const pluginNav = document.querySelector("#plugin-nav");
-    if (pluginNav) {
-      pluginNav.innerHTML = doc.pluginNav
-        ?.map(
-          (item) =>
-            `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
-              item.state !== "active" ? " · 준비중" : ""
-            }</li>`
-        )
-        .join("") || "";
+    if (!pluginNav) return;
+    pluginNav.innerHTML = doc.pluginNav
+      ?.map(
+        (item) =>
+          `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
+            item.state !== "active" ? " · 준비중" : ""
+          }</li>`
+      )
+      .join("") || "";
+  };
+
+  const renderOnPageToc = (doc) => {
+    const toc = document.querySelector("#onpage-toc");
+    if (!toc) return;
+
+    if (!doc.nav?.length) {
+      toc.innerHTML = '<p class="muted">표시할 목차가 없습니다.</p>';
+      return;
     }
+
+    toc.innerHTML = doc.nav
+      .map((item) => `<a href="#${item.id}" data-target="${item.id}">${item.label}</a>`)
+      .join("");
+
+    toc.onclick = (event) => {
+      const link = event.target.closest("a");
+      if (!link) return;
+      event.preventDefault();
+      const targetId = link.dataset.target;
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    if (currentTocObserver) {
+      currentTocObserver.disconnect();
+    }
+
+    currentTocObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = toc.querySelector(`a[data-target="${entry.target.id}"]`);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            toc.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 1] }
+    );
+
+    doc.nav.forEach((item) => {
+      const section = document.getElementById(item.id);
+      if (section) {
+        currentTocObserver.observe(section);
+      }
+    });
   };
 
   const renderDoc = (docId) => {
-    const doc = DOCS.find((d) => d.id === docId) || DOCS[0];
+    const navEntry = navMap.get(docId);
+    const effectiveDocId = navEntry?.isUsable === false ? fallbackDoc : docId;
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+    }
+
+    const doc = DOCS.find((d) => d.id === effectiveDocId) || DOCS[0];
     if (!doc) return;
 
     select.value = doc.id;
-    renderNav(doc);
+    renderNavTree(doc.id);
 
     const breadcrumb = document.querySelector("#breadcrumb");
     const updated = document.querySelector("#doc-updated");
@@ -906,6 +979,9 @@ function setupDocExperience() {
       body.classList.toggle("inactive", doc.status !== "published");
     }
 
+    renderPluginNav(doc);
+    renderOnPageToc(doc);
+
     if (pager) {
       const prev = doc.pager?.prev ? `<a href="#" class="pager-link">← 이전: ${doc.pager.prev}</a>` : "";
       const next = doc.pager?.next ? `<a href="#" class="pager-link">다음: ${doc.pager.next} →</a>` : "";
@@ -913,7 +989,7 @@ function setupDocExperience() {
       pager.classList.toggle("inactive", doc.status !== "published");
     }
 
-    if (doc.status !== "published") {
+    if (navEntry?.isUsable === false || doc.status !== "published") {
       showToast("준비 중인 문서입니다. 연결되면 자동으로 안내합니다.");
     }
 
@@ -929,6 +1005,21 @@ function setupDocExperience() {
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
     renderDoc(value);
+  });
+
+  navList.addEventListener("click", (event) => {
+    const item = event.target.closest("li[data-doc]");
+    if (!item) return;
+    const docId = item.dataset.doc;
+    const navEntry = navMap.get(docId);
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+      return;
+    }
+    params.set("doc", docId);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
+    renderDoc(docId);
   });
 }
 
