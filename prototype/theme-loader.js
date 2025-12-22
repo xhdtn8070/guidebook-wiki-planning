@@ -279,6 +279,8 @@ const DOCS = [
   },
 ];
 
+const DOC_MAP = new Map(DOCS.map((doc) => [doc.id, doc]));
+
 const NAV_TREE = [
   {
     label: "인증",
@@ -1086,6 +1088,14 @@ function setupDocExperience() {
     navList.innerHTML = NAV_TREE.map((item) => renderNode(item)).join("");
   };
 
+  const getNeighbor = (docId, direction) => {
+    const usable = flattenNav(NAV_TREE).filter((item) => item.isUsable !== false);
+    const index = usable.findIndex((item) => item.docId === docId);
+    if (index === -1) return null;
+    const offset = direction === "next" ? 1 : -1;
+    return usable[index + offset] || null;
+  };
+
   const renderPluginNav = (doc) => {
     const pluginNav = document.querySelector("#plugin-nav");
     if (!pluginNav) return;
@@ -1247,10 +1257,30 @@ function setupDocExperience() {
     renderOnPageToc(doc);
 
     if (pager) {
-      const prev = doc.pager?.prev ? `<a href="#" class="pager-link">← 이전: ${doc.pager.prev}</a>` : "";
-      const next = doc.pager?.next ? `<a href="#" class="pager-link">다음: ${doc.pager.next} →</a>` : "";
-      pager.innerHTML = `${prev}${next}`;
+      const prev = getNeighbor(doc.id, "prev");
+      const next = getNeighbor(doc.id, "next");
+      const prevLabel = prev ? DOC_MAP.get(prev.docId)?.title || prev.label || prev.docId : "";
+      const nextLabel = next ? DOC_MAP.get(next.docId)?.title || next.label || next.docId : "";
+      const prevLink = prev
+        ? `<a href="docs.html?doc=${prev.docId}" class="pager-link" data-doc="${prev.docId}">← 이전: ${prevLabel}</a>`
+        : "";
+      const nextLink = next
+        ? `<a href="docs.html?doc=${next.docId}" class="pager-link" data-doc="${next.docId}">다음: ${nextLabel} →</a>`
+        : "";
+      pager.innerHTML = `${prevLink}${nextLink}`;
       pager.classList.toggle("inactive", doc.status !== "published");
+
+      pager.querySelectorAll(".pager-link").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const targetDoc = link.dataset.doc;
+          if (!targetDoc) return;
+          params.set("doc", targetDoc);
+          const newUrl = `${window.location.pathname}?${params.toString()}`;
+          window.history.replaceState({}, "", newUrl);
+          renderDoc(targetDoc);
+        });
+      });
     }
 
     if (navEntry?.isUsable === false || doc.status !== "published") {
