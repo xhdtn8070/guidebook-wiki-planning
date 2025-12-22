@@ -8,77 +8,322 @@ const THEME_FILES = {
 
 const DOCS = [
   {
-    id: "api-console",
-    title: "API 콘솔을 이용해 샘플 워크플로 실행하기",
-    breadcrumb: "Docs / 플러그인 / API 콘솔 실행",
-    lead: "ActionBlock 구성과 요청/응답 예시를 포함한 문서 상세 페이지 시안입니다.",
-    updated: "2024-06-01",
+    id: "page_1",
+    title: "카카오 OAuth 가이드",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth",
+    lead: "GET /api/v1/wiki/nav 예시에 맞춰 좌측 트리와 우측 TOC가 동작하는 대표 문서입니다.",
+    updated: "2024-06-12",
     status: "published",
     nav: [
-      { id: "prep", label: "사전 준비" },
-      { id: "run", label: "실행 예시" },
-      { id: "block", label: "플러그인 블록" },
+      { id: "overview", label: "요약" },
+      { id: "nav-tree", label: "네비게이션 트리" },
+      { id: "flow", label: "연동 흐름" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "overview",
+        title: "요약",
+        body: `
+          <p class="muted">/api/v1/wiki/nav 응답을 그대로 사용해 좌측 SidebarNav를 렌더링하고, <code>isUsable=false</code>인 항목은 토스트만 띄웁니다.</p>
+          <ul>
+            <li>전체 트리는 카카오 OAuth 가이드 → 개요 → API 콘솔 → 실행 예시 순으로 3뎁스까지 내려갑니다.</li>
+            <li>각 문서는 <code>GET /api/v1/wiki/pages?path=... </code>로 불러온다고 가정하고 MDX를 목업 데이터로 채워 두었습니다.</li>
+            <li>우측 인페이지 TOC는 본문 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
+          </ul>
+        `,
+      },
+      {
+        type: "code",
+        id: "nav-tree",
+        label: "[GET] /api/v1/wiki/nav 예시 (요약)",
+        code: `{"nodes":[{"id":"page_1","title":"카카오 OAuth 가이드","isUsable":true,"children":[{"id":"page_2","title":"개요","isUsable":true},{"id":"page_3","title":"API 콘솔","isUsable":true,"children":[{"id":"page_3_1","title":"실행 예시","isUsable":true},{"id":"page_3_2","title":"SDK 연동 (준비 중)","isUsable":false}]}]}]}]}`,
+      },
+      {
+        type: "section",
+        id: "flow",
+        title: "연동 흐름",
+        body: `
+          <ol>
+            <li>좌측 트리에서 "API 콘솔"을 선택하면 <code>page_3</code>의 MDX를 불러와 중앙 컬럼에 렌더합니다.</li>
+            <li>"실행 예시"와 같이 하위 문서도 같은 패턴으로 불러오며, 상단 드롭다운과 트리가 함께 활성 상태를 갱신합니다.</li>
+            <li>"SDK 연동 (준비 중)"처럼 isUsable=false인 항목은 비활성 상태로 표시하고 토스트로 안내합니다.</li>
+          </ol>
+        `,
+      },
+    ],
+    pager: { prev: "인증 공통", next: "카카오 개요" },
+  },
+  {
+    id: "page_2",
+    title: "개요",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / 개요",
+    lead: "카카오 OAuth 플로우를 간단히 요약하고 필요한 키와 리다이렉트 URI를 정리했습니다.",
+    updated: "2024-06-05",
+    status: "published",
+    nav: [
+      { id: "context", label: "배경" },
+      { id: "setup", label: "사전 준비" },
+      { id: "mdx", label: "MDX 샘플" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "context",
+        title: "배경",
+        body: `<p>카카오 OAuth 인증 흐름과 토큰 교환 과정을 한눈에 보이도록 개요 문서를 구성했습니다.</p>`,
+      },
+      {
+        type: "callout",
+        tone: "success",
+        id: "setup",
+        title: "사전 준비 체크리스트",
+        items: ["REST API 키 발급", "Redirect URI 등록", "동의항목 문구 검토"],
+      },
+      {
+        type: "code",
+        id: "mdx",
+        label: "MDX 본문 예시",
+        code: `# 카카오 OAuth 개요\n\n1. 인가 코드 받기\n2. 액세스 토큰 발급\n3. 사용자 정보 조회`,
+      },
+    ],
+    pager: { prev: "카카오 OAuth", next: "API 콘솔" },
+  },
+  {
+    id: "page_3",
+    title: "API 콘솔",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔",
+    lead: "API 콘솔에서 액션 블록을 실행하고 응답을 확인하는 과정을 담았습니다.",
+    updated: "2024-06-02",
+    status: "published",
+    nav: [
+      { id: "layout", label: "레이아웃" },
+      { id: "exec", label: "실행 예시" },
+      { id: "action-block", label: "액션 블록" },
       { id: "next", label: "다음 단계" },
     ],
     pluginNav: [
       { id: "api-console", label: "API 콘솔", state: "active" },
       { id: "workflow", label: "워크플로 빌더", state: "coming" },
-      { id: "diagram", label: "다이어그램 뷰어", state: "draft" },
     ],
     sections: [
       {
-        type: "callout",
-        tone: "success",
-        title: "사전 준비",
-        id: "prep",
-        items: ["테넌트별 API Key 발급", "Webhook URL (Slack/Discord) 등록", "액션 실행 권한 확인"],
+        type: "section",
+        id: "layout",
+        title: "문서 상세 레이아웃",
+        body: `<p class="muted">좌측 트리는 /api/v1/wiki/nav에서 내려준 무한 뎁스 구조를 그대로 보여주고, 오른쪽 TOC는 현재 문서 헤더만 추려서 표시합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "exec",
+        title: "실행 예시",
+        body: `<p>POST /api/plugins/execute 로 액션 블록을 호출하는 간단한 예시입니다. 요청/응답을 그대로 복사해 붙여넣을 수 있도록 포맷했습니다.</p>`,
       },
       {
         type: "code",
-        id: "run",
-        label: "요청 예시",
+        id: "action-block",
+        label: "API 콘솔 실행 요청",
         code: `POST /api/plugins/execute\nAuthorization: Bearer {token}\n{\n  "plugin": "api-console",\n  "payload": {\n    "method": "POST",\n    "url": "https://api.guidebook.wiki/v1/demo",\n    "body": { "preview": true }\n  }\n}`,
       },
       {
         type: "plugin",
-        id: "block",
+        id: "action-block-demo",
       },
       {
         type: "list",
         id: "next",
-        title: "결과/추가 리소스",
-        items: ["실행 로그는 7일 보관", "Slack 웹훅으로 결과 전송", "워크플로 빌더 베타 안내"],
+        title: "다음 단계",
+        items: ["실행 로그를 기록하는 webhooks 연결", "동일 액션을 워크플로 빌더에서 재사용", "SDK 예제와 비교"],
       },
     ],
-    pager: { prev: "인증 설정", next: "워크플로 빌더" },
+    pager: { prev: "개요", next: "실행 예시" },
   },
   {
-    id: "sdk-guide",
-    title: "SDK 통합 가이드",
-    breadcrumb: "Docs / SDK / 통합 가이드",
-    lead: "다중 언어 SDK 설치/초기화 안내를 준비 중입니다.",
+    id: "page_3_1",
+    title: "실행 예시",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 실행 예시",
+    lead: "POST 호출 예시와 응답 스니펫을 담은 하위 문서입니다.",
+    updated: "2024-05-28",
+    status: "published",
+    nav: [
+      { id: "sample", label: "샘플 요청" },
+      { id: "response", label: "샘플 응답" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "code",
+        id: "sample",
+        label: "샘플 요청",
+        code: `curl -X POST https://api.guidebook.wiki/v1/demo \\\n+  -H "Authorization: Bearer {token}" \\\n+  -d '{"plugin":"api-console","payload":{"method":"POST","url":"https://kapi.kakao.com/v2/user/me"}}'`,
+      },
+      {
+        type: "code",
+        id: "response",
+        label: "샘플 응답",
+        code: `HTTP/1.1 200 OK\n{\n  "id": 123456789,\n  "kakao_account": {\n    "profile": { "nickname": "가이드북" },\n    "email": "docs@example.com"\n  }\n}`,
+      },
+    ],
+    pager: { prev: "API 콘솔", next: "SDK 연동" },
+  },
+  {
+    id: "page_3_2",
+    title: "SDK 연동 (준비 중)",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / SDK 연동",
+    lead: "SDK 샘플은 곧 업데이트될 예정입니다.",
     updated: "준비 중",
     status: "coming",
     nav: [
-      { id: "install", label: "설치" },
-      { id: "init", label: "초기화" },
+      { id: "placeholder", label: "예정된 내용" },
     ],
     pluginNav: [],
-    pager: { prev: "API 콘솔", next: "릴리스 노트" },
+    sections: [
+      {
+        type: "section",
+        id: "placeholder",
+        title: "예정된 내용",
+        body: `<p>JavaScript, Kotlin, Spring 예제를 추가해 SDK 초기화와 오류 처리 패턴을 안내할 예정입니다.</p>`,
+      },
+    ],
+    pager: { prev: "실행 예시", next: "릴리스 노트" },
+  },
+  {
+    id: "ops-release",
+    title: "릴리스 노트",
+    breadcrumb: "Docs / 운영 / 릴리스 노트",
+    lead: "최근 릴리스에서 바뀐 항목을 간단히 요약했습니다.",
+    updated: "2024-05-10",
+    status: "published",
+    nav: [
+      { id: "summary", label: "요약" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "summary",
+        title: "요약",
+        body: `<ul><li>API 콘솔 실행 속도 개선</li><li>위키 검색 가중치 튜닝</li><li>TOC 스크롤 스파이 버그 수정</li></ul>`,
+      },
+    ],
+    pager: { prev: "SDK 연동", next: "릴리스 체크리스트" },
   },
   {
     id: "ops-checklist",
-    title: "운영 체크리스트",
-    breadcrumb: "Docs / 운영 / 체크리스트",
-    lead: "릴리스 전후 체크리스트와 장애 대응 템플릿을 정리 중입니다.",
-    updated: "초안", 
-    status: "draft",
+    title: "릴리스 체크리스트",
+    breadcrumb: "Docs / 운영 / 릴리스 체크리스트",
+    lead: "배포 전/후 체크리스트는 준비 중입니다.",
+    updated: "준비 중",
+    status: "coming",
     nav: [
-      { id: "release", label: "릴리스" },
-      { id: "incident", label: "장애 대응" },
+      { id: "incoming", label: "예정된 섹션" },
     ],
     pluginNav: [],
-    pager: { prev: "SDK", next: "부록" },
+    sections: [
+      {
+        type: "section",
+        id: "incoming",
+        title: "예정된 섹션",
+        body: `<p>릴리스 전후 점검표, 롤백 기준, smoke test 템플릿을 추가합니다.</p>`,
+      },
+    ],
+    pager: { prev: "릴리스 노트", next: "API 용어집" },
+  },
+  {
+    id: "glossary",
+    title: "API 용어집",
+    breadcrumb: "Docs / 부록 / API 용어집",
+    lead: "자주 등장하는 필드와 상태 코드를 정리했습니다.",
+    updated: "2024-04-22",
+    status: "published",
+    nav: [
+      { id: "terms", label: "주요 용어" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "terms",
+        title: "주요 용어",
+        body: `<ul><li><strong>isUsable</strong>: 문서 준비 상태를 나타내는 boolean</li><li><strong>gateType</strong>: 권한/노출 조건</li><li><strong>fullPath</strong>: 문서의 고유 경로 (slug)</li></ul>`,
+      },
+    ],
+    pager: { prev: "릴리스 체크리스트", next: "에러 코드" },
+  },
+  {
+    id: "glossary-errors",
+    title: "에러 코드",
+    breadcrumb: "Docs / 부록 / API 용어집 / 에러 코드",
+    lead: "위키와 API에서 공통으로 쓰는 에러 코드를 모았습니다.",
+    updated: "2024-04-18",
+    status: "published",
+    nav: [
+      { id: "codes", label: "공통 코드" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "code",
+        id: "codes",
+        label: "공통 에러 코드",
+        code: `{
+  "RESTRICTED": "권한이 부족합니다",
+  "NOT_FOUND": "문서를 찾을 수 없습니다",
+  "NOT_USABLE": "준비 중인 문서입니다"
+}`,
+      },
+    ],
+    pager: { prev: "API 용어집", next: "끝" },
+  },
+];
+
+const DOC_MAP = new Map(DOCS.map((doc) => [doc.id, doc]));
+
+const NAV_TREE = [
+  {
+    label: "인증",
+    isUsable: true,
+    children: [
+      {
+        label: "카카오 OAuth 가이드",
+        docId: "page_1",
+        isUsable: true,
+        children: [
+          { label: "개요", docId: "page_2", isUsable: true },
+          {
+            label: "API 콘솔",
+            docId: "page_3",
+            isUsable: true,
+            children: [
+              { label: "실행 예시", docId: "page_3_1", isUsable: true },
+              { label: "SDK 연동 (준비 중)", docId: "page_3_2", isUsable: false },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    label: "운영",
+    isUsable: true,
+    children: [
+      { label: "릴리스 노트", docId: "ops-release", isUsable: true },
+      { label: "릴리스 체크리스트", docId: "ops-checklist", isUsable: false },
+    ],
+  },
+  {
+    label: "부록",
+    isUsable: true,
+    children: [
+      {
+        label: "API 용어집",
+        docId: "glossary",
+        isUsable: true,
+        children: [{ label: "에러 코드", docId: "glossary-errors", isUsable: true }],
+      },
+    ],
   },
 ];
 
@@ -480,6 +725,7 @@ const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 let currentTheme = select?.value || "nordic-tech";
 let currentMode = savedMode;
+let currentTocObserver = null;
 
 if (initial && THEME_FILES[initial]) {
   currentTheme = initial;
@@ -803,36 +1049,133 @@ function setupDocExperience() {
   const navList = document.querySelector("#doc-nav");
   if (!select || !navList) return;
 
-  const defaultDoc = params.get("doc") || DOCS[0]?.id;
+  const flattenNav = (nodes, acc = []) => {
+    nodes.forEach((node) => {
+      if (node.docId) acc.push(node);
+      if (node.children) flattenNav(node.children, acc);
+    });
+    return acc;
+  };
+
+  const navMap = new Map(flattenNav(NAV_TREE).map((item) => [item.docId, item]));
+  const fallbackDoc = flattenNav(NAV_TREE).find((item) => item.isUsable)?.docId || DOCS[0]?.id;
+  const defaultDoc = params.get("doc") || fallbackDoc;
+  const initialHash = window.location.hash?.replace("#", "") || "";
+  const scrollPositions = new Map();
+  let currentDocId = defaultDoc;
 
   const renderOptions = () => {
-    select.innerHTML = DOCS.map((doc) => `<option value="${doc.id}">${doc.title}</option>`).join("");
+    select.innerHTML = flattenNav(NAV_TREE)
+      .map(
+        (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
+          item.isUsable ? "" : " · 준비중"
+        }</option>`
+      )
+      .join("");
   };
 
-  const renderNav = (doc) => {
-    navList.innerHTML = doc.nav
-      ?.map((item) => `<li data-id="${item.id}">${item.label}</li>`)
-      .join("") || "";
+  const renderNavTree = (activeId) => {
+    const renderNode = (node) => {
+      if (node.children?.length) {
+        return `<li class="nav-group">
+            <div class="nav-group-label">${node.label}</div>
+            <ul>${node.children.map((child) => renderNode(child)).join("")}</ul>
+          </li>`;
+      }
 
+      return `<li data-doc="${node.docId}" class="${node.docId === activeId ? "active" : ""} ${
+        node.isUsable ? "" : "disabled"
+      }">${node.label}${node.isUsable ? "" : " · 준비중"}</li>`;
+    };
+
+    navList.innerHTML = NAV_TREE.map((item) => renderNode(item)).join("");
+  };
+
+  const getNeighbor = (docId, direction) => {
+    const usable = flattenNav(NAV_TREE).filter((item) => item.isUsable !== false);
+    const index = usable.findIndex((item) => item.docId === docId);
+    if (index === -1) return null;
+    const offset = direction === "next" ? 1 : -1;
+    return usable[index + offset] || null;
+  };
+
+  const renderPluginNav = (doc) => {
     const pluginNav = document.querySelector("#plugin-nav");
-    if (pluginNav) {
-      pluginNav.innerHTML = doc.pluginNav
-        ?.map(
-          (item) =>
-            `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
-              item.state !== "active" ? " · 준비중" : ""
-            }</li>`
-        )
-        .join("") || "";
-    }
+    if (!pluginNav) return;
+    pluginNav.innerHTML = doc.pluginNav
+      ?.map(
+        (item) =>
+          `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
+            item.state !== "active" ? " · 준비중" : ""
+          }</li>`
+      )
+      .join("") || "";
   };
 
-  const renderDoc = (docId) => {
-    const doc = DOCS.find((d) => d.id === docId) || DOCS[0];
+  const renderOnPageToc = (doc) => {
+    const toc = document.querySelector("#onpage-toc");
+    if (!toc) return;
+
+    if (!doc.nav?.length) {
+      toc.innerHTML = '<p class="muted">표시할 목차가 없습니다.</p>';
+      return;
+    }
+
+    toc.innerHTML = doc.nav
+      .map((item) => `<a href="#${item.id}" data-target="${item.id}">${item.label}</a>`)
+      .join("");
+
+    toc.onclick = (event) => {
+      const link = event.target.closest("a");
+      if (!link) return;
+      event.preventDefault();
+      const targetId = link.dataset.target;
+      const target = document.getElementById(targetId);
+      if (target) {
+        window.history.replaceState(window.history.state, "", `${window.location.pathname}?${params.toString()}#${targetId}`);
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    if (currentTocObserver) {
+      currentTocObserver.disconnect();
+    }
+
+    currentTocObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = toc.querySelector(`a[data-target="${entry.target.id}"]`);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            toc.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 1] }
+    );
+
+    doc.nav.forEach((item) => {
+      const section = document.getElementById(item.id);
+      if (section) {
+        currentTocObserver.observe(section);
+      }
+    });
+  };
+
+  const renderDoc = (docId, options = {}) => {
+    const { hash = "", restoreScroll = false, scrollPosition = 0 } = options;
+    const navEntry = navMap.get(docId);
+    const effectiveDocId = navEntry?.isUsable === false ? fallbackDoc : docId;
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+    }
+
+    const doc = DOCS.find((d) => d.id === effectiveDocId) || DOCS[0];
     if (!doc) return;
 
     select.value = doc.id;
-    renderNav(doc);
+    renderNavTree(doc.id);
 
     const breadcrumb = document.querySelector("#breadcrumb");
     const updated = document.querySelector("#doc-updated");
@@ -853,6 +1196,12 @@ function setupDocExperience() {
 
     const content = doc.sections
       ?.map((section) => {
+        if (section.type === "section") {
+          return `<section class="section-card" id="${section.id}">
+            <h2>${section.title}</h2>
+            ${section.body}
+          </section>`;
+        }
         if (section.type === "callout") {
           return `<section class="callout success" id="${section.id}">
             <p class="callout-title">${section.title}</p>
@@ -860,8 +1209,11 @@ function setupDocExperience() {
           </section>`;
         }
         if (section.type === "code") {
-          return `<section class="code-block" aria-label="${section.label}" id="${section.id}">
-            <pre><code>${section.code}</code></pre>
+          return `<section class="section-card" id="${section.id}">
+            <h3>${section.label}</h3>
+            <div class="code-block" aria-label="${section.label}">
+              <pre><code>${section.code}</code></pre>
+            </div>
           </section>`;
         }
         if (section.type === "plugin") {
@@ -892,8 +1244,8 @@ function setupDocExperience() {
           </div>`;
         }
         if (section.type === "list") {
-          return `<section id="${section.id}">
-            <h4>${section.title}</h4>
+          return `<section class="section-card" id="${section.id}">
+            <h3>${section.title}</h3>
             <ul>${section.items.map((item) => `<li>${item}</li>`).join("")}</ul>
           </section>`;
         }
@@ -906,29 +1258,103 @@ function setupDocExperience() {
       body.classList.toggle("inactive", doc.status !== "published");
     }
 
+    renderPluginNav(doc);
+    renderOnPageToc(doc);
+
     if (pager) {
-      const prev = doc.pager?.prev ? `<a href="#" class="pager-link">← 이전: ${doc.pager.prev}</a>` : "";
-      const next = doc.pager?.next ? `<a href="#" class="pager-link">다음: ${doc.pager.next} →</a>` : "";
-      pager.innerHTML = `${prev}${next}`;
+      const prev = getNeighbor(doc.id, "prev");
+      const next = getNeighbor(doc.id, "next");
+      const prevLabel = prev ? DOC_MAP.get(prev.docId)?.title || prev.label || prev.docId : "";
+      const nextLabel = next ? DOC_MAP.get(next.docId)?.title || next.label || next.docId : "";
+      const prevLink = prev
+        ? `<a href="docs.html?doc=${prev.docId}" class="pager-link" data-doc="${prev.docId}">← 이전: ${prevLabel}</a>`
+        : "";
+      const nextLink = next
+        ? `<a href="docs.html?doc=${next.docId}" class="pager-link" data-doc="${next.docId}">다음: ${nextLabel} →</a>`
+        : "";
+      pager.innerHTML = `${prevLink}${nextLink}`;
       pager.classList.toggle("inactive", doc.status !== "published");
+
+      pager.querySelectorAll(".pager-link").forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          const targetDoc = link.dataset.doc;
+          if (!targetDoc) return;
+          navigateToDoc(targetDoc, { push: true });
+        });
+      });
     }
 
-    if (doc.status !== "published") {
+    if (navEntry?.isUsable === false || doc.status !== "published") {
       showToast("준비 중인 문서입니다. 연결되면 자동으로 안내합니다.");
     }
+
+    const scrollToTarget = () => {
+      if (hash) {
+        const target = document.getElementById(hash);
+        if (target) {
+          target.scrollIntoView({ behavior: "auto", block: "start" });
+          return;
+        }
+      }
+
+      if (restoreScroll) {
+        window.scrollTo({ top: scrollPosition, behavior: "auto" });
+        return;
+      }
+
+      window.scrollTo({ top: 0, behavior: "auto" });
+    };
+
+    requestAnimationFrame(scrollToTarget);
 
     setupPluginDemo();
   };
 
+  const buildUrl = (docId, hash = "") => {
+    params.set("doc", docId);
+    return `${window.location.pathname}?${params.toString()}${hash ? `#${hash}` : ""}`;
+  };
+
+  const navigateToDoc = (docId, options = {}) => {
+    const { push = true, restoreScroll = false, scrollPosition = 0, hash = "" } = options;
+    if (currentDocId && currentDocId !== docId) {
+      scrollPositions.set(currentDocId, window.scrollY);
+    }
+    const url = buildUrl(docId, hash);
+    const state = { doc: docId, scroll: restoreScroll ? scrollPosition : 0, hash };
+    const method = push ? "pushState" : "replaceState";
+    window.history[method](state, "", url);
+    renderDoc(docId, { hash, restoreScroll, scrollPosition: restoreScroll ? scrollPosition : 0 });
+    currentDocId = docId;
+  };
+
+  window.addEventListener("popstate", (event) => {
+    const docId = event.state?.doc || params.get("doc") || fallbackDoc;
+    const storedScroll = event.state?.scroll ?? scrollPositions.get(docId) ?? 0;
+    const hash = (event.state?.hash || window.location.hash.replace("#", "")) ?? "";
+    navigateToDoc(docId, { push: false, restoreScroll: true, scrollPosition: storedScroll, hash });
+  });
+
   renderOptions();
-  renderDoc(defaultDoc);
+  window.history.replaceState({ doc: defaultDoc, scroll: window.scrollY, hash: initialHash }, "", buildUrl(defaultDoc, initialHash));
+  renderDoc(defaultDoc, { hash: initialHash, restoreScroll: Boolean(initialHash), scrollPosition: 0 });
 
   select.addEventListener("change", (event) => {
     const value = event.target.value;
-    params.set("doc", value);
-    const newUrl = `${window.location.pathname}?${params.toString()}`;
-    window.history.replaceState({}, "", newUrl);
-    renderDoc(value);
+    navigateToDoc(value, { push: true });
+  });
+
+  navList.addEventListener("click", (event) => {
+    const item = event.target.closest("li[data-doc]");
+    if (!item) return;
+    const docId = item.dataset.doc;
+    const navEntry = navMap.get(docId);
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+      return;
+    }
+    navigateToDoc(docId, { push: true });
   });
 }
 

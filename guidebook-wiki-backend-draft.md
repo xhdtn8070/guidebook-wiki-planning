@@ -149,6 +149,9 @@ OIDC SSO(B2B)는 나중에.
 
 ```
 
+- 필드 설명 추가:
+    - `isUsable` (boolean, default: `true`): 문서가 아직 준비되지 않았을 때 `false`. 프론트는 항목을 비활성화하고 클릭 시 “준비 중입니다” 토스트를 표시하며, 트리 구조/순서는 그대로 유지한다.
+
 ---
 
 ## 2. 위키 구조(목차) API
@@ -162,6 +165,7 @@ OIDC SSO(B2B)는 나중에.
 - 설명:
     - 해당 테넌트의 전체 문서 트리(목차 구조)를 가져온다.
     - 내용(MDX)은 포함하지 않고, **구조 + 메타 정보**만 전달.
+    - 문서 준비 상태는 `isUsable`(boolean)로 구분해 프론트에서 비활성 처리할 수 있게 한다.
 - 헤더:
     - `X-Tenant: <tenantCode>`
     - `Authorization` (선택: 비공개 문서 여부에 따라 다르게 내려줄 수도 있음. v1에서는 그냥 구조 전체 내려줘도 됨)
@@ -187,6 +191,7 @@ Query (옵션):
         "iconKey": "kakao",
         "gateType": "FREE",
         "visibility": "PUBLIC",
+        "isUsable": true,
         "children": [
           {
             "id": "page_2",
@@ -198,7 +203,48 @@ Query (옵션):
             "iconKey": "doc",
             "gateType": "FREE",
             "visibility": "PUBLIC",
+            "isUsable": true,
             "children": []
+          },
+          {
+            "id": "page_3",
+            "title": "API 콘솔",
+            "fullPath": "kakao/oauth/console",
+            "parentId": "page_1",
+            "depth": 1,
+            "orderInParent": 1,
+            "iconKey": "play",
+            "gateType": "FREE",
+            "visibility": "PUBLIC",
+            "isUsable": true,
+            "children": [
+              {
+                "id": "page_3_1",
+                "title": "실행 예시",
+                "fullPath": "kakao/oauth/console/run",
+                "parentId": "page_3",
+                "depth": 2,
+                "orderInParent": 0,
+                "iconKey": "code",
+                "gateType": "FREE",
+                "visibility": "PUBLIC",
+                "isUsable": true,
+                "children": []
+              },
+              {
+                "id": "page_3_2",
+                "title": "SDK 연동 (준비 중)",
+                "fullPath": "kakao/oauth/console/sdk",
+                "parentId": "page_3",
+                "depth": 2,
+                "orderInParent": 1,
+                "iconKey": "sdk",
+                "gateType": "FREE",
+                "visibility": "PUBLIC",
+                "isUsable": false,
+                "children": []
+              }
+            ]
           }
         ]
       }
