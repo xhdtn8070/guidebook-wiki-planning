@@ -14,3 +14,4 @@
 2. 또는 `prototype/index.html`을 직접 열기(file://). 단, 브라우저 정책에 따라 fetch가 막히면 인라인 프리셋으로만 동작합니다.
 3. 상단 셀렉트 박스로 테마 전환 또는 `?theme=gradient-pulse`처럼 URL 파라미터로 지정.
 4. API 연동 시 `THEME_FILES` 매핑을 실제 엔드포인트 fetch 로직으로 교체하면 됩니다. 인라인 프리셋은 file:// 폴백용이므로 운영 시 제거 가능.
+5. `npm test` 는 의존성 없이 정적 서버를 임시 포트로 띄운 뒤 홈(`index.html`)과 테마 JSON 응답을 확인하는 스모크 테스트입니다.

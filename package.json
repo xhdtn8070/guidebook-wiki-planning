@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "preview": "node prototype/dev-server.js",
-    "test": "node -e \"console.log('No automated tests configured for this prototype.');\"",
+    "test": "node prototype/smoke-test.js",
     "lint": "node -e \"console.log('No lint configuration for this prototype.');\""
   }
 }
