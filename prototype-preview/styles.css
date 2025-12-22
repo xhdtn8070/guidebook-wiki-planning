@@ -1,0 +1,117 @@
+:root {
+  --bg: #0b1021;
+  --surface: #11182f;
+  --accent: #7dffda;
+  --text: #e8f1ff;
+  color-scheme: light dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+header {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+  background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 18%, var(--bg)), var(--bg));
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+main {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+select {
+  padding: 10px 12px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 15%, transparent);
+  border-radius: 8px;
+}
+
+#preview-surface {
+  padding: 20px;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+#preview-description {
+  margin: 4px 0 0;
+  color: color-mix(in srgb, var(--text) 72%, transparent);
+}
+
+#theme-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.theme-card {
+  background: var(--surface);
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--text) 8%, transparent);
+  padding: 12px;
+  display: grid;
+  gap: 8px;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+
+.theme-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.theme-card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.theme-card p {
+  margin: 0;
+  color: color-mix(in srgb, var(--text) 70%, transparent);
+}
+
+.theme-card code {
+  background: color-mix(in srgb, var(--surface) 70%, var(--bg));
+  padding: 6px 8px;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.theme-chip {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--bg) 60%, var(--accent));
+}
