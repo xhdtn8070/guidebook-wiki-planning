@@ -33,10 +33,13 @@ sequenceDiagram
     U->>FE: 페이지 접근 (GET /)
     FE->>FE: host에서 tenantCode 추출 (playbook)
 
-    U->>FE: (클라이언트) fetch('/api/wiki/nav')
+    U->>FE: (클라이언트) fetch('/api/wiki/groups')
     FE->>FE: BFF API Route 처리<br/>tenantCode 세팅
-    FE->>BE: GET /api/v1/wiki/nav<br/>X-Tenant: playbook<br/>Authorization: Bearer ...
-    BE-->>FE: nav JSON
+    FE->>BE: GET /api/v1/wiki/groups<br/>X-Tenant: playbook<br/>Authorization: Bearer ...
+    BE-->>FE: groups JSON
+    U->>FE: (클라이언트) fetch('/api/wiki/nav?groupId=api-guide')
+    FE->>BE: GET /api/v1/wiki/nav?groupId=api-guide
+    BE-->>FE: nav JSON (그룹별)
     FE-->>U: nav JSON 응답, React 컴포넌트로 렌더
 
 ```
@@ -122,28 +125,31 @@ app/
 - 데이터:
     - 최소한 네비게이션 일부 + “이 테넌트 소개 문서” 정도를 보여줘도 좋음.
 - 호출 API:
-    - `GET /api/v1/wiki/nav`
-    - (선택) 테넌트 소개 문서 `GET /api/v1/wiki/pages?path=home` 등
+    - `GET /api/v1/wiki/groups` → 그룹 드롭다운
+    - 기본 그룹용 `GET /api/v1/wiki/nav?groupId={groupId}`
+    - (선택) 테넌트 소개 문서 `GET /api/v1/wiki/pages?groupId={groupId}&path=home` 등
 
 ---
 
 ### 2-2-2. `/docs/[...slug]` (문서 상세 페이지)
 
 - URL 예:
-    - `/docs/kakao/oauth/intro` → `fullPath = kakao/oauth/intro`
+    - `/docs/kakao/oauth/intro?groupId=api-guide` → `fullPath = kakao/oauth/intro`, `groupId = api-guide`
 - 역할:
     - 왼쪽에 문서 트리(목차), 가운데에 문서 내용 MDX, 오른쪽에 인페이지 TOC(스크롤 연동) 렌더링
     - 문서 내에 플러그인(ActionBlock)이 있을 경우 추가 데이터 패칭
 - 필요 데이터:
-    1. 문서 트리(nav) – 폴더/문서 트리 구조를 그대로 렌더하고, `isUsable=false`인 항목은 비활성 표시 후 클릭 시 토스트("준비 중입니다")
-    2. 현재 문서의 메타 + 본문(MDX)
-    3. 현재 경로/문서 위치에 따라 상단 breadcrumb (depth 기반)
-    4. 현재 문서 내 헤딩을 기반으로 한 OnPageTOC (우측 스크롤 스파이)
-    5. 스크롤 정책: 문서 전환(pager/트리/셀렉트) 시 항상 최상단으로 이동, 뒤로가기는 직전 문서의 스크롤 위치 복원, 인페이지 TOC 클릭 시 `#헤딩ID` 해시를 반영해 공유/직접 진입 시 동일 위치로 스크롤
+    1. 문서 **그룹 목록** – TopBar/본문 상단 셀렉트에서 그룹 전환, `status=COMING_SOON` 그룹은 비활성 + 토스트
+    2. 그룹별 문서 트리(nav) – 폴더/문서 트리 구조를 그대로 렌더하고, `isUsable=false`인 항목은 비활성 표시 후 클릭 시 토스트("준비 중입니다")
+    3. 현재 문서의 메타 + 본문(MDX)
+    4. 현재 경로/문서 위치에 따라 상단 breadcrumb (depth 기반)
+    5. 현재 문서 내 헤딩을 기반으로 한 OnPageTOC (우측 스크롤 스파이)
+    6. 스크롤 정책: 문서 전환(pager/트리/셀렉트/그룹 스위치) 시 항상 최상단으로 이동, 뒤로가기는 직전 문서의 스크롤 위치 복원, 인페이지 TOC 클릭 시 `#헤딩ID` 해시를 반영해 공유/직접 진입 시 동일 위치로 스크롤
 - API 호출 순서(권장):
-    1. 클라이언트/서버에서 `slug` → `fullPath`로 합치기
-    2. `GET /api/v1/wiki/nav`
-    3. `GET /api/v1/wiki/pages?path={fullPath}`
+    1. 클라이언트/서버에서 `slug` → `fullPath`로 합치기 + `groupId` 추출(없으면 그룹 목록 첫 항목)
+    2. `GET /api/v1/wiki/groups` → 그룹 셀렉트 초기화
+    3. `GET /api/v1/wiki/nav?groupId={groupId}`
+    4. `GET /api/v1/wiki/pages?groupId={groupId}&path={fullPath}`
 - 권한:
     - `wiki/pages` 응답에서 `403`/`gateType`을 보고,
         - `AFTER_AD` → 광고/구독 컴포넌트 노출
@@ -199,7 +205,8 @@ app/
     - 테넌트 어드민/에디터용 화면.
     - 해당 테넌트의 문서 트리를 편집용 UI로 보여줌.
 - 데이터:
-    - `GET /api/v1/wiki/nav`
+    - `GET /api/v1/wiki/groups`
+    - `GET /api/v1/wiki/nav?groupId={groupId}`
     - (추가로) 페이지별 메타 정보 / 작성자 / 수정일 등 필요 시.
 - 권한:
     - `/auth/me` 호출해서 현재 유저의 테넌트 내 역할 확인 → `TENANT_ADMIN` 또는 `EDITOR` 아니면 접근 제한.
@@ -265,6 +272,7 @@ app/
 app/
   api/
     wiki/
+      groups/route.ts  # GET /api/wiki/groups → BE /api/v1/wiki/groups
       nav/route.ts     # GET /api/wiki/nav → BE /api/v1/wiki/nav
       pages/route.ts   # GET /api/wiki/pages → BE /api/v1/wiki/pages
     search/route.ts    # GET /api/search → BE /api/v1/search

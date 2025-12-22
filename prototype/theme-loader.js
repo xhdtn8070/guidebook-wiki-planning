@@ -9,6 +9,7 @@ const THEME_FILES = {
 const DOCS = [
   {
     id: "page_1",
+    groupId: "api-guide",
     title: "카카오 OAuth 가이드",
     breadcrumb: "Docs / 인증 / 카카오 OAuth",
     lead: "GET /api/v1/wiki/nav 예시에 맞춰 좌측 트리와 우측 TOC가 동작하는 대표 문서입니다.",
@@ -57,6 +58,7 @@ const DOCS = [
   },
   {
     id: "page_2",
+    groupId: "api-guide",
     title: "개요",
     breadcrumb: "Docs / 인증 / 카카오 OAuth / 개요",
     lead: "카카오 OAuth 플로우를 간단히 요약하고 필요한 키와 리다이렉트 URI를 정리했습니다.",
@@ -93,6 +95,7 @@ const DOCS = [
   },
   {
     id: "page_3",
+    groupId: "api-guide",
     title: "API 콘솔",
     breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔",
     lead: "API 콘솔에서 액션 블록을 실행하고 응답을 확인하는 과정을 담았습니다.",
@@ -142,6 +145,7 @@ const DOCS = [
   },
   {
     id: "page_3_1",
+    groupId: "api-guide",
     title: "실행 예시",
     breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 실행 예시",
     lead: "POST 호출 예시와 응답 스니펫을 담은 하위 문서입니다.",
@@ -170,6 +174,7 @@ const DOCS = [
   },
   {
     id: "page_3_2",
+    groupId: "api-guide",
     title: "SDK 연동 (준비 중)",
     breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / SDK 연동",
     lead: "SDK 샘플은 곧 업데이트될 예정입니다.",
@@ -191,6 +196,7 @@ const DOCS = [
   },
   {
     id: "ops-release",
+    groupId: "api-guide",
     title: "릴리스 노트",
     breadcrumb: "Docs / 운영 / 릴리스 노트",
     lead: "최근 릴리스에서 바뀐 항목을 간단히 요약했습니다.",
@@ -212,6 +218,7 @@ const DOCS = [
   },
   {
     id: "ops-checklist",
+    groupId: "api-guide",
     title: "릴리스 체크리스트",
     breadcrumb: "Docs / 운영 / 릴리스 체크리스트",
     lead: "배포 전/후 체크리스트는 준비 중입니다.",
@@ -233,6 +240,7 @@ const DOCS = [
   },
   {
     id: "glossary",
+    groupId: "api-guide",
     title: "API 용어집",
     breadcrumb: "Docs / 부록 / API 용어집",
     lead: "자주 등장하는 필드와 상태 코드를 정리했습니다.",
@@ -254,6 +262,7 @@ const DOCS = [
   },
   {
     id: "glossary-errors",
+    groupId: "api-guide",
     title: "에러 코드",
     breadcrumb: "Docs / 부록 / API 용어집 / 에러 코드",
     lead: "위키와 API에서 공통으로 쓰는 에러 코드를 모았습니다.",
@@ -277,11 +286,157 @@ const DOCS = [
     ],
     pager: { prev: "API 용어집", next: "끝" },
   },
+  {
+    id: "ops_home",
+    groupId: "ops-handbook",
+    title: "운영 핸드북 홈",
+    breadcrumb: "Docs / 운영 핸드북 / 홈",
+    lead: "운영팀 전용 런북, 점검표, 보안 정책을 모아둔 그룹 허브입니다.",
+    updated: "2024-06-14",
+    status: "published",
+    nav: [
+      { id: "scope", label: "핵심 구성" },
+      { id: "nav-map", label: "목차 API" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "scope",
+        title: "핸드북 구성",
+        body: `<ul><li>장애 대응, 모니터링, 배포 프로세스를 그룹 단위로 묶습니다.</li><li>좌측 트리는 <code>groupId=ops-handbook</code> 쿼리로 불러온 구조를 그대로 반영합니다.</li><li>문서 상태는 <code>isUsable</code>로 제어하고, 준비 중인 항목은 토스트로 안내합니다.</li></ul>`,
+      },
+      {
+        type: "code",
+        id: "nav-map",
+        label: "[GET] /api/v1/wiki/nav?groupId=ops-handbook",
+        code: `{"groupId":"ops-handbook","nodes":[{"id":"ops_home","title":"운영 핸드북 홈","isUsable":true,"children":[{"id":"ops_runbook","title":"장애 대응 런북","isUsable":true},{"id":"ops_monitoring","title":"모니터링 대시보드","isUsable":true},{"id":"ops_release_plan","title":"릴리스 플랜","isUsable":false}]},{"id":"sec_access","title":"접근 제어 정책","isUsable":true}]}`,
+      },
+    ],
+    pager: { prev: "끝", next: "장애 대응" },
+  },
+  {
+    id: "ops_runbook",
+    groupId: "ops-handbook",
+    title: "장애 대응 런북",
+    breadcrumb: "Docs / 운영 핸드북 / 장애 대응",
+    lead: "장애 감지부터 커뮤니케이션, 복구 보고까지의 표준 흐름입니다.",
+    updated: "2024-06-12",
+    status: "published",
+    nav: [
+      { id: "triage", label: "트리아지" },
+      { id: "comms", label: "커뮤니케이션" },
+      { id: "post", label: "사후 분석" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "callout",
+        tone: "success",
+        id: "triage",
+        title: "트리아지 체크",
+        items: ["SLO 위반 여부 확인", "에러율/대기시간 그래프 캡처", "롤백 가능 버전 파악"],
+      },
+      {
+        type: "section",
+        id: "comms",
+        title: "커뮤니케이션",
+        body: `<p>상태 페이지 업데이트 → 슬랙 #incident 채널 핑 → 영업/CS 알림을 순차적으로 전파합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "post",
+        title: "사후 분석",
+        body: `<p>근본 원인, 탐지 시나리오, 재발 방지액션을 24시간 내 기록합니다.</p>`,
+      },
+    ],
+    pager: { prev: "운영 핸드북 홈", next: "모니터링" },
+  },
+  {
+    id: "ops_monitoring",
+    groupId: "ops-handbook",
+    title: "모니터링 대시보드",
+    breadcrumb: "Docs / 운영 핸드북 / 모니터링",
+    lead: "주요 지표와 알림 룰, 슬랙 연동 포인트를 정리했습니다.",
+    updated: "2024-06-08",
+    status: "published",
+    nav: [
+      { id: "signals", label: "핵심 시그널" },
+      { id: "alerts", label: "알림 규칙" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "signals",
+        title: "핵심 시그널",
+        body: `<ul><li>P90 응답시간, 에러율, 트래픽 기울기</li><li>스토리지/큐 적재량과 스로틀링 비율</li></ul>`,
+      },
+      {
+        type: "section",
+        id: "alerts",
+        title: "알림 규칙",
+        body: `<p>5분 연속 에러율 2% 이상 또는 P90 1.2s 초과 시 슬랙/온콜 알림을 발생시킵니다.</p>`,
+      },
+    ],
+    pager: { prev: "장애 대응", next: "릴리스 플랜" },
+  },
+  {
+    id: "ops_release_plan",
+    groupId: "ops-handbook",
+    title: "릴리스 플랜 (준비 중)",
+    breadcrumb: "Docs / 운영 핸드북 / 릴리스 플랜",
+    lead: "릴리스 승인·롤백 체크리스트는 준비 중입니다.",
+    updated: "준비 중",
+    status: "coming",
+    nav: [
+      { id: "release-plan", label: "예정된 항목" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "release-plan",
+        title: "예정된 항목",
+        body: `<p>릴리스 승인 기준, 자동화된 롤백 스크립트, smoke test 템플릿을 추가합니다.</p>`,
+      },
+    ],
+    pager: { prev: "모니터링", next: "접근 제어" },
+  },
+  {
+    id: "sec_access",
+    groupId: "ops-handbook",
+    title: "접근 제어 정책",
+    breadcrumb: "Docs / 운영 핸드북 / 보안 / 접근 제어",
+    lead: "테넌트·프로젝트·문서 단위 접근 정책과 감사 로깅 요구사항을 정리했습니다.",
+    updated: "2024-06-03",
+    status: "published",
+    nav: [
+      { id: "policy", label: "정책" },
+      { id: "audit", label: "감사" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "policy",
+        title: "정책",
+        body: `<p>SSO 연동, IP ACL, 역할 기반 접근 제어(RBAC)를 조합해 적용합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "audit",
+        title: "감사 로깅",
+        body: `<p>문서 뷰/수정, 다운로드, 검색 키워드를 전부 감시 로그에 기록합니다.</p>`,
+      },
+    ],
+    pager: { prev: "릴리스 플랜", next: "끝" },
+  },
 ];
 
 const DOC_MAP = new Map(DOCS.map((doc) => [doc.id, doc]));
 
-const NAV_TREE = [
+const API_NAV_TREE = [
   {
     label: "인증",
     isUsable: true,
@@ -326,6 +481,62 @@ const NAV_TREE = [
     ],
   },
 ];
+
+const OPS_NAV_TREE = [
+  {
+    label: "운영 핸드북",
+    docId: "ops_home",
+    isUsable: true,
+    children: [
+      { label: "장애 대응 런북", docId: "ops_runbook", isUsable: true },
+      { label: "모니터링 대시보드", docId: "ops_monitoring", isUsable: true },
+      { label: "릴리스 플랜 (준비 중)", docId: "ops_release_plan", isUsable: false },
+    ],
+  },
+  {
+    label: "보안",
+    isUsable: true,
+    children: [{ label: "접근 제어 정책", docId: "sec_access", isUsable: true }],
+  },
+];
+
+const DOC_GROUPS = [
+  {
+    id: "api-guide",
+    label: "API 가이드",
+    description: "외부 파트너용 API/콘솔 문서",
+    status: "published",
+    defaultDoc: "page_1",
+    navTree: API_NAV_TREE,
+  },
+  {
+    id: "ops-handbook",
+    label: "운영 핸드북",
+    description: "내부 운영·보안 런북",
+    status: "published",
+    defaultDoc: "ops_home",
+    navTree: OPS_NAV_TREE,
+  },
+];
+
+const DOC_GROUP_MAP = new Map(DOC_GROUPS.map((group) => [group.id, group]));
+
+const flattenNavNodes = (nodes = [], acc = []) => {
+  nodes.forEach((node) => {
+    if (node.docId) acc.push(node);
+    if (node.children) flattenNavNodes(node.children, acc);
+  });
+  return acc;
+};
+
+const fallbackDocForGroup = (groupId) => {
+  const navItems = flattenNavNodes(DOC_GROUP_MAP.get(groupId)?.navTree || []);
+  const usable = navItems.find((item) => item.isUsable !== false);
+  if (usable?.docId) return usable.docId;
+  const groupDoc = DOCS.find((doc) => doc.groupId === groupId);
+  if (groupDoc) return groupDoc.id;
+  return DOCS[0]?.id;
+};
 
 const INLINE_THEME_PRESETS = {
   "gradient-pulse": {
@@ -1015,12 +1226,16 @@ function setupNavDocsDropdown() {
   if (!menu || !toggle) return;
 
   const renderItems = () => {
-    menu.innerHTML = DOCS.map((doc) => {
-      const state = doc.status;
+    menu.innerHTML = DOC_GROUPS.map((group) => {
+      const state = group.status || "published";
       const stateLabel = state === "published" ? "바로가기" : "준비중";
-      return `<a href="docs.html?doc=${doc.id}" class="nav-item" data-state="${state}">
-        <span>${doc.title}</span>
+      const targetDoc = fallbackDocForGroup(group.id);
+      return `<a href="docs.html?group=${group.id}&doc=${targetDoc}" class="nav-item" data-state="${state}" data-group="${
+        group.id
+      }">
+        <div>${group.label}</div>
         <span class="nav-pill">${stateLabel}</span>
+        <small class="muted">${group.description || "문서 그룹"}</small>
       </a>`;
     }).join("");
   };
@@ -1037,35 +1252,57 @@ function setupNavDocsDropdown() {
     const target = event.target.closest(".nav-item");
     if (!target) return;
     const state = target.dataset.state;
+    const groupId = target.dataset.group;
     if (state && state !== "published") {
       event.preventDefault();
-      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+      showToast("준비 중인 문서 그룹입니다. 곧 업데이트됩니다.");
+      return;
+    }
+
+    if (typeof window.setDocGroup === "function") {
+      event.preventDefault();
+      menu.classList.remove("active");
+      toggle.setAttribute("aria-expanded", "false");
+      window.setDocGroup(groupId);
     }
   });
 }
 
 function setupDocExperience() {
+  const groupSelect = document.querySelector("#doc-group-select");
   const select = document.querySelector("#doc-select");
   const navList = document.querySelector("#doc-nav");
-  if (!select || !navList) return;
+  if (!select || !navList || !groupSelect) return;
 
-  const flattenNav = (nodes, acc = []) => {
-    nodes.forEach((node) => {
-      if (node.docId) acc.push(node);
-      if (node.children) flattenNav(node.children, acc);
-    });
-    return acc;
-  };
-
-  const navMap = new Map(flattenNav(NAV_TREE).map((item) => [item.docId, item]));
-  const fallbackDoc = flattenNav(NAV_TREE).find((item) => item.isUsable)?.docId || DOCS[0]?.id;
-  const defaultDoc = params.get("doc") || fallbackDoc;
+  const initialGroupParam = params.get("group");
+  const initialGroupId = DOC_GROUP_MAP.has(initialGroupParam) ? initialGroupParam : DOC_GROUPS[0]?.id;
+  let currentGroupId = initialGroupId;
+  let navItems = [];
+  let navMap = new Map();
+  let fallbackDoc = fallbackDocForGroup(currentGroupId);
+  const defaultDocParam = params.get("doc");
   const initialHash = window.location.hash?.replace("#", "") || "";
   const scrollPositions = new Map();
-  let currentDocId = defaultDoc;
+  let currentDocId = "";
+
+  const renderGroupOptions = () => {
+    groupSelect.innerHTML = DOC_GROUPS.map(
+      (group) =>
+        `<option value="${group.id}" ${group.status === "published" ? "" : "disabled"}>${group.label}${
+          group.status === "published" ? "" : " · 준비중"
+        }</option>`
+    ).join("");
+  };
+
+  const syncGroupState = () => {
+    navItems = flattenNavNodes(DOC_GROUP_MAP.get(currentGroupId)?.navTree || []);
+    navMap = new Map(navItems.map((item) => [item.docId, item]));
+    fallbackDoc = fallbackDocForGroup(currentGroupId);
+    groupSelect.value = currentGroupId;
+  };
 
   const renderOptions = () => {
-    select.innerHTML = flattenNav(NAV_TREE)
+    select.innerHTML = navItems
       .map(
         (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
           item.isUsable ? "" : " · 준비중"
@@ -1088,11 +1325,12 @@ function setupDocExperience() {
       }">${node.label}${node.isUsable ? "" : " · 준비중"}</li>`;
     };
 
-    navList.innerHTML = NAV_TREE.map((item) => renderNode(item)).join("");
+    const navTree = DOC_GROUP_MAP.get(currentGroupId)?.navTree || [];
+    navList.innerHTML = navTree.map((item) => renderNode(item)).join("");
   };
 
   const getNeighbor = (docId, direction) => {
-    const usable = flattenNav(NAV_TREE).filter((item) => item.isUsable !== false);
+    const usable = navItems.filter((item) => item.isUsable !== false);
     const index = usable.findIndex((item) => item.docId === docId);
     if (index === -1) return null;
     const offset = direction === "next" ? 1 : -1;
@@ -1166,12 +1404,15 @@ function setupDocExperience() {
   const renderDoc = (docId, options = {}) => {
     const { hash = "", restoreScroll = false, scrollPosition = 0 } = options;
     const navEntry = navMap.get(docId);
-    const effectiveDocId = navEntry?.isUsable === false ? fallbackDoc : docId;
+    const effectiveDocId = navEntry?.isUsable === false || !navEntry ? fallbackDoc : docId;
     if (navEntry?.isUsable === false) {
       showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
     }
 
-    const doc = DOCS.find((d) => d.id === effectiveDocId) || DOCS[0];
+    const doc =
+      DOCS.find((d) => d.id === effectiveDocId && d.groupId === currentGroupId) ||
+      DOCS.find((d) => d.id === effectiveDocId) ||
+      DOCS.find((d) => d.id === fallbackDoc);
     if (!doc) return;
 
     select.value = doc.id;
@@ -1184,14 +1425,16 @@ function setupDocExperience() {
     const body = document.querySelector("#doc-body");
     const pager = document.querySelector("#pager");
     const status = document.querySelector("#doc-status");
+    const groupMeta = DOC_GROUP_MAP.get(currentGroupId);
 
     if (breadcrumb) breadcrumb.textContent = doc.breadcrumb;
     if (updated) updated.textContent = `업데이트 · ${doc.updated}`;
     if (title) title.textContent = doc.title;
     if (lead) lead.textContent = doc.lead;
     if (status) {
-      status.textContent = doc.status === "published" ? "발행" : "준비중";
+      status.textContent = `${groupMeta?.label || "문서"} · ${doc.status === "published" ? "발행" : "준비중"}`;
       status.dataset.state = doc.status;
+      status.dataset.group = groupMeta?.id || "";
     }
 
     const content = doc.sections
@@ -1267,10 +1510,10 @@ function setupDocExperience() {
       const prevLabel = prev ? DOC_MAP.get(prev.docId)?.title || prev.label || prev.docId : "";
       const nextLabel = next ? DOC_MAP.get(next.docId)?.title || next.label || next.docId : "";
       const prevLink = prev
-        ? `<a href="docs.html?doc=${prev.docId}" class="pager-link" data-doc="${prev.docId}">← 이전: ${prevLabel}</a>`
+        ? `<a href="docs.html?group=${currentGroupId}&doc=${prev.docId}" class="pager-link" data-doc="${prev.docId}">← 이전: ${prevLabel}</a>`
         : "";
       const nextLink = next
-        ? `<a href="docs.html?doc=${next.docId}" class="pager-link" data-doc="${next.docId}">다음: ${nextLabel} →</a>`
+        ? `<a href="docs.html?group=${currentGroupId}&doc=${next.docId}" class="pager-link" data-doc="${next.docId}">다음: ${nextLabel} →</a>`
         : "";
       pager.innerHTML = `${prevLink}${nextLink}`;
       pager.classList.toggle("inactive", doc.status !== "published");
@@ -1311,7 +1554,8 @@ function setupDocExperience() {
     setupPluginDemo();
   };
 
-  const buildUrl = (docId, hash = "") => {
+  const buildUrl = (groupId, docId, hash = "") => {
+    params.set("group", groupId);
     params.set("doc", docId);
     return `${window.location.pathname}?${params.toString()}${hash ? `#${hash}` : ""}`;
   };
@@ -1321,24 +1565,51 @@ function setupDocExperience() {
     if (currentDocId && currentDocId !== docId) {
       scrollPositions.set(currentDocId, window.scrollY);
     }
-    const url = buildUrl(docId, hash);
-    const state = { doc: docId, scroll: restoreScroll ? scrollPosition : 0, hash };
+    const url = buildUrl(currentGroupId, docId, hash);
+    const state = { group: currentGroupId, doc: docId, scroll: restoreScroll ? scrollPosition : 0, hash };
     const method = push ? "pushState" : "replaceState";
     window.history[method](state, "", url);
     renderDoc(docId, { hash, restoreScroll, scrollPosition: restoreScroll ? scrollPosition : 0 });
     currentDocId = docId;
   };
 
+  const changeGroup = (groupId, options = {}) => {
+    currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
+    syncGroupState();
+    renderOptions();
+    const targetDoc = options.docId && navMap.has(options.docId) ? options.docId : fallbackDoc;
+    navigateToDoc(targetDoc, { push: options.push ?? true });
+  };
+
   window.addEventListener("popstate", (event) => {
+    const groupId = event.state?.group || params.get("group") || DOC_GROUPS[0]?.id;
+    currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
+    syncGroupState();
+    renderOptions();
     const docId = event.state?.doc || params.get("doc") || fallbackDoc;
     const storedScroll = event.state?.scroll ?? scrollPositions.get(docId) ?? 0;
     const hash = (event.state?.hash || window.location.hash.replace("#", "")) ?? "";
     navigateToDoc(docId, { push: false, restoreScroll: true, scrollPosition: storedScroll, hash });
   });
 
+  renderGroupOptions();
+  syncGroupState();
+  const defaultDoc = navMap.has(defaultDocParam) ? defaultDocParam : fallbackDoc;
+  currentDocId = defaultDoc;
   renderOptions();
-  window.history.replaceState({ doc: defaultDoc, scroll: window.scrollY, hash: initialHash }, "", buildUrl(defaultDoc, initialHash));
+  window.history.replaceState(
+    { group: currentGroupId, doc: defaultDoc, scroll: window.scrollY, hash: initialHash },
+    "",
+    buildUrl(currentGroupId, defaultDoc, initialHash)
+  );
   renderDoc(defaultDoc, { hash: initialHash, restoreScroll: Boolean(initialHash), scrollPosition: 0 });
+
+  window.setDocGroup = (groupId) => changeGroup(groupId, { push: true });
+
+  groupSelect.addEventListener("change", (event) => {
+    const nextGroup = event.target.value;
+    changeGroup(nextGroup, { push: true });
+  });
 
   select.addEventListener("change", (event) => {
     const value = event.target.value;

@@ -152,6 +152,30 @@ CREATE TABLE user_tenants (
 
 ## 3. 위키 문서 구조
 
+### 3.0. wiki_groups (문서 그룹)
+
+테넌트별 여러 문서 그룹을 갖기 위한 상단 테이블. 드롭다운 노출 순서와 각 그룹의 기본 문서를 관리한다.
+
+```sql
+CREATE TABLE wiki_groups (
+    id              BIGSERIAL PRIMARY KEY,
+    tenant_id       BIGINT NOT NULL REFERENCES tenants(id),
+    code            VARCHAR(255) NOT NULL,          -- api-guide, ops-handbook
+    name            VARCHAR(255) NOT NULL,
+    order_in_tenant INT NOT NULL DEFAULT 0,
+    status          VARCHAR(50) NOT NULL DEFAULT 'PUBLISHED', -- PUBLISHED | COMING_SOON | ARCHIVED
+    default_page_id BIGINT REFERENCES wiki_pages(id),
+    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    UNIQUE (tenant_id, code)
+);
+
+CREATE INDEX idx_wiki_groups_tenant_order
+    ON wiki_groups(tenant_id, order_in_tenant);
+```
+
+`wiki_pages`와는 1:N 관계이며, 그룹 상태가 `COMING_SOON`이면 프론트에서는 선택 불가 + 토스트 안내로 처리한다.
+
 ### 3.1. wiki_pages (문서 트리)
 
 ```sql

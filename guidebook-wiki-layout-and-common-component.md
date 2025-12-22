@@ -134,12 +134,14 @@
 ```
 
 - 우측 인페이지 TOC는 TopBar 아래에서 시작되도록 스티키 오프셋을 두고, 코드/실행 예시가 답답하지 않도록 중앙 컬럼 폭을 넓힌다.
+- TopBar의 Docs 드롭다운은 **문서 그룹** 전환 전용이다. 그룹을 바꾸면 SidebarNav, Doc Select, Bottom Pager 모두 해당 그룹의 트리로 리셋되고, 해시가 없어도 문서 최상단으로 스크롤을 초기화한다.
 
 ## 2-2. 호출 API
 
 - 최초 렌더 시:
-    - `GET /api/wiki/nav`
-    - `GET /api/wiki/pages?path={fullPath}`
+    - `GET /api/wiki/groups` (상단 드롭다운)
+    - `GET /api/wiki/nav?groupId={groupId}`
+    - `GET /api/wiki/pages?groupId={groupId}&path={fullPath}`
 - 권한 부족인 경우:
     - 응답 에러에서 `gateType` 확인 후 광고/구독/로그인 UI 표시
     - (선택) `/api/wiki/pages/permission?path=...` 먼저 호출 가능
@@ -147,6 +149,9 @@
 ## 2-3. 필요한 컴포넌트
 
 - 페이지 컴포넌트: `DocPage`
+- `DocGroupSwitcher`
+    - TopBar 드롭다운과 본문 상단 선택박스 모두 동일 데이터(`GET /wiki/groups`)를 사용해 그룹을 변경
+    - `status=COMING_SOON` 혹은 `isUsable=false` 그룹은 비활성화 + 토스트 "준비 중인 문서 그룹입니다" 노출
 - `SidebarNav`
     - `NavTree`, `NavTreeItem`
     - `isUsable=false` 문서는 비활성 스타일(회색/커서 막힘) + 클릭 시 “준비 중입니다” 토스트

@@ -158,12 +158,51 @@ OIDC SSO(B2B)는 나중에.
 
 앞서 말한 것처럼 **구조/컨텐츠/권한**을 분리한다.
 
+### 2.0. 문서 그룹 조회
+
+**[GET] `/api/v1/wiki/groups`**
+
+- 설명: 하나의 테넌트에 여러 위키 그룹(예: "API 가이드", "운영 핸드북")을 둘 수 있으므로, 최상단 드롭다운에서 고를 수 있도록 전체 그룹 메타 정보를 내려준다.
+- 헤더: `X-Tenant: <tenantCode>`
+- 응답 필드 예시:
+
+```json
+{
+  "success": true,
+  "data": {
+    "groups": [
+      {
+        "id": "api-guide",
+        "name": "API 가이드",
+        "slug": "api-guide",
+        "order": 0,
+        "status": "PUBLISHED",
+        "defaultDocId": "page_1",
+        "isUsable": true
+      },
+      {
+        "id": "ops-handbook",
+        "name": "운영 핸드북",
+        "slug": "ops-handbook",
+        "order": 1,
+        "status": "PUBLISHED",
+        "defaultDocId": "ops_home",
+        "isUsable": true
+      }
+    ]
+  },
+  "error": null
+}
+```
+
+- 비고: 그룹 상태(`isUsable=false` 혹은 `status=COMING_SOON`)일 경우 프론트에서 드롭다운을 비활성화하고 토스트로 안내한다.
+
 ### 2.1. 전체 네비게이션 트리 조회
 
 **[GET] `/api/v1/wiki/nav`**
 
 - 설명:
-    - 해당 테넌트의 전체 문서 트리(목차 구조)를 가져온다.
+    - 해당 테넌트·그룹의 전체 문서 트리(목차 구조)를 가져온다.
     - 내용(MDX)은 포함하지 않고, **구조 + 메타 정보**만 전달.
     - 문서 준비 상태는 `isUsable`(boolean)로 구분해 프론트에서 비활성 처리할 수 있게 한다.
 - 헤더:
@@ -172,6 +211,7 @@ OIDC SSO(B2B)는 나중에.
 
 Query (옵션):
 
+- `groupId` (필수): 어떤 위키 그룹의 네비게이션을 가져올지 지정한다. 없으면 `400`.
 - `depth`: 숫자 (예: `2`) – 너무 깊이까지 안 가져오고 싶을 때 (v1은 전체 가져오기 우선)
 
 응답 예:
@@ -180,6 +220,7 @@ Query (옵션):
 {
   "success": true,
   "data": {
+    "groupId": "api-guide",
     "nodes": [
       {
         "id": "page_1",
@@ -270,8 +311,9 @@ Query (옵션):
     - `X-Tenant: <tenantCode>`
     - `Authorization` (선택, 권한 필요 문서일 경우 필수)
 - Query:
+    - `groupId`: 문서가 속한 그룹 ID (필수, 동일 `fullPath`를 다른 그룹이 재사용할 수 있음)
     - `path`: 문서의 `fullPath`
-        - 예: `/api/v1/wiki/pages?path=kakao/oauth/intro`
+        - 예: `/api/v1/wiki/pages?groupId=api-guide&path=kakao/oauth/intro`
 
 성공 응답 예 (열람 가능):
 
@@ -337,6 +379,7 @@ Query (옵션):
     - `contentMdx`를 제외한 메타 정보만 가져오고 싶을 때.
     - SSR에서 SEO 용도로 쓰거나, 목록/상단 정보만 먼저 그리고 싶을 때.
 - Query:
+    - `groupId`
     - `path`
 
 응답 구조는 `/wiki/pages`와 동일하지만 `contentMdx`는 `null` 혹은 미포함.
@@ -361,6 +404,7 @@ Query (옵션):
     - `X-Tenant`
     - `Authorization` (선택)
 - Query:
+    - `groupId`
     - `path`
 
 응답 예:
