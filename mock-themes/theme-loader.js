@@ -6,6 +6,284 @@ const THEME_FILES = {
   "gradient-pulse": "data/gradient-pulse.json",
 };
 
+const INLINE_THEME_PRESETS = {
+  "gradient-pulse": {
+    "name": "Gradient Pulse",
+    "palette": {
+      "primary": "#f97316",
+      "secondary": "#6366f1",
+      "accent": "#22c55e",
+      "background": "#0f172a",
+      "surface": "rgba(255, 255, 255, 0.12)",
+      "border": "rgba(255, 255, 255, 0.2)",
+      "text": "#f8fafc",
+      "muted": "#cbd5e1"
+    },
+    "font": {
+      "heading": "'Inter', 'Pretendard', sans-serif",
+      "body": "'Inter', 'Pretendard', sans-serif",
+      "monospace": "'Space Mono', 'Fira Code', monospace"
+    },
+    "layout": {
+      "radius": "18px",
+      "shadow": "0 16px 48px rgba(249, 115, 22, 0.3)",
+      "spacing": "18px"
+    },
+    "hero": {
+      "background": "linear-gradient(135deg, #f97316 0%, #6366f1 50%, #22c55e 100%)",
+      "overlayOpacity": 0.18
+    },
+    "components": {
+      "topBar": {
+        "background": "rgba(0, 0, 0, 0.4)",
+        "border": "rgba(255, 255, 255, 0.2)"
+      },
+      "sidebar": {
+        "background": "rgba(15, 23, 42, 0.7)",
+        "border": "rgba(255, 255, 255, 0.2)"
+      },
+      "card": {
+        "background": "rgba(255, 255, 255, 0.08)",
+        "border": "rgba(255, 255, 255, 0.12)"
+      },
+      "button": {
+        "primaryBackground": "linear-gradient(135deg, #f97316, #ef4444)",
+        "primaryText": "#0f172a",
+        "ghostBackground": "rgba(255, 255, 255, 0.08)",
+        "ghostBorder": "rgba(255, 255, 255, 0.32)",
+        "ghostText": "#f8fafc",
+        "text": "#f97316",
+        "shadow": "0 18px 40px rgba(249, 115, 22, 0.45)"
+      },
+      "codeBlock": {
+        "background": "rgba(15, 23, 42, 0.9)",
+        "text": "#e5e7eb",
+        "border": "rgba(255, 255, 255, 0.16)"
+      }
+    }
+  },
+  "midnight-console": {
+    "name": "Midnight Console",
+    "palette": {
+      "primary": "#7c3aed",
+      "secondary": "#22d3ee",
+      "accent": "#f472b6",
+      "background": "#0b1220",
+      "surface": "#0f172a",
+      "border": "#1e293b",
+      "text": "#e2e8f0",
+      "muted": "#94a3b8"
+    },
+    "font": {
+      "heading": "'Inter', 'Pretendard', sans-serif",
+      "body": "'Inter', 'Pretendard', sans-serif",
+      "monospace": "'Space Mono', 'Fira Code', monospace"
+    },
+    "layout": {
+      "radius": "16px",
+      "shadow": "0 18px 40px rgba(124, 58, 237, 0.35)",
+      "spacing": "18px"
+    },
+    "hero": {
+      "background": "radial-gradient(circle at 20% 20%, #312e81 0%, #0b1220 45%, #050914 100%)",
+      "overlayOpacity": 0.32
+    },
+    "components": {
+      "topBar": {
+        "background": "rgba(15, 23, 42, 0.96)",
+        "border": "#1e293b"
+      },
+      "sidebar": {
+        "background": "rgba(11, 18, 32, 0.92)",
+        "border": "#1e293b"
+      },
+      "card": {
+        "background": "#111827",
+        "border": "#1e293b"
+      },
+      "button": {
+        "primaryBackground": "linear-gradient(135deg, #7c3aed, #22d3ee)",
+        "primaryText": "#0b1220",
+        "ghostBackground": "rgba(124, 58, 237, 0.12)",
+        "ghostBorder": "rgba(34, 211, 238, 0.6)",
+        "ghostText": "#e2e8f0",
+        "text": "#c084fc",
+        "shadow": "0 18px 38px rgba(124, 58, 237, 0.45)"
+      },
+      "codeBlock": {
+        "background": "#050914",
+        "text": "#a5f3fc",
+        "border": "#1e293b"
+      }
+    }
+  },
+  "nordic-tech": {
+    "name": "Nordic Tech",
+    "palette": {
+      "primary": "#2a9d8f",
+      "secondary": "#264653",
+      "accent": "#e9c46a",
+      "background": "#eef3f6",
+      "surface": "#ffffff",
+      "border": "#d1dee6",
+      "text": "#0f172a",
+      "muted": "#4b5563"
+    },
+    "font": {
+      "heading": "'Inter', 'Pretendard', sans-serif",
+      "body": "'Inter', 'Pretendard', sans-serif",
+      "monospace": "'Space Mono', 'Fira Code', monospace"
+    },
+    "layout": {
+      "radius": "14px",
+      "shadow": "0 12px 40px rgba(38, 70, 83, 0.12)",
+      "spacing": "18px"
+    },
+    "hero": {
+      "background": "linear-gradient(135deg, #c6f0ef 0%, #e8f5f5 40%, #f7fbff 100%)",
+      "overlayOpacity": 0.28
+    },
+    "components": {
+      "topBar": {
+        "background": "rgba(255,255,255,0.92)",
+        "border": "#d1dee6"
+      },
+      "sidebar": {
+        "background": "rgba(255,255,255,0.96)",
+        "border": "#d1dee6"
+      },
+      "card": {
+        "background": "#ffffff",
+        "border": "#d1dee6"
+      },
+      "button": {
+        "primaryBackground": "#2a9d8f",
+        "primaryText": "#f8fafc",
+        "ghostBackground": "rgba(42, 157, 143, 0.12)",
+        "ghostBorder": "rgba(42, 157, 143, 0.45)",
+        "ghostText": "#0f172a",
+        "text": "#2a9d8f",
+        "shadow": "0 12px 30px rgba(42, 157, 143, 0.35)"
+      },
+      "codeBlock": {
+        "background": "#0f172a",
+        "text": "#d1e9ff",
+        "border": "#19324a"
+      }
+    }
+  },
+  "paper-notebook": {
+    "name": "Paper Notebook",
+    "palette": {
+      "primary": "#ef476f",
+      "secondary": "#ffd166",
+      "accent": "#06d6a0",
+      "background": "#faf7f0",
+      "surface": "#ffffff",
+      "border": "#e8e2d2",
+      "text": "#3c342c",
+      "muted": "#7a6f63"
+    },
+    "font": {
+      "heading": "'Recoleta', 'Pretendard', serif",
+      "body": "'Work Sans', 'Pretendard', sans-serif",
+      "monospace": "'Space Mono', 'Fira Code', monospace"
+    },
+    "layout": {
+      "radius": "12px",
+      "shadow": "0 8px 30px rgba(60, 52, 44, 0.08)",
+      "spacing": "16px"
+    },
+    "hero": {
+      "background": "linear-gradient(135deg, #fff7e6 0%, #fbe0d9 100%)",
+      "overlayOpacity": 0.14
+    },
+    "components": {
+      "topBar": {
+        "background": "rgba(255, 255, 255, 0.94)",
+        "border": "#e8e2d2"
+      },
+      "sidebar": {
+        "background": "rgba(255, 255, 255, 0.96)",
+        "border": "#e8e2d2"
+      },
+      "card": {
+        "background": "#ffffff",
+        "border": "#e8e2d2"
+      },
+      "button": {
+        "primaryBackground": "#ef476f",
+        "primaryText": "#fffaf2",
+        "ghostBackground": "rgba(239, 71, 111, 0.08)",
+        "ghostBorder": "rgba(239, 71, 111, 0.4)",
+        "ghostText": "#3c342c",
+        "text": "#ef476f",
+        "shadow": "0 10px 24px rgba(239, 71, 111, 0.35)"
+      },
+      "codeBlock": {
+        "background": "#1f2937",
+        "text": "#f8fafc",
+        "border": "#e8e2d2"
+      }
+    }
+  },
+  "solarized-playbook": {
+    "name": "Solarized Playbook",
+    "palette": {
+      "primary": "#268bd2",
+      "secondary": "#2aa198",
+      "accent": "#b58900",
+      "background": "#fdf6e3",
+      "surface": "#fffdf5",
+      "border": "#e7d8b1",
+      "text": "#073642",
+      "muted": "#586e75"
+    },
+    "font": {
+      "heading": "'Source Sans Pro', 'Pretendard', sans-serif",
+      "body": "'Source Sans Pro', 'Pretendard', sans-serif",
+      "monospace": "'Space Mono', 'SFMono-Regular', monospace"
+    },
+    "layout": {
+      "radius": "12px",
+      "shadow": "0 12px 40px rgba(7, 54, 66, 0.14)",
+      "spacing": "18px"
+    },
+    "hero": {
+      "background": "linear-gradient(135deg, #fdf6e3 0%, #f0e3b1 100%)",
+      "overlayOpacity": 0.18
+    },
+    "components": {
+      "topBar": {
+        "background": "rgba(253, 246, 227, 0.96)",
+        "border": "#e7d8b1"
+      },
+      "sidebar": {
+        "background": "rgba(255, 253, 245, 0.98)",
+        "border": "#e7d8b1"
+      },
+      "card": {
+        "background": "#fffaf0",
+        "border": "#e7d8b1"
+      },
+      "button": {
+        "primaryBackground": "#268bd2",
+        "primaryText": "#fdf6e3",
+        "ghostBackground": "rgba(38, 139, 210, 0.1)",
+        "ghostBorder": "rgba(38, 139, 210, 0.5)",
+        "ghostText": "#073642",
+        "text": "#268bd2",
+        "shadow": "0 12px 28px rgba(38, 139, 210, 0.35)"
+      },
+      "codeBlock": {
+        "background": "#073642",
+        "text": "#fdf6e3",
+        "border": "#0a4c5b"
+      }
+    }
+  }
+};
+
 const select = document.querySelector("#theme-select");
 const params = new URLSearchParams(window.location.search);
 const initial = params.get("theme");
@@ -16,17 +294,17 @@ if (initial && THEME_FILES[initial]) {
 
 select.addEventListener("change", (event) => {
   const theme = event.target.value;
-  loadTheme(theme);
+  applyThemeFromSource(theme);
   const nextUrl = new URL(window.location.href);
   nextUrl.searchParams.set("theme", theme);
   window.history.replaceState({}, "", nextUrl.toString());
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  loadTheme(select.value);
+  applyThemeFromSource(select.value);
 });
 
-async function loadTheme(themeName) {
+async function applyThemeFromSource(themeName) {
   const path = THEME_FILES[themeName];
   try {
     const res = await fetch(path);
@@ -34,7 +312,11 @@ async function loadTheme(themeName) {
     const theme = await res.json();
     applyTheme(theme);
   } catch (err) {
-    console.error(err);
+    console.warn(`fetch theme failed for ${themeName}, fallback to inline preset`, err);
+    const fallback = INLINE_THEME_PRESETS[themeName];
+    if (fallback) {
+      applyTheme(fallback);
+    }
   }
 }
 
@@ -71,7 +353,7 @@ function applyComponentOverrides(components) {
   sidebar.style.background = components.sidebar.background;
   sidebar.style.borderColor = components.sidebar.border;
 
-  document.querySelectorAll(".card").forEach((card) => {
+  document.querySelectorAll(".card, .panel, .auth-card, .plugin-block").forEach((card) => {
     card.style.background = components.card.background;
     card.style.borderColor = components.card.border;
   });
@@ -97,4 +379,7 @@ function applyComponentOverrides(components) {
     block.style.color = components.codeBlock.text;
     block.style.borderColor = components.codeBlock.border;
   });
+
+  const hero = document.querySelector(".hero");
+  if (hero) hero.style.background = components.heroBackground || getComputedStyle(document.documentElement).getPropertyValue("--hero-bg");
 }

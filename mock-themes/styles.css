@@ -27,6 +27,7 @@ body {
   color: var(--color-text);
   background: var(--color-background);
   line-height: 1.6;
+  letter-spacing: -0.01em;
 }
 
 .page {
@@ -39,24 +40,66 @@ body {
   position: sticky;
   top: 0;
   z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 24px;
+  padding: 12px 20px;
   background: var(--color-surface);
   border-bottom: 1px solid var(--color-border);
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
+  color: var(--color-primary);
   font-weight: 800;
-  font-size: 18px;
+}
+
+.brand-copy {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+
+.brand-sub {
+  color: var(--color-muted);
 }
 
 .controls {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.search {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  background: color-mix(in srgb, var(--color-background) 60%, #fff);
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+}
+
+.search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  font-weight: 600;
+  color: var(--color-text);
 }
 
 .theme-switcher {
@@ -88,11 +131,20 @@ select {
   border-radius: var(--radius);
   padding: 20px;
   box-shadow: var(--shadow);
+  display: grid;
+  gap: 20px;
+  align-self: flex-start;
 }
 
 .sidebar-title {
   font-weight: 700;
-  margin-bottom: 12px;
+}
+
+.sidebar-subtitle {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-muted);
+  margin-bottom: 8px;
 }
 
 .sidebar ul {
@@ -125,10 +177,12 @@ select {
   position: relative;
   border-radius: calc(var(--radius) + 4px);
   overflow: hidden;
-  min-height: 220px;
+  min-height: 260px;
   background: var(--hero-bg);
   border: 1px solid var(--color-border);
   box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
 }
 
 .hero-overlay {
@@ -143,17 +197,19 @@ select {
   position: relative;
   padding: 36px;
   color: #fff;
-  max-width: 720px;
+  max-width: 760px;
+  display: grid;
+  gap: 12px;
 }
 
 .hero h1 {
-  margin: 0 0 12px;
+  margin: 0;
   font-family: var(--font-heading);
   font-size: 32px;
 }
 
 .hero .lead {
-  margin: 0 0 18px;
+  margin: 0;
   color: rgba(255, 255, 255, 0.92);
   font-size: 16px;
 }
@@ -169,10 +225,55 @@ select {
   font-size: 12px;
 }
 
+.pill.ghost {
+  background: color-mix(in srgb, var(--color-primary) 18%, #fff);
+  color: var(--color-primary);
+}
+
 .hero-actions {
   display: flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.hero-auth {
+  position: relative;
+  padding: 28px;
+  display: grid;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.auth-card {
+  position: relative;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: calc(var(--radius) + 2px);
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+  display: grid;
+  gap: 12px;
+  width: min(360px, 100%);
+}
+
+.auth-card h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.auth-buttons {
+  display: grid;
+  gap: 10px;
+}
+
+.banner-placeholder {
+  border: 1px dashed var(--color-border);
+  background: color-mix(in srgb, var(--color-background) 55%, #fff);
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--color-muted);
 }
 
 .cards {
@@ -209,6 +310,89 @@ select {
   color: var(--color-text);
 }
 
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.panel {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  padding: 18px;
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 12px;
+}
+
+.panel h4 {
+  margin: 0;
+}
+
+.list.two-col {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.list ul {
+  padding-left: 16px;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.muted {
+  color: var(--color-muted);
+  margin: 0 0 8px;
+}
+
+.plugin-block {
+  border: 1px dashed color-mix(in srgb, var(--color-primary) 50%, var(--color-border));
+  border-radius: var(--radius);
+  padding: 12px;
+  background: color-mix(in srgb, var(--color-primary) 6%, var(--color-surface));
+  display: grid;
+  gap: 12px;
+}
+
+.plugin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.plugin-body {
+  display: grid;
+  gap: 10px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field label {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.field input,
+.field select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.plugin-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .code-block {
   background: color-mix(in srgb, var(--color-background) 60%, #000);
   color: var(--color-text);
@@ -230,6 +414,12 @@ select {
   color: var(--color-text);
 }
 
+.btn.compact {
+  padding: 6px 8px;
+  font-size: 12px;
+  border-radius: 8px;
+}
+
 .btn.primary {
   background: var(--color-primary);
   color: #fff;
@@ -242,11 +432,28 @@ select {
   color: #fff;
 }
 
+.btn.ghost.link {
+  color: var(--color-primary);
+  border-color: color-mix(in srgb, var(--color-primary) 35%, transparent);
+}
+
 .btn.text {
   padding: 6px 0;
   background: none;
   border: none;
   color: var(--color-primary);
+}
+
+.btn.kakao {
+  background: #fee500;
+  color: #191600;
+  border-color: #e4d200;
+  box-shadow: 0 10px 24px rgba(25, 22, 0, 0.14);
+}
+
+.btn.kakao.ghost {
+  background: #fff;
+  border-color: #e4d200;
 }
 
 .btn:hover {
@@ -280,6 +487,16 @@ select {
   font-weight: 700;
   font-size: 12px;
   background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+@media (max-width: 1080px) {
+  .hero {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-auth {
+    padding-top: 0;
+  }
 }
 
 @media (max-width: 960px) {
