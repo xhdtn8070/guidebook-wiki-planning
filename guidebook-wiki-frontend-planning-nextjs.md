@@ -132,12 +132,13 @@ app/
 - URL 예:
     - `/docs/kakao/oauth/intro` → `fullPath = kakao/oauth/intro`
 - 역할:
-    - 왼쪽에 문서 트리(목차), 오른쪽에 문서 내용 MDX 렌더링
+    - 왼쪽에 문서 트리(목차), 가운데에 문서 내용 MDX, 오른쪽에 인페이지 TOC(스크롤 연동) 렌더링
     - 문서 내에 플러그인(ActionBlock)이 있을 경우 추가 데이터 패칭
 - 필요 데이터:
-    1. 문서 트리(nav)
+    1. 문서 트리(nav) – 폴더/문서 트리 구조를 그대로 렌더하고, `isUsable=false`인 항목은 비활성 표시 후 클릭 시 토스트("준비 중입니다")
     2. 현재 문서의 메타 + 본문(MDX)
     3. 현재 경로/문서 위치에 따라 상단 breadcrumb (depth 기반)
+    4. 현재 문서 내 헤딩을 기반으로 한 OnPageTOC (우측 스크롤 스파이)
 - API 호출 순서(권장):
     1. 클라이언트/서버에서 `slug` → `fullPath`로 합치기
     2. `GET /api/v1/wiki/nav`

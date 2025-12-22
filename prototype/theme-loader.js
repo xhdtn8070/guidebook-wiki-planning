@@ -9,15 +9,16 @@ const THEME_FILES = {
 const DOCS = [
   {
     id: "api-console",
-    title: "API 콘솔을 이용해 샘플 워크플로 실행하기",
-    breadcrumb: "Docs / 플러그인 / API 콘솔 실행",
-    lead: "ActionBlock 구성과 요청/응답 예시를 포함한 문서 상세 페이지 시안입니다.",
-    updated: "2024-06-01",
+    title: "API 콘솔로 액션 블록 실행하기",
+    breadcrumb: "Docs / 시작하기 / API 콘솔",
+    lead: "문서 상세 페이지 시안에 맞춰 오른쪽 인페이지 TOC와 액션 블록을 포함한 예시입니다.",
+    updated: "2024-06-10",
     status: "published",
     nav: [
-      { id: "prep", label: "사전 준비" },
-      { id: "run", label: "실행 예시" },
-      { id: "block", label: "플러그인 블록" },
+      { id: "layout", label: "레이아웃 개요" },
+      { id: "callout", label: "사전 체크리스트" },
+      { id: "exec", label: "실행 예시" },
+      { id: "action-block", label: "액션 블록" },
       { id: "next", label: "다음 단계" },
     ],
     pluginNav: [
@@ -27,27 +28,53 @@ const DOCS = [
     ],
     sections: [
       {
+        type: "section",
+        id: "layout",
+        title: "문서 상세 레이아웃",
+        body: `
+          <p class="muted">좌측에는 전체 문서 트리, 가운데에는 MDX 본문, 우측에는 인페이지 TOC가 스티키로 따라오는 3단 구조입니다.</p>
+          <ul>
+            <li>좌측 SidebarNav는 <code>GET /api/v1/wiki/nav</code> 결과를 트리로 렌더하고, <strong>isUsable=false</strong>인 항목은 비활성 처리합니다.</li>
+            <li>가운데 본문은 <code>GET /api/v1/wiki/pages</code>의 MDX를 렌더하며 헤더/컨텐츠/액션 블록을 포함합니다.</li>
+            <li>우측 인페이지 TOC는 문서 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
+          </ul>
+        `,
+      },
+      {
         type: "callout",
         tone: "success",
-        title: "사전 준비",
-        id: "prep",
+        title: "사전 체크리스트",
+        id: "callout",
         items: ["테넌트별 API Key 발급", "Webhook URL (Slack/Discord) 등록", "액션 실행 권한 확인"],
       },
       {
+        type: "section",
+        id: "exec",
+        title: "실행 예시와 코드 블록",
+        body: `
+          <p class="muted">문서 내 실행 예시는 코드 블록과 결과 캡처를 나란히 배치해 폭이 부족하지 않도록 중앙 컬럼을 확장했습니다.</p>
+          <p>아래 예시는 API 콘솔 액션을 POST로 실행하는 샘플이며, 요청/응답을 그대로 붙여 넣을 수 있도록 포매팅했습니다.</p>
+        `,
+      },
+      {
         type: "code",
-        id: "run",
-        label: "요청 예시",
+        id: "action-block",
+        label: "API 콘솔 실행 요청",
         code: `POST /api/plugins/execute\nAuthorization: Bearer {token}\n{\n  "plugin": "api-console",\n  "payload": {\n    "method": "POST",\n    "url": "https://api.guidebook.wiki/v1/demo",\n    "body": { "preview": true }\n  }\n}`,
       },
       {
         type: "plugin",
-        id: "block",
+        id: "action-block-demo",
       },
       {
         type: "list",
         id: "next",
-        title: "결과/추가 리소스",
-        items: ["실행 로그는 7일 보관", "Slack 웹훅으로 결과 전송", "워크플로 빌더 베타 안내"],
+        title: "다음 단계",
+        items: [
+          "SDK 통합 가이드로 코드에 연결",
+          "워크플로 빌더에서 동일 액션을 블록으로 조립",
+          "운영 체크리스트를 참고해 배포 전 검증",
+        ],
       },
     ],
     pager: { prev: "인증 설정", next: "워크플로 빌더" },
@@ -56,7 +83,7 @@ const DOCS = [
     id: "sdk-guide",
     title: "SDK 통합 가이드",
     breadcrumb: "Docs / SDK / 통합 가이드",
-    lead: "다중 언어 SDK 설치/초기화 안내를 준비 중입니다.",
+    lead: "Next.js, NestJS, Spring 예제를 담은 설치/초기화 가이드를 준비 중입니다.",
     updated: "준비 중",
     status: "coming",
     nav: [
@@ -64,21 +91,67 @@ const DOCS = [
       { id: "init", label: "초기화" },
     ],
     pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "install",
+        title: "설치",
+        body: `<p>npm 패키지와 Gradle/Maven 아티팩트를 예시로 추가할 예정입니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "init",
+        title: "초기화",
+        body: `<p>환경 변수, 테넌트 토큰 설정, 샘플 인보크 코드 등을 포함합니다.</p>`,
+      },
+    ],
     pager: { prev: "API 콘솔", next: "릴리스 노트" },
   },
   {
     id: "ops-checklist",
     title: "운영 체크리스트",
     breadcrumb: "Docs / 운영 / 체크리스트",
-    lead: "릴리스 전후 체크리스트와 장애 대응 템플릿을 정리 중입니다.",
-    updated: "초안", 
+    lead: "릴리스 전/후 체크리스트와 장애 대응 템플릿을 정리 중입니다.",
+    updated: "초안",
     status: "draft",
     nav: [
       { id: "release", label: "릴리스" },
       { id: "incident", label: "장애 대응" },
     ],
     pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "release",
+        title: "릴리스",
+        body: `<p>릴리스 플랜, 롤백 체크포인트, 스모크 테스트 목록을 여기에 담습니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "incident",
+        title: "장애 대응",
+        body: `<p>장애 단계별 커뮤니케이션 채널, 핸드오버 템플릿, SLA 측정 지표를 추가합니다.</p>`,
+      },
+    ],
     pager: { prev: "SDK", next: "부록" },
+  },
+];
+
+const NAV_TREE = [
+  {
+    label: "시작하기",
+    isUsable: true,
+    children: [
+      { label: "API 콘솔", docId: "api-console", isUsable: true },
+      { label: "SDK 통합", docId: "sdk-guide", isUsable: false },
+    ],
+  },
+  {
+    label: "운영",
+    isUsable: true,
+    children: [
+      { label: "운영 체크리스트", docId: "ops-checklist", isUsable: false },
+    ],
   },
 ];
 
@@ -480,6 +553,7 @@ const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 let currentTheme = select?.value || "nordic-tech";
 let currentMode = savedMode;
+let currentTocObserver = null;
 
 if (initial && THEME_FILES[initial]) {
   currentTheme = initial;
@@ -803,36 +877,120 @@ function setupDocExperience() {
   const navList = document.querySelector("#doc-nav");
   if (!select || !navList) return;
 
-  const defaultDoc = params.get("doc") || DOCS[0]?.id;
-
-  const renderOptions = () => {
-    select.innerHTML = DOCS.map((doc) => `<option value="${doc.id}">${doc.title}</option>`).join("");
+  const flattenNav = (nodes, acc = []) => {
+    nodes.forEach((node) => {
+      if (node.docId) acc.push(node);
+      if (node.children) flattenNav(node.children, acc);
+    });
+    return acc;
   };
 
-  const renderNav = (doc) => {
-    navList.innerHTML = doc.nav
-      ?.map((item) => `<li data-id="${item.id}">${item.label}</li>`)
-      .join("") || "";
+  const navMap = new Map(flattenNav(NAV_TREE).map((item) => [item.docId, item]));
+  const fallbackDoc = flattenNav(NAV_TREE).find((item) => item.isUsable)?.docId || DOCS[0]?.id;
+  const defaultDoc = params.get("doc") || fallbackDoc;
 
+  const renderOptions = () => {
+    select.innerHTML = flattenNav(NAV_TREE)
+      .map(
+        (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
+          item.isUsable ? "" : " · 준비중"
+        }</option>`
+      )
+      .join("");
+  };
+
+  const renderNavTree = (activeId) => {
+    const renderNode = (node) => {
+      if (node.children?.length) {
+        return `<li class="nav-group">
+            <div class="nav-group-label">${node.label}</div>
+            <ul>${node.children.map((child) => renderNode(child)).join("")}</ul>
+          </li>`;
+      }
+
+      return `<li data-doc="${node.docId}" class="${node.docId === activeId ? "active" : ""} ${
+        node.isUsable ? "" : "disabled"
+      }">${node.label}${node.isUsable ? "" : " · 준비중"}</li>`;
+    };
+
+    navList.innerHTML = NAV_TREE.map((item) => renderNode(item)).join("");
+  };
+
+  const renderPluginNav = (doc) => {
     const pluginNav = document.querySelector("#plugin-nav");
-    if (pluginNav) {
-      pluginNav.innerHTML = doc.pluginNav
-        ?.map(
-          (item) =>
-            `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
-              item.state !== "active" ? " · 준비중" : ""
-            }</li>`
-        )
-        .join("") || "";
+    if (!pluginNav) return;
+    pluginNav.innerHTML = doc.pluginNav
+      ?.map(
+        (item) =>
+          `<li data-id="${item.id}" class="${item.state !== "active" ? "inactive" : ""}">${item.label}${
+            item.state !== "active" ? " · 준비중" : ""
+          }</li>`
+      )
+      .join("") || "";
+  };
+
+  const renderOnPageToc = (doc) => {
+    const toc = document.querySelector("#onpage-toc");
+    if (!toc) return;
+
+    if (!doc.nav?.length) {
+      toc.innerHTML = '<p class="muted">표시할 목차가 없습니다.</p>';
+      return;
     }
+
+    toc.innerHTML = doc.nav
+      .map((item) => `<a href="#${item.id}" data-target="${item.id}">${item.label}</a>`)
+      .join("");
+
+    toc.onclick = (event) => {
+      const link = event.target.closest("a");
+      if (!link) return;
+      event.preventDefault();
+      const targetId = link.dataset.target;
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    if (currentTocObserver) {
+      currentTocObserver.disconnect();
+    }
+
+    currentTocObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = toc.querySelector(`a[data-target="${entry.target.id}"]`);
+          if (!link) return;
+          if (entry.isIntersecting) {
+            toc.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
+            link.classList.add("active");
+          }
+        });
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 1] }
+    );
+
+    doc.nav.forEach((item) => {
+      const section = document.getElementById(item.id);
+      if (section) {
+        currentTocObserver.observe(section);
+      }
+    });
   };
 
   const renderDoc = (docId) => {
-    const doc = DOCS.find((d) => d.id === docId) || DOCS[0];
+    const navEntry = navMap.get(docId);
+    const effectiveDocId = navEntry?.isUsable === false ? fallbackDoc : docId;
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+    }
+
+    const doc = DOCS.find((d) => d.id === effectiveDocId) || DOCS[0];
     if (!doc) return;
 
     select.value = doc.id;
-    renderNav(doc);
+    renderNavTree(doc.id);
 
     const breadcrumb = document.querySelector("#breadcrumb");
     const updated = document.querySelector("#doc-updated");
@@ -853,6 +1011,12 @@ function setupDocExperience() {
 
     const content = doc.sections
       ?.map((section) => {
+        if (section.type === "section") {
+          return `<section class="section-card" id="${section.id}">
+            <h2>${section.title}</h2>
+            ${section.body}
+          </section>`;
+        }
         if (section.type === "callout") {
           return `<section class="callout success" id="${section.id}">
             <p class="callout-title">${section.title}</p>
@@ -860,8 +1024,11 @@ function setupDocExperience() {
           </section>`;
         }
         if (section.type === "code") {
-          return `<section class="code-block" aria-label="${section.label}" id="${section.id}">
-            <pre><code>${section.code}</code></pre>
+          return `<section class="section-card" id="${section.id}">
+            <h3>${section.label}</h3>
+            <div class="code-block" aria-label="${section.label}">
+              <pre><code>${section.code}</code></pre>
+            </div>
           </section>`;
         }
         if (section.type === "plugin") {
@@ -892,8 +1059,8 @@ function setupDocExperience() {
           </div>`;
         }
         if (section.type === "list") {
-          return `<section id="${section.id}">
-            <h4>${section.title}</h4>
+          return `<section class="section-card" id="${section.id}">
+            <h3>${section.title}</h3>
             <ul>${section.items.map((item) => `<li>${item}</li>`).join("")}</ul>
           </section>`;
         }
@@ -906,6 +1073,9 @@ function setupDocExperience() {
       body.classList.toggle("inactive", doc.status !== "published");
     }
 
+    renderPluginNav(doc);
+    renderOnPageToc(doc);
+
     if (pager) {
       const prev = doc.pager?.prev ? `<a href="#" class="pager-link">← 이전: ${doc.pager.prev}</a>` : "";
       const next = doc.pager?.next ? `<a href="#" class="pager-link">다음: ${doc.pager.next} →</a>` : "";
@@ -913,7 +1083,7 @@ function setupDocExperience() {
       pager.classList.toggle("inactive", doc.status !== "published");
     }
 
-    if (doc.status !== "published") {
+    if (navEntry?.isUsable === false || doc.status !== "published") {
       showToast("준비 중인 문서입니다. 연결되면 자동으로 안내합니다.");
     }
 
@@ -929,6 +1099,21 @@ function setupDocExperience() {
     const newUrl = `${window.location.pathname}?${params.toString()}`;
     window.history.replaceState({}, "", newUrl);
     renderDoc(value);
+  });
+
+  navList.addEventListener("click", (event) => {
+    const item = event.target.closest("li[data-doc]");
+    if (!item) return;
+    const docId = item.dataset.doc;
+    const navEntry = navMap.get(docId);
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+      return;
+    }
+    params.set("doc", docId);
+    const newUrl = `${window.location.pathname}?${params.toString()}`;
+    window.history.replaceState({}, "", newUrl);
+    renderDoc(docId);
   });
 }
 
