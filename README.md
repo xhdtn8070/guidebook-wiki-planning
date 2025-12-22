@@ -12,7 +12,10 @@
 각 파일 상단에도 선행/후행 문서 안내를 추가했으니 필요한 부분만 찾아볼 때 참고하세요.
 
 ## 프로토타입 미리보기
-- `npm run preview` 명령으로 `prototype/` 폴더를 정적 서버로 실행한 뒤 브라우저에서 `http://localhost:4173/`로 접속하면 테마 기반 위키 프로토타입을 확인할 수 있습니다(추가 의존성 없음).
+- **Docker Compose**: Docker Desktop만 설치되어 있으면 됩니다.
+  - `docker compose up --build` 로 컨테이너를 띄운 뒤 `http://localhost:4173/` 접속
+  - 백그라운드 실행 시 `docker compose up -d`, 중단 시 `docker compose down`
+- **로컬 Node**: `npm run preview` 명령으로 `prototype/` 폴더를 정적 서버로 실행한 뒤 브라우저에서 `http://localhost:4173/`로 접속하면 테마 기반 위키 프로토타입을 확인할 수 있습니다.
 - `npm test` 로 정적 서버를 임시 포트에 올려 index와 테마 JSON 응답을 확인하는 스모크 테스트를 돌릴 수 있습니다.
 
 ## 문서 개요
