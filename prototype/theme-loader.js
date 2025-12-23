@@ -23,6 +23,10 @@ const DOCS = [
       { id: "overview", label: "요약" },
       { id: "nav-tree", label: "네비게이션 트리" },
       { id: "flow", label: "연동 흐름" },
+      { id: "backup", label: "Step 1. 백업" },
+      { id: "plugin-update", label: "Step 2. 플러그인 업데이트" },
+      { id: "paper-update", label: "Step 3. 종이 매뉴얼" },
+      { id: "faq", label: "FAQ" },
     ],
     pluginNav: [],
     sections: [
@@ -55,6 +59,56 @@ const DOCS = [
             <li>"실행 예시"와 같이 하위 문서도 같은 패턴으로 불러오며, 상단 드롭다운과 트리가 함께 활성 상태를 갱신합니다.</li>
             <li>"SDK 연동 (준비 중)"처럼 isUsable=false인 항목은 비활성 상태로 표시하고 토스트로 안내합니다.</li>
           </ol>
+        `,
+      },
+      {
+        type: "section",
+        id: "backup",
+        title: "Step 1. 백업",
+        body: `
+          <p>사이드바/TOC 구조를 바꾸기 전에 <strong>GET /api/v1/wiki/nav</strong> 응답을 S3에 버전 태깅해 둡니다.</p>
+          <ul>
+            <li>기존 트리와 비교할 수 있도록 JSON 스냅샷을 남깁니다.</li>
+            <li>실패 시 복구를 빠르게 하기 위해 <code>restore_from_backup=true</code> 쿼리를 허용합니다.</li>
+          </ul>
+        `,
+      },
+      {
+        type: "section",
+        id: "plugin-update",
+        title: "Step 2. 플러그인 업데이트",
+        body: `
+          <p>액션 블록, 워크플로 플러그인 모두 <code>isUsable</code>이 true인 경우에만 실행 버튼을 노출합니다.</p>
+          <ol>
+            <li>액션 블록 카탈로그를 새 트리와 동기화합니다.</li>
+            <li>준비 중 플러그인은 회색 뱃지와 토스트로 안내합니다.</li>
+            <li>실행 로그를 남겨 테스트 시나리오를 재검증합니다.</li>
+          </ol>
+        `,
+      },
+      {
+        type: "section",
+        id: "paper-update",
+        title: "Step 3. 종이 매뉴얼",
+        body: `
+          <p>오프라인 가이드를 병행하는 경우에는 PDF/종이 매뉴얼 업데이트 일정을 함께 기록합니다.</p>
+          <ul>
+            <li>검색 키워드와 동일한 섹션 제목을 사용해 인쇄본과 웹 TOC를 나란히 맞춥니다.</li>
+            <li>새로운 예제 코드는 색상을 줄이고 대비를 높여 인쇄 품질을 확보합니다.</li>
+          </ul>
+        `,
+      },
+      {
+        type: "section",
+        id: "faq",
+        title: "FAQ",
+        body: `
+          <p>사이드바와 TOC가 동시에 스크롤될 때 발생하는 잔여 버그와 해결 팁을 모았습니다.</p>
+          <ul>
+            <li><strong>TOC 동기화 지연</strong>: IntersectionObserver의 threshold를 0.25로 조정합니다.</li>
+            <li><strong>트리 하이라이트 손실</strong>: 현재 문서 ID를 history state와 로컬스토리지에 중복 저장합니다.</li>
+            <li><strong>플러그인 미노출</strong>: <code>pluginNav</code> 배열에 state 필드를 추가해 준비중 상태를 구분합니다.</li>
+          </ul>
         `,
       },
     ],
@@ -109,6 +163,8 @@ const DOCS = [
       { id: "layout", label: "레이아웃" },
       { id: "exec", label: "실행 예시" },
       { id: "action-block", label: "액션 블록" },
+      { id: "payload-guard", label: "유효성 검증" },
+      { id: "logging", label: "로깅" },
       { id: "next", label: "다음 단계" },
     ],
     pluginNav: [
@@ -135,8 +191,20 @@ const DOCS = [
         code: `POST /api/plugins/execute\nAuthorization: Bearer {token}\n{\n  "plugin": "api-console",\n  "payload": {\n    "method": "POST",\n    "url": "https://api.guidebook.wiki/v1/demo",\n    "body": { "preview": true }\n  }\n}`,
       },
       {
+        type: "section",
+        id: "payload-guard",
+        title: "유효성 검증",
+        body: `<p>요청 본문에는 <code>tenantId</code>, <code>requestId</code>를 포함하고 길이 제한(64KB)을 초과하면 422로 반환합니다.</p>`
+      },
+      {
         type: "plugin",
         id: "action-block-demo",
+      },
+      {
+        type: "section",
+        id: "logging",
+        title: "로깅",
+        body: `<p>실행 로그는 Kinesis에 적재하며 <code>event=wiki.action_block</code> 태그를 붙여 필터링합니다. 실패 시 재시도 큐를 별도로 둡니다.</p>`,
       },
       {
         type: "list",
@@ -196,7 +264,54 @@ const DOCS = [
         body: `<p>JavaScript, Kotlin, Spring 예제를 추가해 SDK 초기화와 오류 처리 패턴을 안내할 예정입니다.</p>`,
       },
     ],
-    pager: { prev: "실행 예시", next: "릴리스 노트" },
+    pager: { prev: "실행 예시", next: "릴리스 체크" },
+  },
+  {
+    id: "page_4",
+    groupId: "api-guide",
+    title: "릴리스 체크",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 릴리스 체크",
+    lead: "릴리스 직전·직후 확인해야 할 체크리스트와 백업 경로를 묶었습니다.",
+    updated: "2024-06-09",
+    status: "published",
+    nav: [
+      { id: "rollout", label: "롤아웃 절차" },
+      { id: "fallback", label: "롤백 경로" },
+      { id: "postcheck", label: "사후 점검" },
+      { id: "samples", label: "샘플 링크" },
+    ],
+    pluginNav: [
+      { id: "checklist", label: "체크리스트", state: "active" },
+      { id: "dryrun", label: "드라이런", state: "active" },
+      { id: "handoff", label: "핸드오프", state: "coming" },
+    ],
+    sections: [
+      {
+        type: "section",
+        id: "rollout",
+        title: "롤아웃 절차",
+        body: `<p>릴리스 노트와 액션 블록이 함께 배포되도록 <code>releaseId</code>를 공통으로 사용합니다. 단계별 진행률은 좌측 트리와 TOC에 동시에 반영됩니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "fallback",
+        title: "롤백 경로",
+        body: `<ul><li>S3에 백업된 nav 스냅샷으로 1분 내 트리를 복구합니다.</li><li>액션 블록 플래그(<code>feature/wiki-ab</code>)를 내려 긴급 차단합니다.</li><li>검색 인덱스는 롤백 대상 빌드로 재배포합니다.</li></ul>`,
+      },
+      {
+        type: "section",
+        id: "postcheck",
+        title: "사후 점검",
+        body: `<p>릴리스 후 30분 동안은 On-call이 TOC 하이라이트, 트리 이동, 플러그인 실행 로그를 순차적으로 확인합니다.</p>`,
+      },
+      {
+        type: "list",
+        id: "samples",
+        title: "샘플 링크",
+        items: ["릴리스 상태 변환 API 호출", "플러그인 드라이런 결과 캡처", "검색 랭킹 비교 스프레드시트"],
+      },
+    ],
+    pager: { prev: "SDK 연동", next: "릴리스 노트" },
   },
   {
     id: "ops-release",
@@ -458,6 +573,7 @@ const API_NAV_TREE = [
             children: [
               { label: "실행 예시", docId: "page_3_1", isUsable: true },
               { label: "SDK 연동 (준비 중)", docId: "page_3_2", isUsable: false },
+              { label: "릴리스 체크", docId: "page_4", isUsable: true },
             ],
           },
         ],
@@ -1427,18 +1543,12 @@ function setupDocExperience() {
     const lead = document.querySelector("#doc-lead");
     const body = document.querySelector("#doc-body");
     const pager = document.querySelector("#pager");
-    const status = document.querySelector("#doc-status");
     const groupMeta = DOC_GROUP_MAP.get(currentGroupId);
 
     if (breadcrumb) breadcrumb.textContent = doc.breadcrumb;
     if (updated) updated.textContent = `업데이트 · ${doc.updated}`;
     if (title) title.textContent = doc.title;
     if (lead) lead.textContent = doc.lead;
-    if (status) {
-      status.textContent = `${groupMeta?.label || "문서"} · ${doc.status === "published" ? "발행" : "준비중"}`;
-      status.dataset.state = doc.status;
-      status.dataset.group = groupMeta?.id || "";
-    }
 
     const content = doc.sections
       ?.map((section) => {

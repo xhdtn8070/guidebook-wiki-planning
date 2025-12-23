@@ -322,6 +322,21 @@ select {
   margin: 0 auto;
 }
 
+.page.doc-shell {
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+.page.doc-shell .layout.doc-page {
+  height: calc(100vh - var(--topbar-height));
+  overflow: hidden;
+  align-items: stretch;
+}
+
+.page.doc-shell .layout.doc-page > * {
+  min-height: 0;
+}
+
 .layout.doc-page {
   grid-template-columns: 280px minmax(700px, 1fr) 260px;
   align-items: start;
@@ -346,6 +361,11 @@ select {
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
   min-width: 240px;
+}
+
+.doc-shell .sidebar {
+  top: 0;
+  height: 100%;
 }
 
 .sidebar-scroll {
@@ -423,6 +443,13 @@ select {
 .content {
   display: grid;
   gap: 16px;
+}
+
+.doc-content {
+  height: 100%;
+  overflow: auto;
+  padding-right: 6px;
+  align-content: start;
 }
 
 .hero {
@@ -823,6 +850,11 @@ select {
   min-width: 230px;
 }
 
+.doc-shell .onpage-toc {
+  top: 0;
+  height: 100%;
+}
+
 .onpage-toc nav {
   display: grid;
   gap: 6px;
@@ -836,15 +868,16 @@ select {
   text-decoration: none;
   font-size: 12.5px;
   display: block;
-  padding: 6px 10px;
+  padding: 5px 10px 5px 12px;
   border-radius: 8px;
+  border-left: 2px solid transparent;
 }
 
 .onpage-toc a.active {
   color: var(--color-text);
   font-weight: 700;
-  background: color-mix(in srgb, var(--color-primary) 18%, transparent);
-  border-left: 0;
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  border-left-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
 }
 
 .doc-body p,
@@ -903,22 +936,6 @@ select {
 
 .doc-select select {
   min-width: 190px;
-}
-
-.doc-status {
-  padding: 6px 9px;
-  border-radius: 9px;
-  font-weight: 700;
-  border: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-muted) 15%, transparent);
-  color: var(--color-text);
-  font-size: 13px;
-}
-
-.doc-status[data-state="draft"],
-.doc-status[data-state="coming"] {
-  color: var(--color-muted);
-  background: color-mix(in srgb, var(--color-border) 30%, transparent);
 }
 
 .callout {
@@ -1208,6 +1225,15 @@ select {
 }
 
 @media (max-width: 960px) {
+  .page.doc-shell {
+    overflow: auto;
+  }
+
+  .page.doc-shell .layout.doc-page {
+    height: auto;
+    overflow: visible;
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }
