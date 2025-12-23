@@ -929,18 +929,18 @@ const INLINE_THEME_PRESETS = {
 const select = document.querySelector("#theme-select");
 const modeSelect = document.querySelector("#mode-select");
 const themeChip = document.querySelector("#theme-chip");
-const params = new URLSearchParams(window.location.search);
-const initial = params.get("theme");
-const savedMode = params.get("mode") || localStorage.getItem("wiki-color-mode") || "system";
-const savedTheme = initial || localStorage.getItem("wiki-theme");
+const savedMode = localStorage.getItem("wiki-color-mode") || "system";
+const savedTheme = localStorage.getItem("wiki-theme");
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
 let currentTheme = savedTheme || select?.value || "nordic-tech";
 if (!THEME_FILES[currentTheme]) {
   currentTheme = "nordic-tech";
 }
-let currentMode = savedMode;
+let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : "system";
 let currentTocObserver = null;
+
+persistMode(currentMode);
 
 if (select) {
   select.value = currentTheme;
@@ -955,14 +955,12 @@ select?.addEventListener("change", (event) => {
   currentTheme = theme;
   localStorage.setItem("wiki-theme", theme);
   applyThemeFromSource(theme, currentMode);
-  updateUrlParam("theme", theme);
 });
 
 modeSelect?.addEventListener("change", (event) => {
   const mode = event.target.value;
   currentMode = mode;
   persistMode(mode);
-  updateUrlParam("mode", mode);
   applyThemeFromSource(currentTheme, mode);
 });
 
@@ -976,12 +974,6 @@ mediaQuery.addEventListener("change", () => {
     applyThemeFromSource(currentTheme, currentMode);
   }
 });
-
-function updateUrlParam(key, value) {
-  const nextUrl = new URL(window.location.href);
-  nextUrl.searchParams.set(key, value);
-  window.history.replaceState({}, "", nextUrl.toString());
-}
 
 function persistMode(mode) {
   localStorage.setItem("wiki-color-mode", mode);
