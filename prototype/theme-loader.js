@@ -1,3 +1,7 @@
+const params = new URLSearchParams(window.location.search);
+const DEFAULT_THEME = "midnight-console";
+const DEFAULT_MODE = "dark";
+
 const THEME_FILES = {
   "nordic-tech": "data/nordic-tech.json",
   "solarized-playbook": "data/solarized-playbook.json",
@@ -929,15 +933,15 @@ const INLINE_THEME_PRESETS = {
 const select = document.querySelector("#theme-select");
 const modeSelect = document.querySelector("#mode-select");
 const themeChip = document.querySelector("#theme-chip");
-const savedMode = localStorage.getItem("wiki-color-mode") || "system";
-const savedTheme = localStorage.getItem("wiki-theme");
+const savedMode = localStorage.getItem("wiki-color-mode") || DEFAULT_MODE;
+const savedTheme = localStorage.getItem("wiki-theme") || DEFAULT_THEME;
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-let currentTheme = savedTheme || select?.value || "nordic-tech";
+let currentTheme = savedTheme || params.get("theme") || select?.value || DEFAULT_THEME;
 if (!THEME_FILES[currentTheme]) {
-  currentTheme = "nordic-tech";
+  currentTheme = DEFAULT_THEME;
 }
-let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : "system";
+let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : DEFAULT_MODE;
 let currentTocObserver = null;
 
 persistMode(currentMode);
