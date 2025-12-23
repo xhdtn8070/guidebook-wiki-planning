@@ -11,6 +11,10 @@
   --radius: 10px;
   --spacing: 12px;
   --topbar-height: 56px;
+  --doc-gutter: clamp(16px, 3vw, 28px);
+  --doc-gap: clamp(14px, 2vw, 22px);
+  --doc-left-width: 260px;
+  --doc-right-width: 150px;
   --hero-bg: linear-gradient(120deg, #dfe9ff 0%, #f5f7fb 100%);
   --hero-overlay-opacity: 0.4;
   --surface-strong: color-mix(in srgb, var(--color-surface) 88%, var(--color-background));
@@ -329,21 +333,24 @@ select {
 
 .page.doc-shell {
   min-height: 100vh;
-  display: grid;
-  grid-template-rows: auto auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .layout.doc-page {
-  grid-template-columns: 270px minmax(700px, 1fr) 190px;
-  align-items: start;
-  column-gap: clamp(16px, 2.8vw, 30px);
+  position: relative;
+  display: block;
   width: 100%;
-  margin: 0 auto;
   max-width: 1480px;
+  margin: 0 auto;
+  padding: 18px calc(var(--doc-right-width) + var(--doc-gap) + var(--doc-gutter))
+    32px calc(var(--doc-left-width) + var(--doc-gap) + var(--doc-gutter));
+  min-height: calc(100vh - var(--topbar-height));
 }
 
 .sidebar {
-  position: sticky;
+  position: fixed;
+  left: var(--doc-gutter);
   top: var(--topbar-height);
   background: var(--surface-strong);
   border: 1px solid var(--color-border);
@@ -353,10 +360,9 @@ select {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  align-self: flex-start;
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
-  min-width: 240px;
+  width: var(--doc-left-width);
 }
 
 .sidebar-scroll {
@@ -439,6 +445,9 @@ select {
 .doc-content {
   padding-right: 6px;
   align-content: start;
+  max-width: 940px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .hero {
@@ -783,14 +792,19 @@ select {
 }
 
 @media (max-width: 1240px) {
+  :root {
+    --doc-left-width: 240px;
+    --doc-right-width: 136px;
+  }
+
   .layout.doc-page {
-    grid-template-columns: minmax(230px, 280px) minmax(540px, 1fr) minmax(170px, 210px);
+    max-width: 1340px;
   }
 }
 
 @media (max-width: 1080px) {
   .layout.doc-page {
-    grid-template-columns: minmax(220px, 32vw) 1fr;
+    padding-right: var(--doc-gutter);
   }
 
   .onpage-toc {
@@ -824,36 +838,37 @@ select {
 }
 
 .onpage-toc {
-  position: sticky;
+  position: fixed;
+  right: var(--doc-gutter);
   top: var(--topbar-height);
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 8px 10px;
+  padding: 6px 8px;
   background: var(--surface-strong);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
-  min-width: 180px;
-  max-width: 200px;
+  width: var(--doc-right-width);
 }
 
 .onpage-toc nav {
   display: grid;
   gap: 2px;
   overflow: auto;
-  padding-right: 4px;
+  padding-right: 3px;
   flex: 1;
 }
 
 .onpage-toc a {
   color: var(--color-muted);
   text-decoration: none;
-  font-size: 11px;
+  font-size: 10px;
+  line-height: 1.25;
   display: block;
-  padding: 2px 8px 2px 9px;
+  padding: 2px 7px 2px 8px;
   border-radius: 6px;
   border-left: 1px solid transparent;
 }
@@ -1210,12 +1225,12 @@ select {
 }
 
 @media (max-width: 960px) {
-  .page.doc-shell {
-    overflow: auto;
+  .layout.doc-page {
+    padding: 14px var(--doc-gutter) 24px;
+    min-height: auto;
   }
 
-  .page.doc-shell .layout.doc-page {
-    height: auto;
+  .page.doc-shell {
     overflow: visible;
   }
 
@@ -1231,6 +1246,8 @@ select {
     position: static;
     top: auto;
     box-shadow: none;
+    width: auto;
+    height: auto;
   }
 }
 
