@@ -932,15 +932,15 @@ const themeChip = document.querySelector("#theme-chip");
 const params = new URLSearchParams(window.location.search);
 const initial = params.get("theme");
 const savedMode = params.get("mode") || localStorage.getItem("wiki-color-mode") || "system";
+const savedTheme = initial || localStorage.getItem("wiki-theme");
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-let currentTheme = select?.value || "nordic-tech";
+let currentTheme = savedTheme || select?.value || "nordic-tech";
+if (!THEME_FILES[currentTheme]) {
+  currentTheme = "nordic-tech";
+}
 let currentMode = savedMode;
 let currentTocObserver = null;
-
-if (initial && THEME_FILES[initial]) {
-  currentTheme = initial;
-}
 
 if (select) {
   select.value = currentTheme;
@@ -953,6 +953,7 @@ if (modeSelect) {
 select?.addEventListener("change", (event) => {
   const theme = event.target.value;
   currentTheme = theme;
+  localStorage.setItem("wiki-theme", theme);
   applyThemeFromSource(theme, currentMode);
   updateUrlParam("theme", theme);
 });
@@ -1026,6 +1027,7 @@ function applyTheme(theme, themeKey, modePreference = currentMode) {
 
   root.dataset.theme = themeKey;
   root.dataset.colorMode = effectiveMode;
+  localStorage.setItem("wiki-theme", themeKey);
 
   root.style.setProperty("--color-background", paletteSet.background || palette?.background);
   root.style.setProperty("--color-surface", paletteSet.surface || palette?.surface);
@@ -1050,22 +1052,34 @@ function applyTheme(theme, themeKey, modePreference = currentMode) {
   }
 }
 
+function softenSurfaceColor(base) {
+  if (!base) return null;
+  const normalized = base.trim();
+  if (normalized.includes("gradient")) return normalized;
+  return `color-mix(in srgb, ${normalized} 82%, var(--color-background))`;
+}
+
+function softenBorderColor(base) {
+  if (!base) return null;
+  return `color-mix(in srgb, ${base} 75%, transparent)`;
+}
+
 function applyComponentOverrides(components, heroTheme) {
   const topbar = document.querySelector(".topbar");
-  if (topbar && components.topBar) {
-    topbar.style.background = components.topBar.background;
-    topbar.style.borderColor = components.topBar.border;
+  if (topbar && components?.topBar) {
+    topbar.style.background = softenSurfaceColor(components.topBar.background) || "var(--surface-strong)";
+    topbar.style.borderColor = softenBorderColor(components.topBar.border) || "var(--color-border)";
   }
 
   const sidebar = document.querySelector(".sidebar");
-  if (sidebar && components.sidebar) {
-    sidebar.style.background = components.sidebar.background;
-    sidebar.style.borderColor = components.sidebar.border;
+  if (sidebar && components?.sidebar) {
+    sidebar.style.background = softenSurfaceColor(components.sidebar.background) || "var(--surface-strong)";
+    sidebar.style.borderColor = softenBorderColor(components.sidebar.border) || "var(--color-border)";
   }
 
   document.querySelectorAll(".card, .panel, .auth-card, .plugin-block").forEach((card) => {
-    card.style.background = components.card?.background;
-    card.style.borderColor = components.card?.border;
+    card.style.background = softenSurfaceColor(components?.card?.background) || "var(--surface-strong)";
+    card.style.borderColor = softenBorderColor(components?.card?.border) || "var(--color-border)";
   });
 
   document.querySelectorAll(".btn.primary").forEach((btn) => {
