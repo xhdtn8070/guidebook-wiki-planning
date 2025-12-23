@@ -1233,10 +1233,19 @@ function setupSearchPreview() {
 function setupNavDocsDropdown() {
   const menu = document.querySelector("#nav-doc-menu");
   const toggle = document.querySelector("#nav-docs .dropdown-toggle");
-  if (!menu || !toggle) return;
+  const dropdown = document.querySelector("#nav-docs");
+  if (!menu || !toggle || !dropdown) return;
 
   const renderItems = () => {
-    menu.innerHTML = DOC_GROUPS.map((group) => {
+    const hero = `
+      <div class="nav-menu-hero">
+        <p class="muted">Paper-inspired Docs</p>
+        <strong>Docs 바로가기</strong>
+        <span class="hero-note">그룹을 선택해 상세 페이지로 이동합니다.</span>
+      </div>
+    `;
+
+    const items = DOC_GROUPS.map((group) => {
       const state = group.status || "published";
       const stateLabel = state === "published" ? "바로가기" : "준비중";
       const targetDoc = fallbackDocForGroup(group.id);
@@ -1248,6 +1257,8 @@ function setupNavDocsDropdown() {
         <small class="muted">${group.description || "문서 그룹"}</small>
       </a>`;
     }).join("");
+
+    menu.innerHTML = `${hero}<div class="nav-menu-grid">${items}</div>`;
   };
 
   renderItems();
@@ -1255,6 +1266,7 @@ function setupNavDocsDropdown() {
   toggle.addEventListener("click", (e) => {
     e.preventDefault();
     const isOpen = menu.classList.toggle("active");
+    dropdown.classList.toggle("open", isOpen);
     toggle.setAttribute("aria-expanded", String(isOpen));
   });
 
@@ -1272,6 +1284,7 @@ function setupNavDocsDropdown() {
     if (typeof window.setDocGroup === "function") {
       event.preventDefault();
       menu.classList.remove("active");
+      dropdown.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
       window.setDocGroup(groupId);
     }

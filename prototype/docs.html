@@ -16,18 +16,20 @@
   <body>
     <div class="page">
       <header class="topbar">
-        <div class="brand">
+        <a class="brand" href="index.html" aria-label="Guidebook Wiki 홈으로 이동">
           <span class="brand-mark">G</span>
           <div class="brand-copy">
             <strong>Guidebook Wiki</strong>
             <span class="brand-sub">API 실전 플레이북</span>
           </div>
-        </div>
-        <div class="controls">
-          <nav class="primary-nav" aria-label="주요 내비게이션">
-            <a href="index.html" class="nav-link">메인</a>
+        </a>
+        <div class="topbar-center">
+          <nav class="primary-nav" aria-label="문서 바로가기">
             <div class="nav-dropdown" id="nav-docs">
-              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">Docs</button>
+              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                <span class="nav-label">Docs</span>
+                <span class="nav-caption">문서 그룹 빠른 이동</span>
+              </button>
               <div class="nav-menu" id="nav-doc-menu" aria-label="문서 선택"></div>
             </div>
           </nav>
@@ -35,6 +37,8 @@
             <input type="search" placeholder="문서 검색 /search" aria-label="문서 검색" />
             <button class="btn compact">⌘K</button>
           </div>
+        </div>
+        <div class="topbar-actions">
           <label class="theme-switcher" for="theme-select">
             <span>테넌트 테마</span>
             <select id="theme-select" aria-label="테넌트 테마 선택">
