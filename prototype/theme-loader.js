@@ -1285,9 +1285,8 @@ function setupNavDocsDropdown() {
 
 function setupDocExperience() {
   const groupSelect = document.querySelector("#doc-group-select");
-  const select = document.querySelector("#doc-select");
   const navList = document.querySelector("#doc-nav");
-  if (!select || !navList || !groupSelect) return;
+  if (!navList || !groupSelect) return;
 
   const initialGroupParam = params.get("group");
   const initialGroupId = DOC_GROUP_MAP.has(initialGroupParam) ? initialGroupParam : DOC_GROUPS[0]?.id;
@@ -1314,16 +1313,6 @@ function setupDocExperience() {
     navMap = new Map(navItems.map((item) => [item.docId, item]));
     fallbackDoc = fallbackDocForGroup(currentGroupId);
     groupSelect.value = currentGroupId;
-  };
-
-  const renderOptions = () => {
-    select.innerHTML = navItems
-      .map(
-        (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
-          item.isUsable ? "" : " · 준비중"
-        }</option>`
-      )
-      .join("");
   };
 
   const renderNavTree = (activeId) => {
@@ -1430,7 +1419,6 @@ function setupDocExperience() {
       DOCS.find((d) => d.id === fallbackDoc);
     if (!doc) return;
 
-    select.value = doc.id;
     renderNavTree(doc.id);
 
     const breadcrumb = document.querySelector("#breadcrumb");
@@ -1591,7 +1579,6 @@ function setupDocExperience() {
   const changeGroup = (groupId, options = {}) => {
     currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
     syncGroupState();
-    renderOptions();
     const targetDoc = options.docId && navMap.has(options.docId) ? options.docId : fallbackDoc;
     navigateToDoc(targetDoc, { push: options.push ?? true });
   };
@@ -1600,7 +1587,6 @@ function setupDocExperience() {
     const groupId = event.state?.group || params.get("group") || DOC_GROUPS[0]?.id;
     currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
     syncGroupState();
-    renderOptions();
     const docId = event.state?.doc || params.get("doc") || fallbackDoc;
     const storedScroll = event.state?.scroll ?? scrollPositions.get(docId) ?? 0;
     const hash = (event.state?.hash || window.location.hash.replace("#", "")) ?? "";
@@ -1611,7 +1597,6 @@ function setupDocExperience() {
   syncGroupState();
   const defaultDoc = navMap.has(defaultDocParam) ? defaultDocParam : fallbackDoc;
   currentDocId = defaultDoc;
-  renderOptions();
   window.history.replaceState(
     { group: currentGroupId, doc: defaultDoc, scroll: window.scrollY, hash: initialHash },
     "",
@@ -1624,11 +1609,6 @@ function setupDocExperience() {
   groupSelect.addEventListener("change", (event) => {
     const nextGroup = event.target.value;
     changeGroup(nextGroup, { push: true });
-  });
-
-  select.addEventListener("change", (event) => {
-    const value = event.target.value;
-    navigateToDoc(value, { push: true });
   });
 
   navList.addEventListener("click", (event) => {
