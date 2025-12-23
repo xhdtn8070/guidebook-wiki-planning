@@ -1239,14 +1239,14 @@ function setupNavDocsDropdown() {
   const renderItems = () => {
     const items = DOC_GROUPS.map((group) => {
       const state = group.status || "published";
-      const stateLabel = state === "published" ? "바로가기" : "준비중";
       const targetDoc = fallbackDocForGroup(group.id);
       return `<a href="docs.html?group=${group.id}&doc=${targetDoc}" class="nav-item" data-state="${state}" data-group="${
         group.id
       }">
         <div>${group.label}</div>
-        <span class="nav-pill">${stateLabel}</span>
-        <small class="muted">${group.description || "문서 그룹"}</small>
+        <small class="muted">${group.description || "문서 그룹"}${
+          state !== "published" ? " · 준비중" : ""
+        }</small>
       </a>`;
     }).join("");
 
