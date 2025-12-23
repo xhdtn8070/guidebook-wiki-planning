@@ -41,6 +41,8 @@ const DOCS = [
             <li>각 문서는 <code>GET /api/v1/wiki/pages?path=... </code>로 불러온다고 가정하고 MDX를 목업 데이터로 채워 두었습니다.</li>
             <li>우측 인페이지 TOC는 본문 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
           </ul>
+          <p>스크롤 테스트를 위해 본문을 길게 확보했습니다. 요약 섹션에서는 로그인 화면 → Docs 진입 → 특정 문서 이동까지의 흐름을 텍스트로 나열하고, 동일한 구조를 상·하단에 반복 배치해 스크롤 스파이가 보다 완만하게 전환되도록 했습니다.</p>
+          <p>테넌트별 브랜드 색상, 버튼 모양, 코드 블록 색 대비 또한 이 영역에서 미리 설명해 전체 UI 스토리와 연결감을 제공합니다.</p>
         `,
       },
       {
@@ -59,6 +61,8 @@ const DOCS = [
             <li>"실행 예시"와 같이 하위 문서도 같은 패턴으로 불러오며, 상단 드롭다운과 트리가 함께 활성 상태를 갱신합니다.</li>
             <li>"SDK 연동 (준비 중)"처럼 isUsable=false인 항목은 비활성 상태로 표시하고 토스트로 안내합니다.</li>
           </ol>
+          <p>실제 운영 환경에서는 QA → Stage → Prod 순으로 동일한 플로우를 검증합니다. 각 단계마다 <code>nav</code> 배열을 다시 받아와 캐시가 만료되었는지 확인하고, 스크롤 위치가 유지되는지 QA 시나리오에 포함합니다.</p>
+          <p>모바일 해상도에서는 좌측 트리를 접고 Docs 드롭다운에서 동일한 항목을 노출해, 스크롤 스파이와 토글이 동일하게 동작하는지 확인합니다.</p>
         `,
       },
       {
@@ -70,7 +74,9 @@ const DOCS = [
           <ul>
             <li>기존 트리와 비교할 수 있도록 JSON 스냅샷을 남깁니다.</li>
             <li>실패 시 복구를 빠르게 하기 위해 <code>restore_from_backup=true</code> 쿼리를 허용합니다.</li>
+            <li>목차/트리의 순서가 뒤바뀌지 않았는지 시각 테스트를 위해 캡처 이미지를 함께 저장합니다.</li>
           </ul>
+          <p>초기 QA에서는 긴 단락을 배치해 스크롤이 충분히 발생하도록 만들고, TOC 하이라이트가 여유 있게 전환되는지 확인합니다. 백업 섹션을 일부러 길게 만들어 내려갈 때와 올라갈 때 모두 자연스러운 상태 변화를 유도합니다.</p>
         `,
       },
       {
@@ -84,6 +90,7 @@ const DOCS = [
             <li>준비 중 플러그인은 회색 뱃지와 토스트로 안내합니다.</li>
             <li>실행 로그를 남겨 테스트 시나리오를 재검증합니다.</li>
           </ol>
+          <p>실패 시나리오와 재시도 동작을 길게 서술해 레이아웃이 충분히 확장되도록 했습니다. 로그 라인을 3~4개 쌓아두고, 각 로그가 스크롤에 영향을 주지 않도록 플렉스 기반 구조를 점검합니다.</p>
         `,
       },
       {
@@ -95,7 +102,9 @@ const DOCS = [
           <ul>
             <li>검색 키워드와 동일한 섹션 제목을 사용해 인쇄본과 웹 TOC를 나란히 맞춥니다.</li>
             <li>새로운 예제 코드는 색상을 줄이고 대비를 높여 인쇄 품질을 확보합니다.</li>
+            <li>PDF 내 북마크 순서와 웹 TOC 순서가 일치하는지 QA 체크리스트에 추가합니다.</li>
           </ul>
+          <p>문서 길이를 충분히 확보하기 위해 예시를 더해, 작은 단락에서도 스크롤 감지가 여유 있게 동작하도록 했습니다. 아래에 FAQ로 이어지기 전에 여백과 간격을 넉넉히 두어 자연스러운 연결을 제공합니다.</p>
         `,
       },
       {
@@ -108,7 +117,9 @@ const DOCS = [
             <li><strong>TOC 동기화 지연</strong>: IntersectionObserver의 threshold를 0.25로 조정합니다.</li>
             <li><strong>트리 하이라이트 손실</strong>: 현재 문서 ID를 history state와 로컬스토리지에 중복 저장합니다.</li>
             <li><strong>플러그인 미노출</strong>: <code>pluginNav</code> 배열에 state 필드를 추가해 준비중 상태를 구분합니다.</li>
+            <li><strong>스크롤 히스테리시스</strong>: 내려갈 때는 섹션 시작점을 만나면 즉시, 올라갈 때는 절반 지점에서 전환해 깜빡임을 줄입니다.</li>
           </ul>
+          <p>FAQ 또한 두세 단락으로 확장해, 스크롤 여유를 확보하고 TOC가 특정 섹션에서 오래 머무를 수 있게 조정했습니다. 이로써 섹션 간 전환 범위가 넉넉해져 사용자가 ‘점멸’처럼 느끼는 문제를 완화합니다.</p>
         `,
       },
     ],
@@ -194,7 +205,9 @@ const DOCS = [
         type: "section",
         id: "payload-guard",
         title: "유효성 검증",
-        body: `<p>요청 본문에는 <code>tenantId</code>, <code>requestId</code>를 포함하고 길이 제한(64KB)을 초과하면 422로 반환합니다.</p>`
+        body: `<p>요청 본문에는 <code>tenantId</code>, <code>requestId</code>를 포함하고 길이 제한(64KB)을 초과하면 422로 반환합니다.</p>
+        <p>샘플 플러그인에서는 필드 누락, JSON 파싱 오류, 타입 불일치, 지나치게 깊은 객체 구조까지 다양한 검증 케이스를 준비해 두었습니다. 각 케이스마다 오류 메시지를 명시하고, UI에서는 해당 필드를 붉은색으로 강조합니다.</p>
+        <p>추가로, Admin 토글을 켠 상태에서는 요청 페이로드를 그대로 로그에 남기지 않고, 민감 정보를 마스킹한 후 저장하도록 설정했습니다.</p>`
       },
       {
         type: "plugin",
@@ -204,7 +217,9 @@ const DOCS = [
         type: "section",
         id: "logging",
         title: "로깅",
-        body: `<p>실행 로그는 Kinesis에 적재하며 <code>event=wiki.action_block</code> 태그를 붙여 필터링합니다. 실패 시 재시도 큐를 별도로 둡니다.</p>`,
+        body: `<p>실행 로그는 Kinesis에 적재하며 <code>event=wiki.action_block</code> 태그를 붙여 필터링합니다. 실패 시 재시도 큐를 별도로 둡니다.</p>
+        <p>로그 구조는 <code>{ timestamp, tenantId, requestId, latencyMs, status, errorCode }</code> 형태로 고정해 대시보드 연동 시 필드 누락이 없도록 했습니다. 실패 로그는 즉시 슬랙 알림과 함께 저장해 재시도 현황을 한 번에 볼 수 있습니다.</p>
+        <p>문서가 길어질수록 TOC 동작이 안정적이므로, 로깅 섹션에도 예시 로그 2~3줄을 추가해 스크롤 여유를 확보했습니다.</p>`,
       },
       {
         type: "list",
@@ -290,19 +305,22 @@ const DOCS = [
         type: "section",
         id: "rollout",
         title: "롤아웃 절차",
-        body: `<p>릴리스 노트와 액션 블록이 함께 배포되도록 <code>releaseId</code>를 공통으로 사용합니다. 단계별 진행률은 좌측 트리와 TOC에 동시에 반영됩니다.</p>`,
+        body: `<p>릴리스 노트와 액션 블록이 함께 배포되도록 <code>releaseId</code>를 공통으로 사용합니다. 단계별 진행률은 좌측 트리와 TOC에 동시에 반영됩니다.</p>
+        <p>QA와 Stage에서는 기능 플래그를 켠 상태로 문서를 길게 읽어 내려가며 TOC 하이라이트가 자연스럽게 이동하는지 확인합니다. 각 단계마다 스크린샷을 남겨 최종 릴리스 전에 다시 비교합니다.</p>`,
       },
       {
         type: "section",
         id: "fallback",
         title: "롤백 경로",
-        body: `<ul><li>S3에 백업된 nav 스냅샷으로 1분 내 트리를 복구합니다.</li><li>액션 블록 플래그(<code>feature/wiki-ab</code>)를 내려 긴급 차단합니다.</li><li>검색 인덱스는 롤백 대상 빌드로 재배포합니다.</li></ul>`,
+        body: `<ul><li>S3에 백업된 nav 스냅샷으로 1분 내 트리를 복구합니다.</li><li>액션 블록 플래그(<code>feature/wiki-ab</code>)를 내려 긴급 차단합니다.</li><li>검색 인덱스는 롤백 대상 빌드로 재배포합니다.</li></ul>
+        <p>문서가 길어도 롤백 경로를 바로 확인할 수 있도록 각 단계에 대한 짧은 메모를 추가했습니다. 스크롤 여유가 충분히 생겨 TOC 전환이 한 템포 늦게 일어나더라도 어색하지 않게 보입니다.</p>`,
       },
       {
         type: "section",
         id: "postcheck",
         title: "사후 점검",
-        body: `<p>릴리스 후 30분 동안은 On-call이 TOC 하이라이트, 트리 이동, 플러그인 실행 로그를 순차적으로 확인합니다.</p>`,
+        body: `<p>릴리스 후 30분 동안은 On-call이 TOC 하이라이트, 트리 이동, 플러그인 실행 로그를 순차적으로 확인합니다.</p>
+        <p>스크롤 방향을 번갈아 바꿔가며 테스트하고, 올라갈 때는 절반 지점을 지나야 활성화가 바뀌는지 QA 체크리스트에 포함했습니다.</p>`,
       },
       {
         type: "list",
@@ -1498,6 +1516,7 @@ function setupDocExperience() {
       const target = document.getElementById(targetId);
       if (target) {
         window.history.replaceState(window.history.state, "", `${window.location.pathname}?${params.toString()}#${targetId}`);
+        setActive(targetId);
         target.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
@@ -1506,6 +1525,16 @@ function setupDocExperience() {
     const sections = doc.nav
       .map((item) => document.getElementById(item.id))
       .filter(Boolean);
+
+    let sectionMeta = [];
+
+    const recalcSectionMeta = () => {
+      sectionMeta = sections.map((section) => ({
+        id: section.id,
+        top: section.offsetTop,
+        height: section.offsetHeight || 1,
+      }));
+    };
 
     const setActive = (id) => {
       tocLinks.forEach((link) => {
@@ -1517,32 +1546,34 @@ function setupDocExperience() {
       const direction = window.scrollY >= lastScrollY ? "down" : "up";
       lastScrollY = window.scrollY;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const triggerLine = direction === "down" ? viewportHeight * 0.1 : viewportHeight * 0.5;
+      const probeLine =
+        direction === "down"
+          ? window.scrollY + viewportHeight * 0.18
+          : window.scrollY + viewportHeight * 0.55;
 
-      let activeId = null;
+      let activeId = sectionMeta[0]?.id || null;
 
       if (direction === "down") {
-        sections.forEach((section) => {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= triggerLine) {
+        sectionMeta.forEach((section) => {
+          if (probeLine >= section.top) {
             activeId = section.id;
           }
         });
       } else {
-        for (const section of sections) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= triggerLine && rect.bottom >= triggerLine) {
+        for (const section of sectionMeta) {
+          const end = section.top + section.height;
+          if (probeLine >= section.top && probeLine <= end) {
             activeId = section.id;
             break;
           }
-          if (rect.top <= triggerLine) {
+          if (probeLine > end) {
             activeId = section.id;
           }
         }
       }
 
-      if (!activeId && sections.length) {
-        activeId = sections[0].id;
+      if (!activeId && sectionMeta.length) {
+        activeId = sectionMeta[0].id;
       }
 
       setActive(activeId);
@@ -1556,14 +1587,18 @@ function setupDocExperience() {
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", recalcSectionMeta, { passive: true });
     tocScrollCleanup = () => {
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", recalcSectionMeta);
       if (tocRafId) {
         cancelAnimationFrame(tocRafId);
         tocRafId = null;
       }
     };
 
+    recalcSectionMeta();
+    requestAnimationFrame(recalcSectionMeta);
     updateTocActive();
   };
 
