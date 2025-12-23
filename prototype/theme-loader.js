@@ -1524,16 +1524,13 @@ function setupDocExperience() {
     const tocLinks = toc.querySelectorAll("a");
     const sections = doc.nav
       .map((item) => document.getElementById(item.id))
-      .filter(Boolean);
+      .filter(Boolean)
+      .map((el) => ({ id: el.id, el }));
 
-    let sectionMeta = [];
-
-    const recalcSectionMeta = () => {
-      sectionMeta = sections.map((section) => ({
-        id: section.id,
-        top: section.offsetTop,
-        height: section.offsetHeight || 1,
-      }));
+    const getTopbarHeight = () => {
+      const raw = getComputedStyle(document.documentElement).getPropertyValue("--topbar-height");
+      const parsed = parseFloat(raw);
+      return Number.isFinite(parsed) ? parsed : 0;
     };
 
     const setActive = (id) => {
@@ -1546,34 +1543,29 @@ function setupDocExperience() {
       const direction = window.scrollY >= lastScrollY ? "down" : "up";
       lastScrollY = window.scrollY;
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const probeLine =
-        direction === "down"
-          ? window.scrollY + viewportHeight * 0.9
-          : window.scrollY + viewportHeight * 0.6;
+      const topbarOffset = getTopbarHeight();
+      const probeRatio = direction === "down" ? 0.9 : 0.6;
+      const availableHeight = Math.max(viewportHeight - topbarOffset, viewportHeight * 0.5);
+      const probeLine = topbarOffset + availableHeight * probeRatio;
 
-      let activeId = sectionMeta[0]?.id || null;
+      let activeId = sections[0]?.id || null;
 
       if (direction === "down") {
-        sectionMeta.forEach((section) => {
-          if (probeLine >= section.top) {
+        sections.forEach((section) => {
+          const top = section.el.getBoundingClientRect().top;
+          if (top <= probeLine) {
             activeId = section.id;
           }
         });
       } else {
-        for (const section of sectionMeta) {
-          const end = section.top + section.height;
-          if (probeLine >= section.top && probeLine <= end) {
+        for (const section of sections) {
+          const rect = section.el.getBoundingClientRect();
+          if (rect.bottom >= probeLine) {
             activeId = section.id;
             break;
           }
-          if (probeLine > end) {
-            activeId = section.id;
-          }
+          activeId = section.id;
         }
-      }
-
-      if (!activeId && sectionMeta.length) {
-        activeId = sectionMeta[0].id;
       }
 
       setActive(activeId);
@@ -1587,18 +1579,14 @@ function setupDocExperience() {
     };
 
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", recalcSectionMeta, { passive: true });
     tocScrollCleanup = () => {
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", recalcSectionMeta);
       if (tocRafId) {
         cancelAnimationFrame(tocRafId);
         tocRafId = null;
       }
     };
 
-    recalcSectionMeta();
-    requestAnimationFrame(recalcSectionMeta);
     updateTocActive();
   };
 
