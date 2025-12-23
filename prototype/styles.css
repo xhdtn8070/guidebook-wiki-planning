@@ -33,6 +33,10 @@ body {
   letter-spacing: -0.01em;
 }
 
+body.doc-page-body {
+  overflow: hidden;
+}
+
 h1,
 h2,
 h3,
@@ -322,9 +326,12 @@ select {
   margin: 0 auto;
 }
 
+
 .page.doc-shell {
   height: 100vh;
   overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr;
 }
 
 .page.doc-shell .layout.doc-page {
@@ -332,7 +339,7 @@ select {
   min-height: 0;
   overflow: hidden;
   align-items: stretch;
-  height: auto;
+  height: 100%;
 }
 
 .page.doc-shell .layout.doc-page > * {
@@ -340,7 +347,7 @@ select {
 }
 
 .layout.doc-page {
-  grid-template-columns: 280px minmax(700px, 1fr) 260px;
+  grid-template-columns: 270px minmax(700px, 1fr) 210px;
   align-items: start;
   column-gap: clamp(16px, 2.8vw, 30px);
   width: 100%;
@@ -445,6 +452,7 @@ select {
 .content {
   display: grid;
   gap: 16px;
+  height: 100%;
 }
 
 .doc-content {
@@ -797,7 +805,7 @@ select {
 
 @media (max-width: 1240px) {
   .layout.doc-page {
-    grid-template-columns: minmax(240px, 300px) minmax(560px, 1fr) minmax(220px, 280px);
+    grid-template-columns: minmax(230px, 280px) minmax(540px, 1fr) minmax(190px, 240px);
   }
 }
 
@@ -842,14 +850,15 @@ select {
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 12px 14px;
+  padding: 10px 12px;
   background: var(--surface-strong);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
-  min-width: 230px;
+  min-width: 200px;
+  max-width: 220px;
 }
 
 .doc-shell .onpage-toc {
@@ -859,7 +868,7 @@ select {
 
 .onpage-toc nav {
   display: grid;
-  gap: 6px;
+  gap: 4px;
   overflow: auto;
   padding-right: 4px;
   flex: 1;
@@ -868,11 +877,11 @@ select {
 .onpage-toc a {
   color: var(--color-muted);
   text-decoration: none;
-  font-size: 12.5px;
+  font-size: 12px;
   display: block;
-  padding: 3px 10px 3px 12px;
-  border-radius: 8px;
-  border-left: 2px solid transparent;
+  padding: 2px 9px 2px 10px;
+  border-radius: 7px;
+  border-left: 1px solid transparent;
 }
 
 .onpage-toc a.active {
