@@ -1548,8 +1548,8 @@ function setupDocExperience() {
       const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
       const probeLine =
         direction === "down"
-          ? window.scrollY + viewportHeight * 0.18
-          : window.scrollY + viewportHeight * 0.55;
+          ? window.scrollY + viewportHeight * 0.9
+          : window.scrollY + viewportHeight * 0.6;
 
       let activeId = sectionMeta[0]?.id || null;
 

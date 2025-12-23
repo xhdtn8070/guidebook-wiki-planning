@@ -739,8 +739,9 @@ select {
   color: var(--color-muted);
 }
 
+
 .doc-content {
-  gap: 12px;
+  gap: 14px;
 }
 
 .doc-header {
@@ -765,7 +766,7 @@ select {
 
 .doc-body {
   display: grid;
-  gap: 10px;
+  gap: 14px;
   max-width: 820px;
   width: 100%;
   margin: 0 auto;
@@ -882,10 +883,22 @@ select {
   border-left-color: color-mix(in srgb, var(--color-primary) 55%, transparent);
 }
 
+
 .doc-body p,
 .doc-body ul,
 .doc-body ol {
-  margin: 0;
+  margin: 0 0 12px;
+}
+
+.doc-body p:last-child,
+.doc-body ul:last-child,
+.doc-body ol:last-child {
+  margin-bottom: 0;
+}
+
+.doc-body .section-card > * + *,
+.doc-body .plugin-block > * + * {
+  margin-top: 8px;
 }
 
 .doc-body h2,
