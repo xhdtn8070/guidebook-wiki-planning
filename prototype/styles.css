@@ -849,26 +849,28 @@ select {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  height: calc(100vh - var(--topbar-height));
-  overflow: hidden;
   width: var(--doc-right-width);
+  max-height: calc(100vh - var(--topbar-height) - 10px);
+  height: auto;
+  overflow: hidden;
 }
 
 .onpage-toc nav {
   display: grid;
-  gap: 2px;
+  gap: 1px;
   overflow: auto;
   padding-right: 3px;
   flex: 1;
+  max-height: inherit;
 }
 
 .onpage-toc a {
   color: var(--color-muted);
   text-decoration: none;
   font-size: 10px;
-  line-height: 1.25;
+  line-height: 1.2;
   display: block;
-  padding: 2px 7px 2px 8px;
+  padding: 2px 6px 2px 7px;
   border-radius: 6px;
   border-left: 1px solid transparent;
 }

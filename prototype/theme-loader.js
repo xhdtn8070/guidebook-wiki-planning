@@ -1501,16 +1501,22 @@ function setupDocExperience() {
 
     currentTocObserver = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          const link = toc.querySelector(`a[data-target="${entry.target.id}"]`);
-          if (!link) return;
-          if (entry.isIntersecting) {
-            toc.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
+        const tocLinks = toc.querySelectorAll("a");
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+
+        tocLinks.forEach((a) => a.classList.remove("active"));
+
+        const topVisible = visible[0];
+        if (topVisible) {
+          const link = toc.querySelector(`a[data-target="${topVisible.target.id}"]`);
+          if (link) {
             link.classList.add("active");
           }
-        });
+        }
       },
-      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 1] }
+      { rootMargin: "-32% 0px -52% 0px", threshold: [0, 0.35, 0.65] }
     );
 
     doc.nav.forEach((item) => {
