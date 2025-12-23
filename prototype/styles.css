@@ -323,14 +323,16 @@ select {
 }
 
 .page.doc-shell {
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
 }
 
 .page.doc-shell .layout.doc-page {
-  height: calc(100vh - var(--topbar-height));
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
   align-items: stretch;
+  height: auto;
 }
 
 .page.doc-shell .layout.doc-page > * {
@@ -868,7 +870,7 @@ select {
   text-decoration: none;
   font-size: 12.5px;
   display: block;
-  padding: 5px 10px 5px 12px;
+  padding: 3px 10px 3px 12px;
   border-radius: 8px;
   border-left: 2px solid transparent;
 }
