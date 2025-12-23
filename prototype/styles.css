@@ -14,7 +14,7 @@
   --doc-gutter: clamp(16px, 3vw, 28px);
   --doc-gap: clamp(14px, 2vw, 22px);
   --doc-left-width: 260px;
-  --doc-right-width: 150px;
+  --doc-right-width: 128px;
   --hero-bg: linear-gradient(120deg, #dfe9ff 0%, #f5f7fb 100%);
   --hero-overlay-opacity: 0.4;
   --surface-strong: color-mix(in srgb, var(--color-surface) 88%, var(--color-background));
@@ -844,11 +844,11 @@ select {
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 6px 8px;
+  padding: 6px 7px;
   background: var(--surface-strong);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 3px;
   width: var(--doc-right-width);
   max-height: calc(100vh - var(--topbar-height) - 10px);
   height: auto;
@@ -857,20 +857,20 @@ select {
 
 .onpage-toc nav {
   display: grid;
-  gap: 1px;
+  gap: 0;
   overflow: auto;
-  padding-right: 3px;
-  flex: 1;
-  max-height: inherit;
+  padding-right: 2px;
+  flex: 0 0 auto;
+  max-height: none;
 }
 
 .onpage-toc a {
   color: var(--color-muted);
   text-decoration: none;
   font-size: 10px;
-  line-height: 1.2;
+  line-height: 1.1;
   display: block;
-  padding: 2px 6px 2px 7px;
+  padding: 2px 5px 2px 6px;
   border-radius: 6px;
   border-left: 1px solid transparent;
 }

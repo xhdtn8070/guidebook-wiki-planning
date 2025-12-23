@@ -1058,7 +1058,9 @@ if (!THEME_FILES[currentTheme]) {
   currentTheme = DEFAULT_THEME;
 }
 let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : DEFAULT_MODE;
-let currentTocObserver = null;
+let tocScrollCleanup = null;
+let tocRafId = null;
+let lastScrollY = window.scrollY;
 
 persistMode(currentMode);
 
@@ -1474,6 +1476,11 @@ function setupDocExperience() {
     const toc = document.querySelector("#onpage-toc");
     if (!toc) return;
 
+    if (tocScrollCleanup) {
+      tocScrollCleanup();
+      tocScrollCleanup = null;
+    }
+
     if (!doc.nav?.length) {
       toc.innerHTML = '<p class="muted">표시할 목차가 없습니다.</p>';
       return;
@@ -1495,36 +1502,69 @@ function setupDocExperience() {
       }
     };
 
-    if (currentTocObserver) {
-      currentTocObserver.disconnect();
-    }
+    const tocLinks = toc.querySelectorAll("a");
+    const sections = doc.nav
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean);
 
-    currentTocObserver = new IntersectionObserver(
-      (entries) => {
-        const tocLinks = toc.querySelectorAll("a");
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.target.getBoundingClientRect().top - b.target.getBoundingClientRect().top);
+    const setActive = (id) => {
+      tocLinks.forEach((link) => {
+        link.classList.toggle("active", link.dataset.target === id);
+      });
+    };
 
-        tocLinks.forEach((a) => a.classList.remove("active"));
+    const updateTocActive = () => {
+      const direction = window.scrollY >= lastScrollY ? "down" : "up";
+      lastScrollY = window.scrollY;
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const triggerLine = direction === "down" ? viewportHeight * 0.1 : viewportHeight * 0.5;
 
-        const topVisible = visible[0];
-        if (topVisible) {
-          const link = toc.querySelector(`a[data-target="${topVisible.target.id}"]`);
-          if (link) {
-            link.classList.add("active");
+      let activeId = null;
+
+      if (direction === "down") {
+        sections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= triggerLine) {
+            activeId = section.id;
+          }
+        });
+      } else {
+        for (const section of sections) {
+          const rect = section.getBoundingClientRect();
+          if (rect.top <= triggerLine && rect.bottom >= triggerLine) {
+            activeId = section.id;
+            break;
+          }
+          if (rect.top <= triggerLine) {
+            activeId = section.id;
           }
         }
-      },
-      { rootMargin: "-32% 0px -52% 0px", threshold: [0, 0.35, 0.65] }
-    );
-
-    doc.nav.forEach((item) => {
-      const section = document.getElementById(item.id);
-      if (section) {
-        currentTocObserver.observe(section);
       }
-    });
+
+      if (!activeId && sections.length) {
+        activeId = sections[0].id;
+      }
+
+      setActive(activeId);
+    };
+
+    const onScroll = () => {
+      if (tocRafId) {
+        cancelAnimationFrame(tocRafId);
+      }
+      tocRafId = requestAnimationFrame(updateTocActive);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    tocScrollCleanup = () => {
+      window.removeEventListener("scroll", onScroll);
+      if (tocRafId) {
+        cancelAnimationFrame(tocRafId);
+        tocRafId = null;
+      }
+    };
+
+    updateTocActive();
   };
 
   const renderDoc = (docId, options = {}) => {
