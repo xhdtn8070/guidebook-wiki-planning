@@ -150,10 +150,7 @@ pre,
   display: inline-flex;
   align-items: stretch;
   gap: 6px;
-  padding: 5px 8px;
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
-  background: color-mix(in srgb, var(--color-background) 65%, var(--color-surface));
+  padding: 0;
   min-width: 200px;
 }
 
@@ -346,15 +343,17 @@ select {
 }
 
 .layout.doc-page {
-  grid-template-columns: minmax(240px, 320px) minmax(680px, 1fr) minmax(220px, 320px);
+  grid-template-columns: 280px minmax(640px, 1fr) 260px;
   align-items: start;
-  column-gap: clamp(14px, 2.6vw, 26px);
+  column-gap: clamp(14px, 2.4vw, 26px);
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   max-width: none;
 }
 
 .sidebar {
+  position: sticky;
+  top: calc(var(--topbar-height) + 12px);
   background: var(--surface-strong);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -363,6 +362,8 @@ select {
   display: grid;
   gap: 12px;
   align-self: flex-start;
+  max-height: calc(100vh - var(--topbar-height) - 28px);
+  overflow: auto;
 }
 
 .sidebar-title {
@@ -868,6 +869,21 @@ select {
   border-radius: var(--radius);
   background: color-mix(in srgb, var(--color-background) 60%, var(--color-surface));
   flex-wrap: wrap;
+}
+
+.sidebar .doc-switcher {
+  position: sticky;
+  top: 0;
+  background: var(--surface-strong);
+  border-color: color-mix(in srgb, var(--color-border) 80%, transparent);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+  z-index: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.sidebar .doc-switcher .doc-select {
+  width: 100%;
 }
 
 .doc-select label {
