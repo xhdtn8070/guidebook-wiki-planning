@@ -34,7 +34,7 @@ body {
 }
 
 body.doc-page-body {
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 h1,
@@ -328,26 +328,13 @@ select {
 
 
 .page.doc-shell {
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
   display: grid;
-  grid-template-rows: auto 1fr;
-}
-
-.page.doc-shell .layout.doc-page {
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  align-items: stretch;
-  height: 100%;
-}
-
-.page.doc-shell .layout.doc-page > * {
-  min-height: 0;
+  grid-template-rows: auto auto;
 }
 
 .layout.doc-page {
-  grid-template-columns: 270px minmax(700px, 1fr) 210px;
+  grid-template-columns: 270px minmax(700px, 1fr) 190px;
   align-items: start;
   column-gap: clamp(16px, 2.8vw, 30px);
   width: 100%;
@@ -370,11 +357,6 @@ select {
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
   min-width: 240px;
-}
-
-.doc-shell .sidebar {
-  top: 0;
-  height: 100%;
 }
 
 .sidebar-scroll {
@@ -452,12 +434,9 @@ select {
 .content {
   display: grid;
   gap: 16px;
-  height: 100%;
 }
 
 .doc-content {
-  height: 100%;
-  overflow: auto;
   padding-right: 6px;
   align-content: start;
 }
@@ -805,7 +784,7 @@ select {
 
 @media (max-width: 1240px) {
   .layout.doc-page {
-    grid-template-columns: minmax(230px, 280px) minmax(540px, 1fr) minmax(190px, 240px);
+    grid-template-columns: minmax(230px, 280px) minmax(540px, 1fr) minmax(170px, 210px);
   }
 }
 
@@ -850,25 +829,20 @@ select {
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  padding: 10px 12px;
+  padding: 8px 10px;
   background: var(--surface-strong);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   height: calc(100vh - var(--topbar-height));
   overflow: hidden;
-  min-width: 200px;
-  max-width: 220px;
-}
-
-.doc-shell .onpage-toc {
-  top: 0;
-  height: 100%;
+  min-width: 180px;
+  max-width: 200px;
 }
 
 .onpage-toc nav {
   display: grid;
-  gap: 4px;
+  gap: 2px;
   overflow: auto;
   padding-right: 4px;
   flex: 1;
@@ -877,10 +851,10 @@ select {
 .onpage-toc a {
   color: var(--color-muted);
   text-decoration: none;
-  font-size: 12px;
+  font-size: 11px;
   display: block;
-  padding: 2px 9px 2px 10px;
-  border-radius: 7px;
+  padding: 2px 8px 2px 9px;
+  border-radius: 6px;
   border-left: 1px solid transparent;
 }
 
