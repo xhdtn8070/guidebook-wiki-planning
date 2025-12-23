@@ -1237,14 +1237,6 @@ function setupNavDocsDropdown() {
   if (!menu || !toggle || !dropdown) return;
 
   const renderItems = () => {
-    const hero = `
-      <div class="nav-menu-hero">
-        <p class="muted">Paper-inspired Docs</p>
-        <strong>Docs 바로가기</strong>
-        <span class="hero-note">그룹을 선택해 상세 페이지로 이동합니다.</span>
-      </div>
-    `;
-
     const items = DOC_GROUPS.map((group) => {
       const state = group.status || "published";
       const stateLabel = state === "published" ? "바로가기" : "준비중";
@@ -1258,7 +1250,7 @@ function setupNavDocsDropdown() {
       </a>`;
     }).join("");
 
-    menu.innerHTML = `${hero}<div class="nav-menu-grid">${items}</div>`;
+    menu.innerHTML = `<div class="nav-menu-grid">${items}</div>`;
   };
 
   renderItems();
