@@ -1625,18 +1625,13 @@ function setupDocExperience() {
   };
 
   const renderNavTree = (activeId) => {
-    const isNodeActive = (node, targetId) => {
-      if (node.docId === targetId) return true;
-      return node.children?.some((child) => isNodeActive(child, targetId)) || false;
-    };
-
     const renderNode = (node) => {
-      const nodeActive = isNodeActive(node, activeId);
+      const selfActive = node.docId === activeId;
       if (node.children?.length) {
         const selfItem = node.docId
-          ? `<div class="nav-group-label ${nodeActive ? "active" : ""}" data-doc="${node.docId}" role="button" tabindex="0">${node.label}</div>`
+          ? `<div class="nav-group-label ${selfActive ? "active" : ""}" data-doc="${node.docId}" role="button" tabindex="0">${node.label}</div>`
           : `<div class="nav-group-label inactive">${node.label}</div>`;
-        return `<li class="nav-group ${nodeActive ? "active" : ""} ${node.isUsable ? "" : "disabled"}">
+        return `<li class="nav-group ${node.isUsable ? "" : "disabled"}">
             ${selfItem}
             <ul>${node.children.map((child) => renderNode(child)).join("")}</ul>
           </li>`;

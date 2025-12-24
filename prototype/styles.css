@@ -12,7 +12,7 @@
   --spacing: 12px;
   --topbar-height: 56px;
   --doc-gutter: clamp(16px, 3vw, 28px);
-  --doc-gap: clamp(14px, 2vw, 22px);
+  --doc-gap: clamp(10px, 1.8vw, 16px);
   --doc-left-width: 226px;
   --doc-right-width: 128px;
   --hero-bg: linear-gradient(120deg, #dfe9ff 0%, #f5f7fb 100%);
@@ -343,8 +343,8 @@ select {
   width: 100%;
   max-width: 1480px;
   margin: 0 auto;
-  padding: 18px calc(var(--doc-right-width) + var(--doc-gap) + var(--doc-gutter))
-    32px calc(var(--doc-left-width) + var(--doc-gap) + var(--doc-gutter));
+  padding: 24px calc(var(--doc-right-width) + var(--doc-gap) + var(--doc-gutter))
+    32px calc(var(--doc-left-width) + (var(--doc-gap) * 0.6) + var(--doc-gutter));
   min-height: calc(100vh - var(--topbar-height));
 }
 
