@@ -332,6 +332,100 @@ const DOCS = [
     pager: { prev: "SDK 연동", next: "릴리스 노트" },
   },
   {
+    id: "page_3_advanced",
+    groupId: "api-guide",
+    title: "고급 설정",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 고급 설정",
+    lead: "API 콘솔에서 옵션과 코드 블록 구성을 세밀하게 조정하는 방법을 모았습니다.",
+    updated: "2024-06-18",
+    status: "published",
+    nav: [
+      { id: "options", label: "옵션 매핑" },
+      { id: "payload-tuning", label: "페이로드 튜닝" },
+      { id: "live-filters", label: "실시간 필터" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "options",
+        title: "옵션 매핑",
+        body: `<p>테넌트별 옵션 스키마를 JSON Schema로 선언하고 UI 렌더링에 재사용합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "payload-tuning",
+        title: "페이로드 튜닝",
+        body: `<p>프리셋/커스텀 페이로드를 나누고, 승인된 필드만 전파되도록 화이트리스트를 둡니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "live-filters",
+        title: "실시간 필터",
+        body: `<p>스트림 응답에서 특정 키를 필터링하거나 샘플링 비율을 적용하는 실시간 가드를 설명합니다.</p>`,
+      },
+    ],
+    pager: { prev: "릴리스 체크", next: "페이로드 튜닝" },
+  },
+  {
+    id: "page_3_advanced_tuning",
+    groupId: "api-guide",
+    title: "페이로드 튜닝",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 고급 설정 / 페이로드 튜닝",
+    lead: "플러그인 페이로드를 동적으로 조정하는 규칙과 시나리오를 예시로 제공합니다.",
+    updated: "2024-06-18",
+    status: "published",
+    nav: [
+      { id: "rules", label: "규칙" },
+      { id: "samples", label: "샘플" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "rules",
+        title: "규칙",
+        body: `<ul><li>필드 매핑 규칙을 선언적으로 관리</li><li>크기 제한과 타입 검증을 실행 전에 수행</li></ul>`,
+      },
+      {
+        type: "code",
+        id: "samples",
+        label: "샘플 규칙",
+        code: `{\n  "drop": ["payload.secret"],\n  "rename": { "payload.apiUrl": "payload.url" }\n}`,
+      },
+    ],
+    pager: { prev: "고급 설정", next: "실시간 필터" },
+  },
+  {
+    id: "page_3_advanced_live",
+    groupId: "api-guide",
+    title: "실시간 필터",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 고급 설정 / 페이로드 튜닝 / 실시간 필터",
+    lead: "실시간 응답 필터를 적용해 민감 데이터를 가리고 샘플링하는 흐름을 시연합니다.",
+    updated: "2024-06-18",
+    status: "published",
+    nav: [
+      { id: "guard", label: "민감도 가드" },
+      { id: "sampling", label: "샘플링" },
+    ],
+    pluginNav: [],
+    sections: [
+      {
+        type: "section",
+        id: "guard",
+        title: "민감도 가드",
+        body: `<p>스키마 기반으로 민감 필드를 탐지하고 마스킹 규칙을 적용합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "sampling",
+        title: "샘플링",
+        body: `<p>트래픽이 많을 때는 10%만 로그로 남기고, 실패 케이스는 100% 기록하도록 설정합니다.</p>`,
+      },
+    ],
+    pager: { prev: "페이로드 튜닝", next: "릴리스 체크" },
+  },
+  {
     id: "ops-release",
     groupId: "api-guide",
     title: "릴리스 노트",
@@ -569,6 +663,44 @@ const DOCS = [
     ],
     pager: { prev: "릴리스 플랜", next: "끝" },
   },
+  {
+    id: "ops-wrapup",
+    groupId: "api-guide",
+    title: "장애 랩업",
+    breadcrumb: "Docs / 운영 / 장애 랩업",
+    lead: "장애 종료 후 후속 조치와 공유 템플릿을 담았습니다.",
+    updated: "2024-06-16",
+    status: "published",
+    nav: [
+      { id: "postmortem", label: "포스트모템" },
+      { id: "followup", label: "후속 조치" },
+    ],
+    pluginNav: [],
+    sections: [
+      { type: "section", id: "postmortem", title: "포스트모템", body: `<p>근본 원인과 감지 시그널을 정리합니다.</p>` },
+      { type: "section", id: "followup", title: "후속 조치", body: `<p>액션 오너와 마감일을 지정해 추적합니다.</p>` },
+    ],
+    pager: { prev: "릴리스 체크리스트", next: "회고 템플릿" },
+  },
+  {
+    id: "ops-wrapup-template",
+    groupId: "api-guide",
+    title: "회고 템플릿",
+    breadcrumb: "Docs / 운영 / 장애 랩업 / 회고 템플릿",
+    lead: "장애 회고 문서를 빠르게 작성할 수 있는 템플릿입니다.",
+    updated: "2024-06-17",
+    status: "published",
+    nav: [
+      { id: "outline", label: "개요" },
+      { id: "questions", label: "질문" },
+    ],
+    pluginNav: [],
+    sections: [
+      { type: "section", id: "outline", title: "개요", body: `<p>타임라인, 영향도, 교훈을 구조화된 섹션으로 제공합니다.</p>` },
+      { type: "section", id: "questions", title: "질문", body: `<p>“무엇을 놓쳤는가?”, “다시 일어나지 않으려면?” 같은 공통 질문을 포함합니다.</p>` },
+    ],
+    pager: { prev: "장애 랩업", next: "API 용어집" },
+  },
 ];
 
 const DOC_MAP = new Map(DOCS.map((doc) => [doc.id, doc]));
@@ -592,6 +724,19 @@ const API_NAV_TREE = [
               { label: "실행 예시", docId: "page_3_1", isUsable: true },
               { label: "SDK 연동 (준비 중)", docId: "page_3_2", isUsable: false },
               { label: "릴리스 체크", docId: "page_4", isUsable: true },
+              {
+                label: "고급 설정",
+                docId: "page_3_advanced",
+                isUsable: true,
+                children: [
+                  {
+                    label: "페이로드 튜닝",
+                    docId: "page_3_advanced_tuning",
+                    isUsable: true,
+                    children: [{ label: "실시간 필터", docId: "page_3_advanced_live", isUsable: true }],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -604,6 +749,12 @@ const API_NAV_TREE = [
     children: [
       { label: "릴리스 노트", docId: "ops-release", isUsable: true },
       { label: "릴리스 체크리스트", docId: "ops-checklist", isUsable: false },
+      {
+        label: "장애 랩업",
+        docId: "ops-wrapup",
+        isUsable: true,
+        children: [{ label: "회고 템플릿", docId: "ops-wrapup-template", isUsable: true }],
+      },
     ],
   },
   {
@@ -1474,12 +1625,18 @@ function setupDocExperience() {
   };
 
   const renderNavTree = (activeId) => {
+    const isNodeActive = (node, targetId) => {
+      if (node.docId === targetId) return true;
+      return node.children?.some((child) => isNodeActive(child, targetId)) || false;
+    };
+
     const renderNode = (node) => {
+      const nodeActive = isNodeActive(node, activeId);
       if (node.children?.length) {
         const selfItem = node.docId
-          ? `<div class="nav-group-label" data-doc="${node.docId}" role="button" tabindex="0">${node.label}</div>`
+          ? `<div class="nav-group-label ${nodeActive ? "active" : ""}" data-doc="${node.docId}" role="button" tabindex="0">${node.label}</div>`
           : `<div class="nav-group-label inactive">${node.label}</div>`;
-        return `<li class="nav-group">
+        return `<li class="nav-group ${nodeActive ? "active" : ""} ${node.isUsable ? "" : "disabled"}">
             ${selfItem}
             <ul>${node.children.map((child) => renderNode(child)).join("")}</ul>
           </li>`;
@@ -1586,8 +1743,10 @@ function setupDocExperience() {
       });
     };
 
-    const docHeader = document.querySelector(".doc-header");
-    const headerBottom = docHeader ? docHeader.getBoundingClientRect().bottom + window.scrollY : 0;
+    const headerBottom = () => {
+      const docHeader = document.querySelector(".doc-header");
+      return docHeader ? docHeader.getBoundingClientRect().bottom + window.scrollY : 0;
+    };
 
     const updateTocActive = () => {
       const direction = window.scrollY >= lastScrollY ? "down" : "up";
@@ -1596,19 +1755,23 @@ function setupDocExperience() {
       const positions = measureSections();
       const probeLine = probeLineFor(direction);
 
-      if (probeLine < headerBottom) {
+      const headerLimit = headerBottom();
+
+      if (probeLine < headerLimit) {
         setActive(null);
         return;
       }
 
+      const relevantPositions = positions.filter((section) => section.bottom > headerLimit);
+
       const activeId =
-        positions.find((section) => section.top <= probeLine && probeLine < section.bottom)?.id ||
-        positions.reduce((currentId, section) => {
+        relevantPositions.find((section) => section.top <= probeLine && probeLine < section.bottom)?.id ||
+        relevantPositions.reduce((currentId, section) => {
           if (section.top <= probeLine) {
             return section.id;
           }
           return currentId;
-        }, positions[0]?.id || null);
+        }, relevantPositions[0]?.id || null);
 
       if (activeId) {
         setActive(activeId);
@@ -1837,6 +2000,20 @@ function setupDocExperience() {
   navList.addEventListener("click", (event) => {
     const item = event.target.closest("li[data-doc], .nav-group-label[data-doc]");
     if (!item) return;
+    const docId = item.dataset.doc;
+    const navEntry = navMap.get(docId);
+    if (navEntry?.isUsable === false) {
+      showToast("준비 중인 문서입니다. 곧 업데이트됩니다.");
+      return;
+    }
+    navigateToDoc(docId, { push: true });
+  });
+
+  navList.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const item = event.target.closest("li[data-doc], .nav-group-label[data-doc]");
+    if (!item) return;
+    event.preventDefault();
     const docId = item.dataset.doc;
     const navEntry = navMap.get(docId);
     if (navEntry?.isUsable === false) {

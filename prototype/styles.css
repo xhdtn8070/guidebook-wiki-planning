@@ -410,14 +410,15 @@ select {
 .sidebar li.nav-group {
   padding: 0;
   border-radius: 0;
-  cursor: default;
 }
 
 .sidebar .nav-group-label {
   font-weight: 700;
   color: var(--color-text);
-  cursor: default;
+  cursor: pointer;
   font-size: 13px;
+  padding: 6px 8px;
+  border-radius: 9px;
 }
 
 .sidebar li.active,
@@ -434,6 +435,18 @@ select {
   opacity: 0.5;
   cursor: not-allowed;
   background: color-mix(in srgb, var(--color-border) 30%, transparent);
+}
+
+.sidebar .nav-group-label.active,
+.sidebar .nav-group-label:hover,
+.sidebar .nav-group-label:focus-visible {
+  background: color-mix(in srgb, var(--color-primary) 12%, transparent);
+  outline: none;
+}
+
+.sidebar .nav-group-label.inactive {
+  cursor: default;
+  opacity: 0.65;
 }
 
 .content {
