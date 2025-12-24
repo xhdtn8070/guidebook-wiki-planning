@@ -1528,9 +1528,28 @@ function setupDocExperience() {
       .map((el) => ({ id: el.id, el }));
 
     const getTopbarHeight = () => {
+      const bar = document.querySelector(".topbar");
+      if (bar) return bar.getBoundingClientRect().height;
+
       const raw = getComputedStyle(document.documentElement).getPropertyValue("--topbar-height");
       const parsed = parseFloat(raw);
       return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    const measureSections = () =>
+      sections.map(({ id, el }) => {
+        const rect = el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        const bottom = rect.bottom + window.scrollY;
+        return { id, top, bottom };
+      });
+
+    const probeLineFor = (direction) => {
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const topbarOffset = getTopbarHeight();
+      const probeRatio = direction === "down" ? 0.9 : 0.6;
+      const availableHeight = Math.max(viewportHeight - topbarOffset, viewportHeight * 0.5);
+      return window.scrollY + topbarOffset + availableHeight * probeRatio;
     };
 
     const setActive = (id) => {
@@ -1542,33 +1561,20 @@ function setupDocExperience() {
     const updateTocActive = () => {
       const direction = window.scrollY >= lastScrollY ? "down" : "up";
       lastScrollY = window.scrollY;
-      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-      const topbarOffset = getTopbarHeight();
-      const probeRatio = direction === "down" ? 0.9 : 0.6;
-      const availableHeight = Math.max(viewportHeight - topbarOffset, viewportHeight * 0.5);
-      const probeLine = topbarOffset + availableHeight * probeRatio;
 
-      let activeId = sections[0]?.id || null;
+      const positions = measureSections();
+      const probeLine = probeLineFor(direction);
 
-      if (direction === "down") {
-        sections.forEach((section) => {
-          const top = section.el.getBoundingClientRect().top;
-          if (top <= probeLine) {
-            activeId = section.id;
-          }
-        });
-      } else {
-        for (const section of sections) {
-          const rect = section.el.getBoundingClientRect();
-          if (rect.bottom >= probeLine) {
-            activeId = section.id;
-            break;
-          }
-          activeId = section.id;
+      const activeId = positions.reduce((currentId, section) => {
+        if (section.top <= probeLine) {
+          return section.id;
         }
-      }
+        return currentId;
+      }, positions[0]?.id || null);
 
-      setActive(activeId);
+      if (activeId) {
+        setActive(activeId);
+      }
     };
 
     const onScroll = () => {
