@@ -1522,6 +1522,9 @@ function setupDocExperience() {
     };
 
     const tocLinks = toc.querySelectorAll("a");
+    // NOTE: 실제 서비스에서는 rehype-toc/remark-slug 같은 라이브러리로 헤더 앵커를 생성해
+    // MDX와 DOM 상태를 일치시키는 편이 좋습니다. 프로토타입에서는 목업 데이터 기준으로만
+    // 스파이를 계산합니다.
     const sections = doc.nav
       .map((item) => document.getElementById(item.id))
       .filter(Boolean)
@@ -1565,12 +1568,14 @@ function setupDocExperience() {
       const positions = measureSections();
       const probeLine = probeLineFor(direction);
 
-      const activeId = positions.reduce((currentId, section) => {
-        if (section.top <= probeLine) {
-          return section.id;
-        }
-        return currentId;
-      }, positions[0]?.id || null);
+      const activeId =
+        positions.find((section) => section.top <= probeLine && probeLine < section.bottom)?.id ||
+        positions.reduce((currentId, section) => {
+          if (section.top <= probeLine) {
+            return section.id;
+          }
+          return currentId;
+        }, positions[0]?.id || null);
 
       if (activeId) {
         setActive(activeId);
