@@ -946,7 +946,8 @@ select {
 }
 
 .doc-select select {
-  min-width: 190px;
+  width: 100%;
+  min-width: 0;
 }
 
 .callout {

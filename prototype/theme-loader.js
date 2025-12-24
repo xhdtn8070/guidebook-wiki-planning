@@ -1079,6 +1079,7 @@ let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : 
 let tocScrollCleanup = null;
 let tocRafId = null;
 let lastScrollY = window.scrollY;
+let topbarHeightRaf = null;
 
 persistMode(currentMode);
 
@@ -1182,6 +1183,8 @@ function applyTheme(theme, themeKey, modePreference = currentMode) {
   if (themeChip) {
     themeChip.textContent = `${theme.name || themeKey} · ${getModeLabel(modePreference)}`;
   }
+
+  syncTopbarHeight();
 }
 
 function softenSurfaceColor(base) {
@@ -1246,7 +1249,26 @@ function applyComponentOverrides(components, heroTheme) {
   }
 }
 
+function syncTopbarHeight() {
+  const topbar = document.querySelector(".topbar");
+  if (!topbar) return;
+  const height = topbar.getBoundingClientRect().height;
+  if (Number.isFinite(height)) {
+    document.documentElement.style.setProperty("--topbar-height", `${height}px`);
+  }
+}
+
+function watchTopbarHeight() {
+  const onResize = () => {
+    if (topbarHeightRaf) cancelAnimationFrame(topbarHeightRaf);
+    topbarHeightRaf = requestAnimationFrame(syncTopbarHeight);
+  };
+  window.addEventListener("resize", onResize, { passive: true });
+  syncTopbarHeight();
+}
+
 function wireInteractions() {
+  watchTopbarHeight();
   setupNavDocsDropdown();
   setupDocExperience();
   setupLoginLinks();
