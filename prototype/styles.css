@@ -11,6 +11,7 @@
   --radius: 10px;
   --spacing: 12px;
   --topbar-height: 56px;
+  --doc-top-gap: 12px;
   --doc-gutter: clamp(16px, 3vw, 28px);
   --doc-gap: clamp(10px, 1.8vw, 16px);
   --doc-left-width: 226px;
@@ -343,7 +344,7 @@ select {
   width: 100%;
   max-width: 1480px;
   margin: 0 auto;
-  padding: 24px calc(var(--doc-right-width) + var(--doc-gap) + var(--doc-gutter))
+  padding: calc(24px + var(--doc-top-gap)) calc(var(--doc-right-width) + var(--doc-gap) + var(--doc-gutter))
     32px calc(var(--doc-left-width) + (var(--doc-gap) * 0.6) + var(--doc-gutter));
   min-height: calc(100vh - var(--topbar-height));
 }
@@ -351,7 +352,7 @@ select {
 .sidebar {
   position: fixed;
   left: var(--doc-gutter);
-  top: var(--topbar-height);
+  top: calc(var(--topbar-height) + var(--doc-top-gap));
   background: var(--surface-strong);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
@@ -850,7 +851,7 @@ select {
 .onpage-toc {
   position: fixed;
   right: var(--doc-gutter);
-  top: var(--topbar-height);
+  top: calc(var(--topbar-height) + var(--doc-top-gap));
   align-self: start;
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
