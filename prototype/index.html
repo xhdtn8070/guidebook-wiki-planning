@@ -10,23 +10,26 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="page">
       <header class="topbar">
-        <div class="brand">
+        <a class="brand" href="index.html" aria-label="Guidebook Wiki 홈으로 이동">
           <span class="brand-mark">G</span>
           <div class="brand-copy">
             <strong>Guidebook Wiki</strong>
             <span class="brand-sub">API 실전 플레이북</span>
           </div>
-        </div>
-        <div class="controls">
-          <nav class="primary-nav" aria-label="주요 내비게이션">
-            <a href="index.html" class="nav-link active">메인</a>
+        </a>
+        <div class="topbar-center">
+          <nav class="primary-nav" aria-label="문서 바로가기">
             <div class="nav-dropdown" id="nav-docs">
-              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">Docs</button>
+              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                <span class="nav-label">Docs</span>
+                <span class="nav-caption">문서 그룹 빠른 이동</span>
+              </button>
               <div class="nav-menu" id="nav-doc-menu" aria-label="문서 선택"></div>
             </div>
           </nav>
@@ -34,12 +37,14 @@
             <input type="search" placeholder="문서 검색 /search" aria-label="문서 검색" />
             <button class="btn compact">⌘K</button>
           </div>
+        </div>
+        <div class="topbar-actions">
           <label class="theme-switcher" for="theme-select">
             <span>테넌트 테마</span>
             <select id="theme-select" aria-label="테넌트 테마 선택">
               <option value="nordic-tech">Nordic Tech</option>
               <option value="solarized-playbook">Solarized Playbook</option>
-              <option value="midnight-console">Midnight Console</option>
+              <option value="midnight-console" selected>Midnight Console</option>
               <option value="paper-notebook">Paper Notebook</option>
               <option value="gradient-pulse">Gradient Pulse</option>
             </select>
@@ -49,10 +54,10 @@
             <select id="mode-select" aria-label="컬러 모드 선택">
               <option value="system">오토</option>
               <option value="light">라이트</option>
-              <option value="dark">다크</option>
+              <option value="dark" selected>다크</option>
             </select>
           </label>
-          <div class="theme-chip" id="theme-chip">Nordic Tech · 오토</div>
+          <div class="theme-chip" id="theme-chip">Midnight Console · 다크</div>
           <button class="btn ghost" id="login-trigger">로그인</button>
         </div>
       </header>

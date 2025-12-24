@@ -1,3 +1,7 @@
+const params = new URLSearchParams(window.location.search);
+const DEFAULT_THEME = "midnight-console";
+const DEFAULT_MODE = "dark";
+
 const THEME_FILES = {
   "nordic-tech": "data/nordic-tech.json",
   "solarized-playbook": "data/solarized-playbook.json",
@@ -19,6 +23,10 @@ const DOCS = [
       { id: "overview", label: "요약" },
       { id: "nav-tree", label: "네비게이션 트리" },
       { id: "flow", label: "연동 흐름" },
+      { id: "backup", label: "Step 1. 백업" },
+      { id: "plugin-update", label: "Step 2. 플러그인 업데이트" },
+      { id: "paper-update", label: "Step 3. 종이 매뉴얼" },
+      { id: "faq", label: "FAQ" },
     ],
     pluginNav: [],
     sections: [
@@ -33,6 +41,8 @@ const DOCS = [
             <li>각 문서는 <code>GET /api/v1/wiki/pages?path=... </code>로 불러온다고 가정하고 MDX를 목업 데이터로 채워 두었습니다.</li>
             <li>우측 인페이지 TOC는 본문 헤더를 기준으로 스크롤 스파이를 적용해 현재 섹션을 강조합니다.</li>
           </ul>
+          <p>스크롤 테스트를 위해 본문을 길게 확보했습니다. 요약 섹션에서는 로그인 화면 → Docs 진입 → 특정 문서 이동까지의 흐름을 텍스트로 나열하고, 동일한 구조를 상·하단에 반복 배치해 스크롤 스파이가 보다 완만하게 전환되도록 했습니다.</p>
+          <p>테넌트별 브랜드 색상, 버튼 모양, 코드 블록 색 대비 또한 이 영역에서 미리 설명해 전체 UI 스토리와 연결감을 제공합니다.</p>
         `,
       },
       {
@@ -51,6 +61,65 @@ const DOCS = [
             <li>"실행 예시"와 같이 하위 문서도 같은 패턴으로 불러오며, 상단 드롭다운과 트리가 함께 활성 상태를 갱신합니다.</li>
             <li>"SDK 연동 (준비 중)"처럼 isUsable=false인 항목은 비활성 상태로 표시하고 토스트로 안내합니다.</li>
           </ol>
+          <p>실제 운영 환경에서는 QA → Stage → Prod 순으로 동일한 플로우를 검증합니다. 각 단계마다 <code>nav</code> 배열을 다시 받아와 캐시가 만료되었는지 확인하고, 스크롤 위치가 유지되는지 QA 시나리오에 포함합니다.</p>
+          <p>모바일 해상도에서는 좌측 트리를 접고 Docs 드롭다운에서 동일한 항목을 노출해, 스크롤 스파이와 토글이 동일하게 동작하는지 확인합니다.</p>
+        `,
+      },
+      {
+        type: "section",
+        id: "backup",
+        title: "Step 1. 백업",
+        body: `
+          <p>사이드바/TOC 구조를 바꾸기 전에 <strong>GET /api/v1/wiki/nav</strong> 응답을 S3에 버전 태깅해 둡니다.</p>
+          <ul>
+            <li>기존 트리와 비교할 수 있도록 JSON 스냅샷을 남깁니다.</li>
+            <li>실패 시 복구를 빠르게 하기 위해 <code>restore_from_backup=true</code> 쿼리를 허용합니다.</li>
+            <li>목차/트리의 순서가 뒤바뀌지 않았는지 시각 테스트를 위해 캡처 이미지를 함께 저장합니다.</li>
+          </ul>
+          <p>초기 QA에서는 긴 단락을 배치해 스크롤이 충분히 발생하도록 만들고, TOC 하이라이트가 여유 있게 전환되는지 확인합니다. 백업 섹션을 일부러 길게 만들어 내려갈 때와 올라갈 때 모두 자연스러운 상태 변화를 유도합니다.</p>
+        `,
+      },
+      {
+        type: "section",
+        id: "plugin-update",
+        title: "Step 2. 플러그인 업데이트",
+        body: `
+          <p>액션 블록, 워크플로 플러그인 모두 <code>isUsable</code>이 true인 경우에만 실행 버튼을 노출합니다.</p>
+          <ol>
+            <li>액션 블록 카탈로그를 새 트리와 동기화합니다.</li>
+            <li>준비 중 플러그인은 회색 뱃지와 토스트로 안내합니다.</li>
+            <li>실행 로그를 남겨 테스트 시나리오를 재검증합니다.</li>
+          </ol>
+          <p>실패 시나리오와 재시도 동작을 길게 서술해 레이아웃이 충분히 확장되도록 했습니다. 로그 라인을 3~4개 쌓아두고, 각 로그가 스크롤에 영향을 주지 않도록 플렉스 기반 구조를 점검합니다.</p>
+        `,
+      },
+      {
+        type: "section",
+        id: "paper-update",
+        title: "Step 3. 종이 매뉴얼",
+        body: `
+          <p>오프라인 가이드를 병행하는 경우에는 PDF/종이 매뉴얼 업데이트 일정을 함께 기록합니다.</p>
+          <ul>
+            <li>검색 키워드와 동일한 섹션 제목을 사용해 인쇄본과 웹 TOC를 나란히 맞춥니다.</li>
+            <li>새로운 예제 코드는 색상을 줄이고 대비를 높여 인쇄 품질을 확보합니다.</li>
+            <li>PDF 내 북마크 순서와 웹 TOC 순서가 일치하는지 QA 체크리스트에 추가합니다.</li>
+          </ul>
+          <p>문서 길이를 충분히 확보하기 위해 예시를 더해, 작은 단락에서도 스크롤 감지가 여유 있게 동작하도록 했습니다. 아래에 FAQ로 이어지기 전에 여백과 간격을 넉넉히 두어 자연스러운 연결을 제공합니다.</p>
+        `,
+      },
+      {
+        type: "section",
+        id: "faq",
+        title: "FAQ",
+        body: `
+          <p>사이드바와 TOC가 동시에 스크롤될 때 발생하는 잔여 버그와 해결 팁을 모았습니다.</p>
+          <ul>
+            <li><strong>TOC 동기화 지연</strong>: IntersectionObserver의 threshold를 0.25로 조정합니다.</li>
+            <li><strong>트리 하이라이트 손실</strong>: 현재 문서 ID를 history state와 로컬스토리지에 중복 저장합니다.</li>
+            <li><strong>플러그인 미노출</strong>: <code>pluginNav</code> 배열에 state 필드를 추가해 준비중 상태를 구분합니다.</li>
+            <li><strong>스크롤 히스테리시스</strong>: 내려갈 때는 섹션 시작점을 만나면 즉시, 올라갈 때는 절반 지점에서 전환해 깜빡임을 줄입니다.</li>
+          </ul>
+          <p>FAQ 또한 두세 단락으로 확장해, 스크롤 여유를 확보하고 TOC가 특정 섹션에서 오래 머무를 수 있게 조정했습니다. 이로써 섹션 간 전환 범위가 넉넉해져 사용자가 ‘점멸’처럼 느끼는 문제를 완화합니다.</p>
         `,
       },
     ],
@@ -105,6 +174,8 @@ const DOCS = [
       { id: "layout", label: "레이아웃" },
       { id: "exec", label: "실행 예시" },
       { id: "action-block", label: "액션 블록" },
+      { id: "payload-guard", label: "유효성 검증" },
+      { id: "logging", label: "로깅" },
       { id: "next", label: "다음 단계" },
     ],
     pluginNav: [
@@ -131,8 +202,24 @@ const DOCS = [
         code: `POST /api/plugins/execute\nAuthorization: Bearer {token}\n{\n  "plugin": "api-console",\n  "payload": {\n    "method": "POST",\n    "url": "https://api.guidebook.wiki/v1/demo",\n    "body": { "preview": true }\n  }\n}`,
       },
       {
+        type: "section",
+        id: "payload-guard",
+        title: "유효성 검증",
+        body: `<p>요청 본문에는 <code>tenantId</code>, <code>requestId</code>를 포함하고 길이 제한(64KB)을 초과하면 422로 반환합니다.</p>
+        <p>샘플 플러그인에서는 필드 누락, JSON 파싱 오류, 타입 불일치, 지나치게 깊은 객체 구조까지 다양한 검증 케이스를 준비해 두었습니다. 각 케이스마다 오류 메시지를 명시하고, UI에서는 해당 필드를 붉은색으로 강조합니다.</p>
+        <p>추가로, Admin 토글을 켠 상태에서는 요청 페이로드를 그대로 로그에 남기지 않고, 민감 정보를 마스킹한 후 저장하도록 설정했습니다.</p>`
+      },
+      {
         type: "plugin",
         id: "action-block-demo",
+      },
+      {
+        type: "section",
+        id: "logging",
+        title: "로깅",
+        body: `<p>실행 로그는 Kinesis에 적재하며 <code>event=wiki.action_block</code> 태그를 붙여 필터링합니다. 실패 시 재시도 큐를 별도로 둡니다.</p>
+        <p>로그 구조는 <code>{ timestamp, tenantId, requestId, latencyMs, status, errorCode }</code> 형태로 고정해 대시보드 연동 시 필드 누락이 없도록 했습니다. 실패 로그는 즉시 슬랙 알림과 함께 저장해 재시도 현황을 한 번에 볼 수 있습니다.</p>
+        <p>문서가 길어질수록 TOC 동작이 안정적이므로, 로깅 섹션에도 예시 로그 2~3줄을 추가해 스크롤 여유를 확보했습니다.</p>`,
       },
       {
         type: "list",
@@ -192,7 +279,57 @@ const DOCS = [
         body: `<p>JavaScript, Kotlin, Spring 예제를 추가해 SDK 초기화와 오류 처리 패턴을 안내할 예정입니다.</p>`,
       },
     ],
-    pager: { prev: "실행 예시", next: "릴리스 노트" },
+    pager: { prev: "실행 예시", next: "릴리스 체크" },
+  },
+  {
+    id: "page_4",
+    groupId: "api-guide",
+    title: "릴리스 체크",
+    breadcrumb: "Docs / 인증 / 카카오 OAuth / API 콘솔 / 릴리스 체크",
+    lead: "릴리스 직전·직후 확인해야 할 체크리스트와 백업 경로를 묶었습니다.",
+    updated: "2024-06-09",
+    status: "published",
+    nav: [
+      { id: "rollout", label: "롤아웃 절차" },
+      { id: "fallback", label: "롤백 경로" },
+      { id: "postcheck", label: "사후 점검" },
+      { id: "samples", label: "샘플 링크" },
+    ],
+    pluginNav: [
+      { id: "checklist", label: "체크리스트", state: "active" },
+      { id: "dryrun", label: "드라이런", state: "active" },
+      { id: "handoff", label: "핸드오프", state: "coming" },
+    ],
+    sections: [
+      {
+        type: "section",
+        id: "rollout",
+        title: "롤아웃 절차",
+        body: `<p>릴리스 노트와 액션 블록이 함께 배포되도록 <code>releaseId</code>를 공통으로 사용합니다. 단계별 진행률은 좌측 트리와 TOC에 동시에 반영됩니다.</p>
+        <p>QA와 Stage에서는 기능 플래그를 켠 상태로 문서를 길게 읽어 내려가며 TOC 하이라이트가 자연스럽게 이동하는지 확인합니다. 각 단계마다 스크린샷을 남겨 최종 릴리스 전에 다시 비교합니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "fallback",
+        title: "롤백 경로",
+        body: `<ul><li>S3에 백업된 nav 스냅샷으로 1분 내 트리를 복구합니다.</li><li>액션 블록 플래그(<code>feature/wiki-ab</code>)를 내려 긴급 차단합니다.</li><li>검색 인덱스는 롤백 대상 빌드로 재배포합니다.</li></ul>
+        <p>문서가 길어도 롤백 경로를 바로 확인할 수 있도록 각 단계에 대한 짧은 메모를 추가했습니다. 스크롤 여유가 충분히 생겨 TOC 전환이 한 템포 늦게 일어나더라도 어색하지 않게 보입니다.</p>`,
+      },
+      {
+        type: "section",
+        id: "postcheck",
+        title: "사후 점검",
+        body: `<p>릴리스 후 30분 동안은 On-call이 TOC 하이라이트, 트리 이동, 플러그인 실행 로그를 순차적으로 확인합니다.</p>
+        <p>스크롤 방향을 번갈아 바꿔가며 테스트하고, 올라갈 때는 절반 지점을 지나야 활성화가 바뀌는지 QA 체크리스트에 포함했습니다.</p>`,
+      },
+      {
+        type: "list",
+        id: "samples",
+        title: "샘플 링크",
+        items: ["릴리스 상태 변환 API 호출", "플러그인 드라이런 결과 캡처", "검색 랭킹 비교 스프레드시트"],
+      },
+    ],
+    pager: { prev: "SDK 연동", next: "릴리스 노트" },
   },
   {
     id: "ops-release",
@@ -454,6 +591,7 @@ const API_NAV_TREE = [
             children: [
               { label: "실행 예시", docId: "page_3_1", isUsable: true },
               { label: "SDK 연동 (준비 중)", docId: "page_3_2", isUsable: false },
+              { label: "릴리스 체크", docId: "page_4", isUsable: true },
             ],
           },
         ],
@@ -929,16 +1067,18 @@ const INLINE_THEME_PRESETS = {
 const select = document.querySelector("#theme-select");
 const modeSelect = document.querySelector("#mode-select");
 const themeChip = document.querySelector("#theme-chip");
-const savedMode = localStorage.getItem("wiki-color-mode") || "system";
-const savedTheme = localStorage.getItem("wiki-theme");
+const savedMode = localStorage.getItem("wiki-color-mode") || DEFAULT_MODE;
+const savedTheme = localStorage.getItem("wiki-theme") || DEFAULT_THEME;
 const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-let currentTheme = savedTheme || select?.value || "nordic-tech";
+let currentTheme = savedTheme || params.get("theme") || select?.value || DEFAULT_THEME;
 if (!THEME_FILES[currentTheme]) {
-  currentTheme = "nordic-tech";
+  currentTheme = DEFAULT_THEME;
 }
-let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : "system";
-let currentTocObserver = null;
+let currentMode = ["light", "dark", "system"].includes(savedMode) ? savedMode : DEFAULT_MODE;
+let tocScrollCleanup = null;
+let tocRafId = null;
+let lastScrollY = window.scrollY;
 
 persistMode(currentMode);
 
@@ -1229,21 +1369,24 @@ function setupSearchPreview() {
 function setupNavDocsDropdown() {
   const menu = document.querySelector("#nav-doc-menu");
   const toggle = document.querySelector("#nav-docs .dropdown-toggle");
-  if (!menu || !toggle) return;
+  const dropdown = document.querySelector("#nav-docs");
+  if (!menu || !toggle || !dropdown) return;
 
   const renderItems = () => {
-    menu.innerHTML = DOC_GROUPS.map((group) => {
+    const items = DOC_GROUPS.map((group) => {
       const state = group.status || "published";
-      const stateLabel = state === "published" ? "바로가기" : "준비중";
       const targetDoc = fallbackDocForGroup(group.id);
       return `<a href="docs.html?group=${group.id}&doc=${targetDoc}" class="nav-item" data-state="${state}" data-group="${
         group.id
       }">
         <div>${group.label}</div>
-        <span class="nav-pill">${stateLabel}</span>
-        <small class="muted">${group.description || "문서 그룹"}</small>
+        <small class="muted">${group.description || "문서 그룹"}${
+          state !== "published" ? " · 준비중" : ""
+        }</small>
       </a>`;
     }).join("");
+
+    menu.innerHTML = `<div class="nav-menu-grid">${items}</div>`;
   };
 
   renderItems();
@@ -1251,6 +1394,7 @@ function setupNavDocsDropdown() {
   toggle.addEventListener("click", (e) => {
     e.preventDefault();
     const isOpen = menu.classList.toggle("active");
+    dropdown.classList.toggle("open", isOpen);
     toggle.setAttribute("aria-expanded", String(isOpen));
   });
 
@@ -1268,6 +1412,7 @@ function setupNavDocsDropdown() {
     if (typeof window.setDocGroup === "function") {
       event.preventDefault();
       menu.classList.remove("active");
+      dropdown.classList.remove("open");
       toggle.setAttribute("aria-expanded", "false");
       window.setDocGroup(groupId);
     }
@@ -1276,9 +1421,8 @@ function setupNavDocsDropdown() {
 
 function setupDocExperience() {
   const groupSelect = document.querySelector("#doc-group-select");
-  const select = document.querySelector("#doc-select");
   const navList = document.querySelector("#doc-nav");
-  if (!select || !navList || !groupSelect) return;
+  if (!navList || !groupSelect) return;
 
   const initialGroupParam = params.get("group");
   const initialGroupId = DOC_GROUP_MAP.has(initialGroupParam) ? initialGroupParam : DOC_GROUPS[0]?.id;
@@ -1305,16 +1449,6 @@ function setupDocExperience() {
     navMap = new Map(navItems.map((item) => [item.docId, item]));
     fallbackDoc = fallbackDocForGroup(currentGroupId);
     groupSelect.value = currentGroupId;
-  };
-
-  const renderOptions = () => {
-    select.innerHTML = navItems
-      .map(
-        (item) => `<option value="${item.docId}" ${item.isUsable ? "" : "disabled"}>${item.label}${
-          item.isUsable ? "" : " · 준비중"
-        }</option>`
-      )
-      .join("");
   };
 
   const renderNavTree = (activeId) => {
@@ -1360,6 +1494,11 @@ function setupDocExperience() {
     const toc = document.querySelector("#onpage-toc");
     if (!toc) return;
 
+    if (tocScrollCleanup) {
+      tocScrollCleanup();
+      tocScrollCleanup = null;
+    }
+
     if (!doc.nav?.length) {
       toc.innerHTML = '<p class="muted">표시할 목차가 없습니다.</p>';
       return;
@@ -1377,34 +1516,94 @@ function setupDocExperience() {
       const target = document.getElementById(targetId);
       if (target) {
         window.history.replaceState(window.history.state, "", `${window.location.pathname}?${params.toString()}#${targetId}`);
+        setActive(targetId);
         target.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     };
 
-    if (currentTocObserver) {
-      currentTocObserver.disconnect();
-    }
+    const tocLinks = toc.querySelectorAll("a");
+    const sections = doc.nav
+      .map((item) => document.getElementById(item.id))
+      .filter(Boolean)
+      .map((el) => ({ id: el.id, el }));
 
-    currentTocObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const link = toc.querySelector(`a[data-target="${entry.target.id}"]`);
-          if (!link) return;
-          if (entry.isIntersecting) {
-            toc.querySelectorAll("a").forEach((a) => a.classList.remove("active"));
-            link.classList.add("active");
-          }
-        });
-      },
-      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 1] }
-    );
+    const getTopbarHeight = () => {
+      const bar = document.querySelector(".topbar");
+      if (bar) return bar.getBoundingClientRect().height;
 
-    doc.nav.forEach((item) => {
-      const section = document.getElementById(item.id);
-      if (section) {
-        currentTocObserver.observe(section);
+      const raw = getComputedStyle(document.documentElement).getPropertyValue("--topbar-height");
+      const parsed = parseFloat(raw);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    // Note: 프로덕션 전환 시에는 scrollama/IntersectionObserver 기반 TOC 스파이로 교체해
+    // 긴 페이지에서도 안정적으로 하이라이트가 유지되도록 개선하세요.
+
+    const measureSections = () =>
+      sections.map(({ id, el }) => {
+        const rect = el.getBoundingClientRect();
+        const top = rect.top + window.scrollY;
+        const bottom = rect.bottom + window.scrollY;
+        return { id, top, bottom, height: Math.max(bottom - top, 1) };
+      });
+
+    const probeLines = () => {
+      const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+      const topbarOffset = getTopbarHeight();
+      const availableHeight = Math.max(viewportHeight - topbarOffset, viewportHeight * 0.5);
+      const down = window.scrollY + topbarOffset + availableHeight * 0.9;
+      const up = window.scrollY + topbarOffset + availableHeight * 0.6;
+      return { down, up, topbarOffset };
+    };
+
+    const setActive = (id) => {
+      tocLinks.forEach((link) => {
+        link.classList.toggle("active", link.dataset.target === id);
+      });
+    };
+
+    const updateTocActive = () => {
+      const direction = window.scrollY >= lastScrollY ? "down" : "up";
+      lastScrollY = window.scrollY;
+
+      const positions = measureSections();
+      if (!positions.length) return;
+
+      const { down, up, topbarOffset } = probeLines();
+
+      // 내려갈 때: 섹션 시작을 90% 지점에서 만나면 바로 전환
+      if (direction === "down") {
+        const candidate = positions.filter((section) => section.top <= down).pop() || positions[0];
+        setActive(candidate.id);
+        return;
       }
-    });
+
+      // 올라갈 때: 섹션 하단이 60% 지점을 지나야 전환 (짧은 섹션은 top 보조)
+      const candidateUp =
+        positions.find((section) => section.bottom - topbarOffset >= up) ||
+        positions.find((section) => section.top <= up) ||
+        positions[0];
+
+      setActive(candidateUp.id);
+    };
+
+    const onScroll = () => {
+      if (tocRafId) {
+        cancelAnimationFrame(tocRafId);
+      }
+      tocRafId = requestAnimationFrame(updateTocActive);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    tocScrollCleanup = () => {
+      window.removeEventListener("scroll", onScroll);
+      if (tocRafId) {
+        cancelAnimationFrame(tocRafId);
+        tocRafId = null;
+      }
+    };
+
+    updateTocActive();
   };
 
   const renderDoc = (docId, options = {}) => {
@@ -1421,7 +1620,6 @@ function setupDocExperience() {
       DOCS.find((d) => d.id === fallbackDoc);
     if (!doc) return;
 
-    select.value = doc.id;
     renderNavTree(doc.id);
 
     const breadcrumb = document.querySelector("#breadcrumb");
@@ -1430,18 +1628,12 @@ function setupDocExperience() {
     const lead = document.querySelector("#doc-lead");
     const body = document.querySelector("#doc-body");
     const pager = document.querySelector("#pager");
-    const status = document.querySelector("#doc-status");
     const groupMeta = DOC_GROUP_MAP.get(currentGroupId);
 
     if (breadcrumb) breadcrumb.textContent = doc.breadcrumb;
     if (updated) updated.textContent = `업데이트 · ${doc.updated}`;
     if (title) title.textContent = doc.title;
     if (lead) lead.textContent = doc.lead;
-    if (status) {
-      status.textContent = `${groupMeta?.label || "문서"} · ${doc.status === "published" ? "발행" : "준비중"}`;
-      status.dataset.state = doc.status;
-      status.dataset.group = groupMeta?.id || "";
-    }
 
     const content = doc.sections
       ?.map((section) => {
@@ -1582,7 +1774,6 @@ function setupDocExperience() {
   const changeGroup = (groupId, options = {}) => {
     currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
     syncGroupState();
-    renderOptions();
     const targetDoc = options.docId && navMap.has(options.docId) ? options.docId : fallbackDoc;
     navigateToDoc(targetDoc, { push: options.push ?? true });
   };
@@ -1591,7 +1782,6 @@ function setupDocExperience() {
     const groupId = event.state?.group || params.get("group") || DOC_GROUPS[0]?.id;
     currentGroupId = DOC_GROUP_MAP.has(groupId) ? groupId : DOC_GROUPS[0]?.id;
     syncGroupState();
-    renderOptions();
     const docId = event.state?.doc || params.get("doc") || fallbackDoc;
     const storedScroll = event.state?.scroll ?? scrollPositions.get(docId) ?? 0;
     const hash = (event.state?.hash || window.location.hash.replace("#", "")) ?? "";
@@ -1602,7 +1792,6 @@ function setupDocExperience() {
   syncGroupState();
   const defaultDoc = navMap.has(defaultDocParam) ? defaultDocParam : fallbackDoc;
   currentDocId = defaultDoc;
-  renderOptions();
   window.history.replaceState(
     { group: currentGroupId, doc: defaultDoc, scroll: window.scrollY, hash: initialHash },
     "",
@@ -1615,11 +1804,6 @@ function setupDocExperience() {
   groupSelect.addEventListener("change", (event) => {
     const nextGroup = event.target.value;
     changeGroup(nextGroup, { push: true });
-  });
-
-  select.addEventListener("change", (event) => {
-    const value = event.target.value;
-    navigateToDoc(value, { push: true });
   });
 
   navList.addEventListener("click", (event) => {
