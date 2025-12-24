@@ -1476,8 +1476,11 @@ function setupDocExperience() {
   const renderNavTree = (activeId) => {
     const renderNode = (node) => {
       if (node.children?.length) {
+        const selfItem = node.docId
+          ? `<div class="nav-group-label" data-doc="${node.docId}" role="button" tabindex="0">${node.label}</div>`
+          : `<div class="nav-group-label inactive">${node.label}</div>`;
         return `<li class="nav-group">
-            <div class="nav-group-label">${node.label}</div>
+            ${selfItem}
             <ul>${node.children.map((child) => renderNode(child)).join("")}</ul>
           </li>`;
       }
@@ -1579,9 +1582,12 @@ function setupDocExperience() {
 
     const setActive = (id) => {
       tocLinks.forEach((link) => {
-        link.classList.toggle("active", link.dataset.target === id);
+        link.classList.toggle("active", id !== null && link.dataset.target === id);
       });
     };
+
+    const docHeader = document.querySelector(".doc-header");
+    const headerBottom = docHeader ? docHeader.getBoundingClientRect().bottom + window.scrollY : 0;
 
     const updateTocActive = () => {
       const direction = window.scrollY >= lastScrollY ? "down" : "up";
@@ -1589,6 +1595,11 @@ function setupDocExperience() {
 
       const positions = measureSections();
       const probeLine = probeLineFor(direction);
+
+      if (probeLine < headerBottom) {
+        setActive(null);
+        return;
+      }
 
       const activeId =
         positions.find((section) => section.top <= probeLine && probeLine < section.bottom)?.id ||
@@ -1824,7 +1835,7 @@ function setupDocExperience() {
   });
 
   navList.addEventListener("click", (event) => {
-    const item = event.target.closest("li[data-doc]");
+    const item = event.target.closest("li[data-doc], .nav-group-label[data-doc]");
     if (!item) return;
     const docId = item.dataset.doc;
     const navEntry = navMap.get(docId);
