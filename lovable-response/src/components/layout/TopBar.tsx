@@ -1,9 +1,11 @@
-import React from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useTheme } from '@/contexts/ThemeContext';
-import { ThemePreset, ThemeMode } from '@/lib/theme';
-import { docGroups, DocGroup } from '@/lib/mockData';
-import { toast } from 'sonner';
+import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useTheme } from "@/contexts/ThemeContext";
+import { ThemePreset, ThemeMode } from "@/lib/theme";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,33 +13,52 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
   DropdownMenuLabel,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ChevronDown, Search, Sun, Moon, Monitor, Palette, User, BookOpen } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { fetchWikiGroups, getDefaultPathForGroup, tenantInfo, wikiGroups, WikiGroup } from "@/lib/wikiData";
+import {
+  ChevronDown,
+  Search,
+  Sun,
+  Moon,
+  Monitor,
+  Palette,
+  User,
+  BookOpen,
+} from "lucide-react";
 
 export function TopBar() {
   const { theme, mode, setTheme, setMode, themePresets, themeModes, effectiveMode } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const handleDocGroupClick = (group: DocGroup) => {
+  const groupsQuery = useQuery({
+    queryKey: ["wiki-groups"],
+    queryFn: fetchWikiGroups,
+    initialData: { success: true, data: { groups: wikiGroups, tenantCode: tenantInfo.code }, error: null },
+  });
+
+  const groups = groupsQuery.data?.data?.groups ?? [];
+
+  const handleDocGroupClick = (group: WikiGroup) => {
     if (!group.isUsable) {
-      toast.info('준비 중입니다', {
-        description: `${group.title} 문서는 곧 공개될 예정입니다.`,
+      toast.info("준비 중입니다", {
+        description: `${group.name} 문서는 곧 공개될 예정입니다.`,
       });
       return;
     }
-    navigate('/docs/getting-started');
+    const defaultPath = getDefaultPathForGroup(group.id);
+    if (defaultPath) {
+      navigate(`/docs/${defaultPath}?groupId=${group.id}`);
+    }
   };
 
   const handleSearchFocus = () => {
-    navigate('/search');
+    navigate("/search");
   };
 
   const getModeIcon = () => {
-    if (mode === 'system') return <Monitor className="h-4 w-4" />;
-    if (effectiveMode === 'dark') return <Moon className="h-4 w-4" />;
+    if (mode === "system") return <Monitor className="h-4 w-4" />;
+    if (effectiveMode === "dark") return <Moon className="h-4 w-4" />;
     return <Sun className="h-4 w-4" />;
   };
 
@@ -51,7 +72,7 @@ export function TopBar() {
           </div>
           <div className="hidden sm:flex flex-col">
             <span className="text-sm font-bold leading-tight">Guidebook Wiki</span>
-            <span className="text-xs text-muted-foreground leading-tight">API 실전 플레이북</span>
+            <span className="text-xs text-muted-foreground leading-tight">{tenantInfo.domain}</span>
           </div>
         </Link>
 
@@ -69,23 +90,25 @@ export function TopBar() {
             <DropdownMenuContent align="start" className="w-72">
               <DropdownMenuLabel>문서 그룹</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {docGroups.map((group) => (
+              {groups.map((group) => (
                 <DropdownMenuItem
                   key={group.id}
-                  className={`flex flex-col items-start gap-1 p-3 ${!group.isUsable ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`flex flex-col items-start gap-1 p-3 ${!group.isUsable ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                   onClick={() => handleDocGroupClick(group)}
                   disabled={!group.isUsable}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">{group.title}</span>
-                    {group.status === 'coming_soon' && (
+                    <span className="font-semibold">{group.name}</span>
+                    {group.status === "COMING_SOON" && (
                       <span className="pill text-[10px] py-0.5 px-1.5">Coming Soon</span>
                     )}
-                    {group.status === 'draft' && (
+                    {group.status === "DRAFT" && (
                       <span className="bg-muted text-muted-foreground text-[10px] py-0.5 px-1.5 rounded-full">Draft</span>
                     )}
                   </div>
-                  <span className="text-xs text-muted-foreground">{group.description}</span>
+                  <span className="text-xs text-muted-foreground">
+                    defaultPath: {group.defaultPath}
+                  </span>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -122,7 +145,7 @@ export function TopBar() {
                 <DropdownMenuItem
                   key={key}
                   onClick={() => setTheme(key)}
-                  className={`flex flex-col items-start ${theme === key ? 'bg-accent' : ''}`}
+                  className={`flex flex-col items-start ${theme === key ? "bg-accent" : ""}`}
                 >
                   <span className="font-medium">{themePresets[key].name}</span>
                   <span className="text-xs text-muted-foreground">{themePresets[key].description}</span>
@@ -145,12 +168,12 @@ export function TopBar() {
                 <DropdownMenuItem
                   key={key}
                   onClick={() => setMode(key)}
-                  className={mode === key ? 'bg-accent' : ''}
+                  className={mode === key ? "bg-accent" : ""}
                 >
                   <span className="flex items-center gap-2">
-                    {key === 'system' && <Monitor className="h-4 w-4" />}
-                    {key === 'light' && <Sun className="h-4 w-4" />}
-                    {key === 'dark' && <Moon className="h-4 w-4" />}
+                    {key === "system" && <Monitor className="h-4 w-4" />}
+                    {key === "light" && <Sun className="h-4 w-4" />}
+                    {key === "dark" && <Moon className="h-4 w-4" />}
                     {themeModes[key]}
                   </span>
                 </DropdownMenuItem>

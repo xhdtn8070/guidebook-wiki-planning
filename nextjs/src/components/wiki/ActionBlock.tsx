@@ -1,5 +1,7 @@
-import React from 'react';
-import { cn } from '@/lib/utils';
+"use client";
+
+import { useState } from "react";
+import { clsx } from "clsx";
 
 interface ActionBlockProps {
   type: string;
@@ -11,50 +13,51 @@ interface ActionBlockProps {
 
 export function ActionBlock({ type, endpoint, className, initialUrl, authOptions }: ActionBlockProps) {
   const availableAuthOptions = authOptions ?? ["Bearer 토큰", "API Key"];
-  const [apiUrl, setApiUrl] = React.useState(initialUrl ?? "https://api.guidebook.wiki/v1/demo");
+  const [apiUrl, setApiUrl] = useState(initialUrl ?? "https://api.guidebook.wiki/v1/demo");
   const formatAuthValue = (option: string) => option.toLowerCase().replace(/\s+/g, "-");
-  const [authType, setAuthType] = React.useState(formatAuthValue(availableAuthOptions[0]));
-  const [result, setResult] = React.useState<string | null>(null);
-  const [loading, setLoading] = React.useState(false);
+  const [authType, setAuthType] = useState(formatAuthValue(availableAuthOptions[0]));
+  const [result, setResult] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleExecute = async () => {
     setLoading(true);
     setResult(null);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1200));
-    
-    setResult(JSON.stringify({
-      success: true,
-      data: {
-        message: 'API 호출 결과 예시입니다.',
-        timestamp: new Date().toISOString(),
-        endpoint: apiUrl,
-      }
-    }, null, 2));
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    setResult(
+      JSON.stringify(
+        {
+          success: true,
+          data: {
+            message: "API 호출 결과 예시입니다.",
+            timestamp: new Date().toISOString(),
+            endpoint: apiUrl,
+            auth: authType,
+          },
+        },
+        null,
+        2,
+      ),
+    );
     setLoading(false);
   };
 
   const handleLoadSample = () => {
-    setApiUrl('https://api.guidebook.wiki/v1/sample');
+    setApiUrl("https://api.guidebook.wiki/v1/sample");
     setAuthType(formatAuthValue(availableAuthOptions[1] ?? availableAuthOptions[0]));
   };
 
   return (
-    <div className={cn(
-      'rounded-lg border border-dashed border-primary/50 p-4',
-      'bg-primary/5',
-      className
-    )}>
-      {/* Header */}
+    <div
+      className={clsx(
+        "rounded-lg border border-dashed border-primary/50 p-4 bg-primary/5",
+        className,
+      )}
+    >
       <div className="flex items-center justify-between mb-4">
         <span className="pill">{type}</span>
-        <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-          {endpoint}
-        </code>
+        <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">{endpoint}</code>
       </div>
 
-      {/* Form */}
       <div className="space-y-3">
         <div className="space-y-1.5">
           <label className="text-sm font-semibold">API URL</label>
@@ -84,14 +87,13 @@ export function ActionBlock({ type, endpoint, className, initialUrl, authOptions
           </select>
         </div>
 
-        {/* Actions */}
         <div className="flex flex-wrap gap-2 pt-2">
           <button
             onClick={handleExecute}
             disabled={loading}
             className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold shadow-md hover:opacity-90 transition-opacity disabled:opacity-50"
           >
-            {loading ? '실행 중...' : '실행'}
+            {loading ? "실행 중..." : "실행"}
           </button>
           <button
             onClick={handleLoadSample}
@@ -99,12 +101,9 @@ export function ActionBlock({ type, endpoint, className, initialUrl, authOptions
           >
             샘플 로드
           </button>
-          <button className="px-4 py-2 text-primary text-sm font-semibold hover:underline">
-            액션 설명 보기 →
-          </button>
+          <button className="px-4 py-2 text-primary text-sm font-semibold hover:underline">액션 설명 보기 →</button>
         </div>
 
-        {/* Result */}
         {(result || loading) && (
           <div className="mt-3 p-3 rounded-lg border border-dashed border-border bg-primary/5 font-mono text-xs">
             {loading ? (
