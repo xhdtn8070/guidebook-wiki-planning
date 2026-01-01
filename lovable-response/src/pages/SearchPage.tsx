@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
-import { LayoutRoot } from '@/components/layout';
-import { mockSearchResults } from '@/lib/mockData';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import React, { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react";
+import { LayoutRoot } from "@/components/layout";
+import { Input } from "@/components/ui/input";
+import { searchWiki } from "@/lib/wikiData";
 
 const SearchPage = () => {
-  const [query, setQuery] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [query, setQuery] = useState("");
 
-  const handleSearch = (value: string) => {
-    setQuery(value);
-    if (value) {
-      setLoading(true);
-      setTimeout(() => setLoading(false), 500);
-    }
-  };
+  const { data, isFetching } = useQuery({
+    queryKey: ["wiki-search", query],
+    queryFn: () => searchWiki(query),
+    enabled: query.trim().length > 0,
+  });
 
-  const results = query ? mockSearchResults : [];
+  const results = data?.data?.results ?? [];
 
   return (
     <LayoutRoot>
@@ -30,12 +28,12 @@ const SearchPage = () => {
             placeholder="검색어를 입력하세요..."
             className="pl-12 h-12 text-lg"
             value={query}
-            onChange={(e) => handleSearch(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             autoFocus
           />
         </div>
 
-        {loading ? (
+        {isFetching ? (
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
               <div key={i} className="p-4 rounded-lg border border-border">
@@ -50,7 +48,7 @@ const SearchPage = () => {
             {results.map((result) => (
               <a
                 key={result.id}
-                href={result.path}
+                href={`/docs/${result.fullPath}?groupId=${result.groupId}`}
                 className="block p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-theme-sm transition-all"
               >
                 <div className="flex justify-between items-start mb-2">

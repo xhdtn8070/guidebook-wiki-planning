@@ -1,40 +1,49 @@
-import React from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { navItems, NavItem } from '@/lib/mockData';
-import { toast } from 'sonner';
-import { ChevronRight, FileText, Folder, Lock } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { ChevronRight, FileText, Folder, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { WikiNavNode } from "@/lib/wikiData";
 
 interface SidebarNavProps {
   className?: string;
+  groupId: string;
+  nodes: WikiNavNode[];
+  currentPath: string;
+  onNavigate?: (fullPath: string) => void;
 }
 
-export function SidebarNav({ className }: SidebarNavProps) {
+export function SidebarNav({ className, groupId, nodes, currentPath, onNavigate }: SidebarNavProps) {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  const handleNavClick = (item: NavItem) => {
+  const handleNavClick = (item: WikiNavNode) => {
     if (!item.isUsable) {
-      toast.info('준비 중입니다', {
-        description: '이 문서는 곧 공개될 예정입니다.',
+      toast.info("준비 중입니다", {
+        description: "이 문서는 곧 공개될 예정입니다.",
       });
       return;
     }
-    navigate(item.path);
+
+    const target = `/docs/${item.fullPath}?groupId=${groupId}`;
+    if (onNavigate) {
+      onNavigate(item.fullPath);
+    } else {
+      navigate(target);
+    }
   };
 
-  const isActive = (path: string) => location.pathname === path;
-  const isParentActive = (item: NavItem) => {
-    if (location.pathname === item.path) return true;
+  const isActive = (path: string) => currentPath === path;
+  const isParentActive = (item: WikiNavNode) => {
+    if (currentPath === item.fullPath) return true;
     if (item.children) {
-      return item.children.some(child => location.pathname === child.path);
+      return item.children.some((child) => isParentActive(child));
     }
     return false;
   };
 
-  const renderNavItem = (item: NavItem, level = 0) => {
+  const renderNavItem = (item: WikiNavNode, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
-    const active = isActive(item.path);
+    const active = isActive(item.fullPath);
     const parentActive = isParentActive(item);
 
     return (
@@ -43,34 +52,27 @@ export function SidebarNav({ className }: SidebarNavProps) {
           onClick={() => handleNavClick(item)}
           disabled={!item.isUsable && !hasChildren}
           className={cn(
-            'w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150',
-            'hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30',
-            active && 'bg-primary/15 text-primary font-semibold',
-            !active && parentActive && level === 0 && 'text-foreground font-semibold',
-            !active && !parentActive && 'text-muted-foreground',
-            !item.isUsable && 'opacity-50 cursor-not-allowed hover:bg-transparent',
-            level > 0 && 'pl-6'
+            "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150",
+            "hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30",
+            active && "bg-primary/15 text-primary font-semibold",
+            !active && parentActive && level === 0 && "text-foreground font-semibold",
+            !active && !parentActive && "text-muted-foreground",
+            !item.isUsable && "opacity-50 cursor-not-allowed hover:bg-transparent",
+            level > 0 && "pl-6"
           )}
         >
-          {hasChildren ? (
-            <Folder className="h-4 w-4 flex-shrink-0" />
-          ) : (
-            <FileText className="h-4 w-4 flex-shrink-0" />
-          )}
+          {hasChildren ? <Folder className="h-4 w-4 flex-shrink-0" /> : <FileText className="h-4 w-4 flex-shrink-0" />}
           <span className="flex-1 text-left truncate">{item.title}</span>
           {!item.isUsable && <Lock className="h-3 w-3 flex-shrink-0" />}
           {hasChildren && item.isUsable && (
-            <ChevronRight className={cn(
-              'h-3 w-3 flex-shrink-0 transition-transform',
-              parentActive && 'rotate-90'
-            )} />
+            <ChevronRight className={cn("h-3 w-3 flex-shrink-0 transition-transform", parentActive && "rotate-90")} />
           )}
         </button>
 
         {/* Children */}
         {hasChildren && parentActive && (
           <ul className="mt-1 space-y-1 border-l border-border/50 ml-4">
-            {item.children!.map(child => renderNavItem(child, level + 1))}
+            {item.children.map((child) => renderNavItem(child, level + 1))}
           </ul>
         )}
       </li>
@@ -78,15 +80,17 @@ export function SidebarNav({ className }: SidebarNavProps) {
   };
 
   return (
-    <aside className={cn(
-      'w-60 shrink-0 border-r border-border bg-surface-strong',
-      'h-[calc(100vh-56px)] sticky top-14 overflow-hidden',
-      className
-    )}>
+    <aside
+      className={cn(
+        "w-60 shrink-0 border-r border-border bg-surface-strong",
+        "h-[calc(100vh-56px)] sticky top-14 overflow-hidden",
+        className
+      )}
+    >
       <div className="p-4 h-full overflow-y-auto custom-scrollbar">
         <nav aria-label="문서 네비게이션">
           <ul className="space-y-1">
-            {navItems.map(item => renderNavItem(item))}
+            {nodes.map((item) => renderNavItem(item))}
           </ul>
         </nav>
 
@@ -99,7 +103,7 @@ export function SidebarNav({ className }: SidebarNavProps) {
             <li>
               <button
                 className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-primary/10 transition-colors"
-                onClick={() => toast.info('준비 중입니다')}
+                onClick={() => toast.info("준비 중입니다")}
               >
                 <div className="h-4 w-4 rounded bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
                   A

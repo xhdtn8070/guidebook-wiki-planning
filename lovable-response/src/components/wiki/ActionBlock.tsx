@@ -5,11 +5,15 @@ interface ActionBlockProps {
   type: string;
   endpoint: string;
   className?: string;
+  initialUrl?: string;
+  authOptions?: string[];
 }
 
-export function ActionBlock({ type, endpoint, className }: ActionBlockProps) {
-  const [apiUrl, setApiUrl] = React.useState('https://api.guidebook.wiki/v1/demo');
-  const [authType, setAuthType] = React.useState('bearer');
+export function ActionBlock({ type, endpoint, className, initialUrl, authOptions }: ActionBlockProps) {
+  const availableAuthOptions = authOptions ?? ["Bearer 토큰", "API Key"];
+  const [apiUrl, setApiUrl] = React.useState(initialUrl ?? "https://api.guidebook.wiki/v1/demo");
+  const formatAuthValue = (option: string) => option.toLowerCase().replace(/\s+/g, "-");
+  const [authType, setAuthType] = React.useState(formatAuthValue(availableAuthOptions[0]));
   const [result, setResult] = React.useState<string | null>(null);
   const [loading, setLoading] = React.useState(false);
 
@@ -33,7 +37,7 @@ export function ActionBlock({ type, endpoint, className }: ActionBlockProps) {
 
   const handleLoadSample = () => {
     setApiUrl('https://api.guidebook.wiki/v1/sample');
-    setAuthType('api-key');
+    setAuthType(formatAuthValue(availableAuthOptions[1] ?? availableAuthOptions[0]));
   };
 
   return (
@@ -69,8 +73,14 @@ export function ActionBlock({ type, endpoint, className }: ActionBlockProps) {
             onChange={(e) => setAuthType(e.target.value)}
             className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm"
           >
-            <option value="bearer">Bearer 토큰</option>
-            <option value="api-key">API Key</option>
+            {availableAuthOptions.map((option) => {
+              const value = formatAuthValue(option);
+              return (
+                <option key={option} value={value}>
+                  {option}
+                </option>
+              );
+            })}
           </select>
         </div>
 
