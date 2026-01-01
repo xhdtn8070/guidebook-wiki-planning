@@ -1,0 +1,77 @@
+{
+  "name": "Solarized Playbook",
+  "palette": {
+    "primary": "#268bd2",
+    "secondary": "#2aa198",
+    "accent": "#b58900",
+    "background": "#fdf6e3",
+    "surface": "#fffdf5",
+    "border": "#e7d8b1",
+    "text": "#073642",
+    "muted": "#586e75"
+  },
+  "paletteModes": {
+    "light": {
+      "primary": "#268bd2",
+      "secondary": "#2aa198",
+      "accent": "#b58900",
+      "background": "#fdf6e3",
+      "surface": "#fffdf5",
+      "border": "#e7d8b1",
+      "text": "#073642",
+      "muted": "#586e75"
+    },
+    "dark": {
+      "primary": "#5fb3d9",
+      "secondary": "#3ed2c5",
+      "accent": "#e0c060",
+      "background": "#002b36",
+      "surface": "#073642",
+      "border": "#0a4c5b",
+      "text": "#fdf6e3",
+      "muted": "#93a1a1"
+    }
+  },
+  "font": {
+    "heading": "'Source Sans Pro', 'Pretendard', sans-serif",
+    "body": "'Source Sans Pro', 'Pretendard', sans-serif",
+    "monospace": "'Space Mono', 'SFMono-Regular', monospace"
+  },
+  "layout": {
+    "radius": "12px",
+    "shadow": "0 12px 40px rgba(7, 54, 66, 0.14)",
+    "spacing": "18px"
+  },
+  "hero": {
+    "background": "linear-gradient(135deg, #fdf6e3 0%, #f0e3b1 100%)",
+    "overlayOpacity": 0.18
+  },
+  "components": {
+    "topBar": {
+      "background": "rgba(253, 246, 227, 0.96)",
+      "border": "#e7d8b1"
+    },
+    "sidebar": {
+      "background": "rgba(255, 253, 245, 0.98)",
+      "border": "#e7d8b1"
+    },
+    "card": {
+      "background": "#fffaf0",
+      "border": "#e7d8b1"
+    },
+    "button": {
+      "primaryBackground": "#268bd2",
+      "primaryText": "#fdf6e3",
+      "ghostBackground": "rgba(38, 139, 210, 0.1)",
+      "ghostBorder": "rgba(38, 139, 210, 0.5)",
+      "ghostText": "#073642",
+      "text": "#268bd2",
+      "shadow": "0 12px 28px rgba(38, 139, 210, 0.35)"
+    },
+    "codeBlock": {
+      "background": "#073642",
+      "text": "#fdf6e3",
+      "border": "#0a4c5b"
+    }
+  }
+}
