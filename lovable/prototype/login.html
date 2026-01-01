@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Guidebook Wiki – 로그인</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <a class="brand" href="index.html" aria-label="Guidebook Wiki 홈으로 이동">
+          <span class="brand-mark">G</span>
+          <div class="brand-copy">
+            <strong>Guidebook Wiki</strong>
+            <span class="brand-sub">API 실전 플레이북</span>
+          </div>
+        </a>
+        <div class="topbar-center">
+          <nav class="primary-nav" aria-label="문서 바로가기">
+            <div class="nav-dropdown" id="nav-docs">
+              <button class="nav-link dropdown-toggle" aria-haspopup="true" aria-expanded="false">
+                <span class="nav-label">Docs</span>
+                <span class="nav-caption">문서 그룹 빠른 이동</span>
+              </button>
+              <div class="nav-menu" id="nav-doc-menu" aria-label="문서 선택"></div>
+            </div>
+          </nav>
+        </div>
+        <div class="topbar-actions">
+          <label class="theme-switcher" for="theme-select">
+            <span>테넌트 테마</span>
+            <select id="theme-select" aria-label="테넌트 테마 선택">
+              <option value="nordic-tech">Nordic Tech</option>
+              <option value="solarized-playbook">Solarized Playbook</option>
+              <option value="midnight-console" selected>Midnight Console</option>
+              <option value="paper-notebook">Paper Notebook</option>
+              <option value="gradient-pulse">Gradient Pulse</option>
+            </select>
+          </label>
+          <label class="theme-switcher" for="mode-select">
+            <span>모드</span>
+            <select id="mode-select" aria-label="컬러 모드 선택">
+              <option value="system">오토</option>
+              <option value="light">라이트</option>
+              <option value="dark" selected>다크</option>
+            </select>
+          </label>
+          <div class="theme-chip" id="theme-chip">Midnight Console · 다크</div>
+        </div>
+      </header>
+
+      <main class="login-layout">
+        <section class="login-hero">
+          <p class="pill ghost">OAuth</p>
+          <h1>카카오 전용 전체 페이지 로그인</h1>
+          <p class="lead">TopBar → 로그인 페이지 → Kakao OAuth 콜백 흐름을 프로토타입으로 시연합니다.</p>
+          <ul class="checklist">
+            <li>카카오 로그인만 제공</li>
+            <li>redirect 파라미터 적용</li>
+            <li>다크/라이트 모드 전환 연동</li>
+          </ul>
+        </section>
+
+        <section class="login-card">
+          <div class="auth-card">
+            <div class="auth-header">
+              <div>
+                <p class="pill ghost">로그인</p>
+                <h2>카카오로 5초 만에 시작</h2>
+                <p class="muted">이메일/비밀번호 입력 없이 카카오 OAuth만 제공합니다.</p>
+              </div>
+              <div class="redirect-chip" id="redirect-chip"></div>
+            </div>
+
+            <div class="auth-buttons">
+              <button class="btn kakao">5초 만에 카카오로 시작하기</button>
+              <button class="btn kakao ghost">다른 카카오계정으로 시작하기</button>
+            </div>
+            <div class="auth-meta">
+              <p class="muted">OAuth 완료 시 `/auth/callback?provider=kakao&redirect=...`로 이동하는 흐름을 표현합니다.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="theme-loader.js" type="module"></script>
+  </body>
+</html>

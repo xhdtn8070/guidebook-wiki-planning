@@ -1,0 +1,77 @@
+{
+  "name": "Paper Notebook",
+  "palette": {
+    "primary": "#ef476f",
+    "secondary": "#ffd166",
+    "accent": "#06d6a0",
+    "background": "#faf7f0",
+    "surface": "#ffffff",
+    "border": "#e8e2d2",
+    "text": "#3c342c",
+    "muted": "#7a6f63"
+  },
+  "paletteModes": {
+    "light": {
+      "primary": "#ef476f",
+      "secondary": "#ffd166",
+      "accent": "#06d6a0",
+      "background": "#faf7f0",
+      "surface": "#ffffff",
+      "border": "#e8e2d2",
+      "text": "#3c342c",
+      "muted": "#7a6f63"
+    },
+    "dark": {
+      "primary": "#f47b94",
+      "secondary": "#ffd166",
+      "accent": "#06d6a0",
+      "background": "#2d2620",
+      "surface": "#362e28",
+      "border": "#4a3f36",
+      "text": "#f6eee1",
+      "muted": "#d6c5b5"
+    }
+  },
+  "font": {
+    "heading": "'Recoleta', 'Pretendard', serif",
+    "body": "'Work Sans', 'Pretendard', sans-serif",
+    "monospace": "'Space Mono', 'Fira Code', monospace"
+  },
+  "layout": {
+    "radius": "12px",
+    "shadow": "0 8px 30px rgba(60, 52, 44, 0.08)",
+    "spacing": "16px"
+  },
+  "hero": {
+    "background": "linear-gradient(135deg, #fff7e6 0%, #fbe0d9 100%)",
+    "overlayOpacity": 0.14
+  },
+  "components": {
+    "topBar": {
+      "background": "rgba(255, 255, 255, 0.94)",
+      "border": "#e8e2d2"
+    },
+    "sidebar": {
+      "background": "rgba(255, 255, 255, 0.96)",
+      "border": "#e8e2d2"
+    },
+    "card": {
+      "background": "#ffffff",
+      "border": "#e8e2d2"
+    },
+    "button": {
+      "primaryBackground": "#ef476f",
+      "primaryText": "#fffaf2",
+      "ghostBackground": "rgba(239, 71, 111, 0.08)",
+      "ghostBorder": "rgba(239, 71, 111, 0.4)",
+      "ghostText": "#3c342c",
+      "text": "#ef476f",
+      "shadow": "0 10px 24px rgba(239, 71, 111, 0.35)"
+    },
+    "codeBlock": {
+      "background": "#1f2937",
+      "text": "#f8fafc",
+      "border": "#e8e2d2"
+    }
+  }
+}
