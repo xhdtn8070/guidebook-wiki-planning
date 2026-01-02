@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "nextjs/package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "installCommand": "cd nextjs && npm install",
   "buildCommand": "cd nextjs && npm run build"
 }
