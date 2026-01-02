@@ -1,9 +1,0 @@
-{
-  "name": "guidebook-wiki-prototype",
-  "private": true,
-  "scripts": {
-    "preview": "node dev-server.js",
-    "test": "node smoke-test.js",
-    "lint": "node -e \"console.log('No lint configuration for this prototype.');\""
-  }
-}

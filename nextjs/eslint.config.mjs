@@ -1,11 +1,12 @@
-import nextPlugin from "eslint-config-next";
+import nextConfig from "eslint-config-next";
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
-  ...nextPlugin(),
+  ...nextConfig,
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "import/no-anonymous-default-export": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
 ];
