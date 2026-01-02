@@ -11,9 +11,10 @@ interface TocItem {
 
 interface OnPageTOCProps {
   items: TocItem[];
+  className?: string;
 }
 
-export function OnPageTOC({ items }: OnPageTOCProps) {
+export function OnPageTOC({ items, className }: OnPageTOCProps) {
   const [activeId, setActiveId] = useState<string>("");
 
   useEffect(() => {
@@ -51,7 +52,12 @@ export function OnPageTOC({ items }: OnPageTOCProps) {
   if (items.length === 0) return null;
 
   return (
-    <aside className="w-44 shrink-0 hidden xl:block h-[calc(100vh-56px)] sticky top-14">
+    <aside
+      className={clsx(
+        "w-44 shrink-0 hidden xl:block h-[calc(100vh-56px)] sticky top-14",
+        className,
+      )}
+    >
       <div className="p-4 h-full overflow-y-auto custom-scrollbar">
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">현재 문서 목차</h3>
         <nav aria-label="현재 문서 목차">

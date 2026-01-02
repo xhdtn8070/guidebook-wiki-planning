@@ -1,33 +1,25 @@
 "use client";
 
+import { useState } from "react";
+import Link from "next/link";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { Input } from "@/components/ui/input";
-import { searchWiki } from "@/lib/wikiData";
+import { mockSearchResults } from "@/lib/mockData";
 import { Search } from "@/components/icons";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState<{ id: string; title: string; summary: string; fullPath: string; groupId: string; tags: string[]; score: number; }[]>([]);
 
-  useEffect(() => {
-    let active = true;
-    if (!query.trim()) {
-      setResults([]);
-      return;
+  const handleSearch = (value: string) => {
+    setQuery(value);
+    if (value) {
+      setLoading(true);
+      setTimeout(() => setLoading(false), 500);
     }
-    setLoading(true);
-    searchWiki(query).then((res) => {
-      if (!active) return;
-      setResults(res.data?.results ?? []);
-      setLoading(false);
-    });
-    return () => {
-      active = false;
-    };
-  }, [query]);
+  };
+
+  const results = query ? mockSearchResults : [];
 
   return (
     <LayoutShell>
@@ -41,7 +33,7 @@ export default function SearchPage() {
             placeholder="검색어를 입력하세요..."
             className="pl-12 h-12 text-lg"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => handleSearch(e.target.value)}
             autoFocus
           />
         </div>
@@ -61,7 +53,7 @@ export default function SearchPage() {
             {results.map((result) => (
               <Link
                 key={result.id}
-                href={`/docs/${result.fullPath}?groupId=${result.groupId}`}
+                href={result.path}
                 className="block p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-theme-sm transition-all"
               >
                 <div className="flex justify-between items-start mb-2">
@@ -71,7 +63,9 @@ export default function SearchPage() {
                 <p className="text-sm text-muted-foreground mb-2">{result.summary}</p>
                 <div className="flex gap-2">
                   {result.tags.map((tag) => (
-                    <span key={tag} className="text-xs bg-muted px-2 py-0.5 rounded">{tag}</span>
+                    <span key={tag} className="text-xs bg-muted px-2 py-0.5 rounded">
+                      {tag}
+                    </span>
                   ))}
                 </div>
               </Link>
