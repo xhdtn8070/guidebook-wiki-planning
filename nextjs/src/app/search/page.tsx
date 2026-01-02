@@ -3,7 +3,7 @@
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { Input } from "@/components/ui/input";
 import { searchWiki } from "@/lib/wikiData";
-import { Search } from "lucide-react";
+import { Search } from "@/components/icons";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 

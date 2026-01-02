@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown, Search, Sun, Moon, Monitor, Palette, User, BookOpen } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { fetchWikiGroups, getDefaultPathForGroup, tenantInfo, wikiGroups, type WikiGroup } from "@/lib/wikiData";
 import { useEffect, useState } from "react";
+import { BookOpen, ChevronDown, Moon, Monitor, Palette, Search, Sun, User } from "@/components/icons";
 
 const modeLabels = {
   system: "시스템",
