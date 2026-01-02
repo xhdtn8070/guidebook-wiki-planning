@@ -1,5 +1,6 @@
-import { TopBar } from "./TopBar";
 import { ReactNode } from "react";
+import { TopBar } from "./TopBar";
+import { Providers } from "@/components/providers";
 
 interface LayoutShellProps {
   children: ReactNode;
@@ -7,9 +8,11 @@ interface LayoutShellProps {
 
 export function LayoutShell({ children }: LayoutShellProps) {
   return (
-    <div className="min-h-screen flex flex-col">
-      <TopBar />
-      {children}
-    </div>
+    <Providers>
+      <div className="page-shell">
+        <TopBar />
+        {children}
+      </div>
+    </Providers>
   );
 }

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { getThemeInitScript } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: "Guidebook Wiki – Next.js Prototype",
@@ -11,9 +12,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const themeInit = getThemeInitScript();
+
   return (
-    <html lang="ko" className="light">
-      <body className="bg-background text-foreground antialiased">{children}</body>
+    <html lang="ko" className="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
+      </head>
+      <body className="bg-background text-foreground antialiased" suppressHydrationWarning>{children}</body>
     </html>
   );
 }

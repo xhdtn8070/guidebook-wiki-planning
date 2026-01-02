@@ -4,99 +4,46 @@ import { OnPageTOC } from "@/components/layout/OnPageTOC";
 import { DocContent } from "@/components/wiki/DocContent";
 import { DocHeader } from "@/components/wiki/DocHeader";
 import { Button } from "@/components/ui/button";
-import {
-  fetchWikiGroups,
-  fetchWikiNav,
-  fetchWikiPage,
-  getDefaultPathForGroup,
-  getPagerForPath,
-  wikiGroups,
-  wikiNavTree,
-} from "@/lib/wikiData";
+import { sampleDocPage } from "@/lib/mockData";
 import { ChevronLeft, ChevronRight } from "@/components/icons";
-import { notFound, redirect } from "next/navigation";
-
-type DocsPageSearchParams = Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
-type DocsPageParams = Promise<{ slug?: string[] }> | { slug?: string[] };
+import { redirect } from "next/navigation";
 
 interface DocsPageProps {
-  params: DocsPageParams;
-  searchParams: DocsPageSearchParams;
+  params: { slug?: string[] };
 }
 
-export default async function DocsPage({ params, searchParams }: DocsPageProps) {
-  const groupsResponse = await fetchWikiGroups();
-  const groups = groupsResponse.data?.groups ?? wikiGroups;
-  const resolvedSearchParams = await searchParams;
-  const groupId = (resolvedSearchParams.groupId as string | undefined) ?? groups[0]?.id;
-
-  const resolvedParams = await params;
-  const slugArray = resolvedParams.slug ?? [];
-  const joinedSlug = slugArray.join("/");
-
-  if (!joinedSlug) {
-    const fallbackPath = getDefaultPathForGroup(groupId);
-    if (fallbackPath) {
-      redirect(`/docs/${fallbackPath}?groupId=${groupId}`);
-    }
+export default function DocsPage({ params }: DocsPageProps) {
+  const slugArray = params.slug ?? [];
+  if (slugArray.length === 0) {
+    redirect("/docs/getting-started");
   }
 
-  const navResponse = groupId ? await fetchWikiNav(groupId) : null;
-  const navNodes = navResponse?.data?.nodes ?? (groupId ? wikiNavTree[groupId] ?? [] : []);
-
-  const pageResponse = groupId && joinedSlug ? await fetchWikiPage(groupId, joinedSlug) : null;
-
-  if (!pageResponse?.data) {
-    notFound();
-  }
-
-  const page = pageResponse.data!;
-  const pager = getPagerForPath(navNodes, page.fullPath);
+  const doc = sampleDocPage;
 
   return (
     <LayoutShell>
       <div className="flex flex-1">
-        <SidebarNav groupId={page.groupId} nodes={navNodes} />
+        <SidebarNav />
 
         <main className="flex-1 min-w-0 p-6 lg:p-8">
           <div className="max-w-3xl mx-auto">
-            <nav className="text-sm text-muted-foreground mb-4">{page.breadcrumb.join(" / ")}</nav>
+            <nav className="text-sm text-muted-foreground mb-4">{doc.breadcrumb}</nav>
 
-            <DocHeader page={page} />
-            <DocContent page={page} />
+            <DocHeader page={doc} />
+            <DocContent page={doc} />
 
             <nav className="flex justify-between mt-12 pt-6 border-t border-border">
-              {pager.prev ? (
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="gap-2"
-                >
-                  <a href={`/docs/${pager.prev.fullPath}?groupId=${page.groupId}`}>
-                    <ChevronLeft className="h-4 w-4" /> 이전: {pager.prev.title}
-                  </a>
-                </Button>
-              ) : (
-                <span className="text-muted-foreground text-sm">이전 문서 없음</span>
-              )}
-              {pager.next ? (
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="gap-2"
-                >
-                  <a href={`/docs/${pager.next.fullPath}?groupId=${page.groupId}`}>
-                    다음: {pager.next.title} <ChevronRight className="h-4 w-4" />
-                  </a>
-                </Button>
-              ) : (
-                <span className="text-muted-foreground text-sm">다음 문서 없음</span>
-              )}
+              <Button variant="ghost" className="gap-2">
+                <ChevronLeft className="h-4 w-4" /> 이전: 빠른 시작
+              </Button>
+              <Button variant="ghost" className="gap-2">
+                다음: Google OAuth <ChevronRight className="h-4 w-4" />
+              </Button>
             </nav>
           </div>
         </main>
 
-        <OnPageTOC items={page.toc} />
+        <OnPageTOC items={doc.toc} />
       </div>
     </LayoutShell>
   );

@@ -1,35 +1,44 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { WikiNavNode } from "@/lib/wikiData";
+import { usePathname, useRouter } from "next/navigation";
 import { clsx } from "clsx";
 import { ChevronRight, FileText, Folder, Lock } from "@/components/icons";
+import { navItems, NavItem } from "@/lib/mockData";
+import { toast } from "@/components/ui/toaster";
 
 interface SidebarNavProps {
-  groupId: string;
-  nodes: WikiNavNode[];
   className?: string;
 }
 
-const isParentActive = (item: WikiNavNode, path: string): boolean => {
-  if (path === item.fullPath) return true;
+const isParentActive = (item: NavItem, path: string): boolean => {
+  if (path === item.path) return true;
   return item.children?.some((child) => isParentActive(child, path)) ?? false;
 };
 
-export function SidebarNav({ groupId, nodes, className }: SidebarNavProps) {
+export function SidebarNav({ className }: SidebarNavProps) {
   const pathname = usePathname();
-  const currentPath = pathname.replace(/^\/docs\//, "");
+  const router = useRouter();
 
-  const renderNavItem = (item: WikiNavNode, level = 0) => {
+  const handleNavClick = (item: NavItem) => {
+    if (!item.isUsable) {
+      toast.info("준비 중입니다", {
+        description: "이 문서는 곧 공개될 예정입니다.",
+      });
+      return;
+    }
+    router.push(item.path);
+  };
+
+  const renderNavItem = (item: NavItem, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;
-    const active = currentPath === item.fullPath;
-    const parentActive = isParentActive(item, currentPath);
+    const active = pathname === item.path;
+    const parentActive = isParentActive(item, pathname);
 
     return (
       <li key={item.id} className="animate-slide-in" style={{ animationDelay: `${level * 30}ms` }}>
-        <Link
-          href={`/docs/${item.fullPath}?groupId=${groupId}`}
+        <button
+          onClick={() => handleNavClick(item)}
+          disabled={!item.isUsable && !hasChildren}
           className={clsx(
             "w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-150",
             "hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30",
@@ -39,8 +48,6 @@ export function SidebarNav({ groupId, nodes, className }: SidebarNavProps) {
             !item.isUsable && "opacity-50 cursor-not-allowed hover:bg-transparent",
             level > 0 && "pl-6",
           )}
-          aria-disabled={!item.isUsable}
-          tabIndex={!item.isUsable ? -1 : 0}
         >
           {hasChildren ? <Folder className="h-4 w-4 flex-shrink-0" /> : <FileText className="h-4 w-4 flex-shrink-0" />}
           <span className="flex-1 text-left truncate">{item.title}</span>
@@ -48,11 +55,11 @@ export function SidebarNav({ groupId, nodes, className }: SidebarNavProps) {
           {hasChildren && item.isUsable && (
             <ChevronRight className={clsx("h-3 w-3 flex-shrink-0 transition-transform", parentActive && "rotate-90")} />
           )}
-        </Link>
+        </button>
 
         {hasChildren && parentActive && (
           <ul className="mt-1 space-y-1 border-l border-border/50 ml-4">
-            {item.children.map((child) => renderNavItem(child, level + 1))}
+            {item.children!.map((child) => renderNavItem(child, level + 1))}
           </ul>
         )}
       </li>
@@ -69,7 +76,7 @@ export function SidebarNav({ groupId, nodes, className }: SidebarNavProps) {
     >
       <div className="p-4 h-full overflow-y-auto custom-scrollbar">
         <nav aria-label="문서 네비게이션">
-          <ul className="space-y-1">{nodes.map((item) => renderNavItem(item))}</ul>
+          <ul className="space-y-1">{navItems.map((item) => renderNavItem(item))}</ul>
         </nav>
 
         <div className="mt-6 pt-4 border-t border-border">
@@ -78,7 +85,10 @@ export function SidebarNav({ groupId, nodes, className }: SidebarNavProps) {
           </h3>
           <ul className="space-y-1">
             <li>
-              <button className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-primary/10 transition-colors">
+              <button
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:bg-primary/10 transition-colors"
+                onClick={() => toast.info("준비 중입니다")}
+              >
                 <div className="h-4 w-4 rounded bg-primary/20 flex items-center justify-center text-[10px] font-bold text-primary">
                   A
                 </div>
