@@ -53,7 +53,7 @@ export default function SearchPage() {
             {results.map((result) => (
               <Link
                 key={result.id}
-                href={result.path}
+                href={{ pathname: result.path }}
                 className="block p-4 rounded-lg border border-border bg-card hover:border-primary/30 hover:shadow-theme-sm transition-all"
               >
                 <div className="flex justify-between items-start mb-2">
