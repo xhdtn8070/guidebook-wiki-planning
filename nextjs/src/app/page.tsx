@@ -46,7 +46,7 @@ export default function HomePage() {
             ].map((item, i) => (
               <Link
                 key={i}
-                href={item.link}
+                href={{ pathname: item.link }}
                 className="group p-5 rounded-xl border border-border bg-card shadow-theme-sm hover:shadow-theme-md hover:border-primary/30 transition-all duration-200"
               >
                 <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
@@ -68,7 +68,7 @@ export default function HomePage() {
               <ul className="space-y-2">
                 {popularDocs.map((doc) => (
                   <li key={doc.id}>
-                    <Link href="/docs/getting-started" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                    <Link href={{ pathname: "/docs/getting-started" }} className="text-sm text-muted-foreground hover:text-primary transition-colors">
                       {doc.title}
                     </Link>
                   </li>
@@ -80,7 +80,7 @@ export default function HomePage() {
               <ul className="space-y-2">
                 {recentDocs.map((doc) => (
                   <li key={doc.id} className="flex justify-between text-sm">
-                    <Link href="/docs/getting-started" className="text-muted-foreground hover:text-primary transition-colors">
+                    <Link href={{ pathname: "/docs/getting-started" }} className="text-muted-foreground hover:text-primary transition-colors">
                       {doc.title}
                     </Link>
                     <span className="text-xs text-muted-foreground">{doc.date}</span>
