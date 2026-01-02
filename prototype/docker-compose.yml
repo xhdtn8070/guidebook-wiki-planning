@@ -1,9 +1,0 @@
-version: "3.9"
-services:
-  prototype:
-    build: .
-    ports:
-      - "4173:4173"
-    environment:
-      - PORT=4173
-    restart: unless-stopped

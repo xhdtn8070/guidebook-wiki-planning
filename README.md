@@ -8,7 +8,7 @@
 - `frontend/`: 프론트엔드 설계와 구현 가이드
 - `backend/`: API 규격 초안 및 공통 정책
 - `database/`: PostgreSQL 스키마 초안
-- `prototype/`: 정적 위키 UI 프로토타입, 프리뷰/테스트 스크립트 및 컨테이너 설정
+- `nextjs/`: 실동작하는 Next.js 기반 위키 UI 코드베이스 (기획서에서 정의한 구조를 구현)
 
 ## 추천 읽기 순서
 1. **docs/guidebook-wiki-planning.md** – 비전, 문제 정의, 전체 아키텍처 개요를 먼저 파악합니다.
@@ -20,11 +20,10 @@
 
 각 파일 상단에도 선행/후행 문서 안내를 추가했으니 필요한 부분만 찾아볼 때 참고하세요.
 
-## 프로토타입 미리보기 (prototype/ 폴더 실행)
-- **Docker Compose**: `cd prototype && docker compose up --build` 후 `http://localhost:4173/` 접속
-  - 백그라운드 실행 시 `docker compose up -d`, 중단 시 `docker compose down`
-- **로컬 Node**: `npm run preview --prefix prototype` 명령으로 정적 서버를 띄운 뒤 `http://localhost:4173/`로 접속합니다.
-- **스모크 테스트**: `npm test --prefix prototype` 로 index와 테마 JSON 응답을 검증하는 테스트를 실행합니다.
+## Next.js 실행/검증
+- **개발 서버**: `cd nextjs && npm run dev`
+- **테스트**: `cd nextjs && npm test`
+- **린트**: `cd nextjs && npm run lint`
 
 ## 사용 방법
 - 새로운 내용이 생기면 기존 문서의 관련 섹션을 업데이트하거나, README에 새 파일을 추가로 연결해 주세요.
