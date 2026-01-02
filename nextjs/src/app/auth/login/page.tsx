@@ -1,10 +1,11 @@
 "use client";
 
+import { Suspense } from "react";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
 
@@ -42,5 +43,19 @@ export default function LoginPage() {
         </div>
       </main>
     </LayoutShell>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <LayoutShell>
+          <main className="flex-1 flex items-center justify-center p-6 text-muted-foreground">로그인 정보를 불러오는 중...</main>
+        </LayoutShell>
+      }
+    >
+      <LoginContent />
+    </Suspense>
   );
 }

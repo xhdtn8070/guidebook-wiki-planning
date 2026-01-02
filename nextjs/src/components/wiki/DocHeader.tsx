@@ -1,6 +1,6 @@
 import { Button } from "../ui/button";
-import { Edit, Star } from "lucide-react";
 import { WikiDocPage } from "@/lib/wikiData";
+import { Edit, Star } from "@/components/icons";
 
 interface DocHeaderProps {
   page: WikiDocPage;

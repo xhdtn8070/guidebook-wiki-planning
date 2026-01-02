@@ -3,7 +3,7 @@ import { ApiShapeCard } from "@/components/wiki/ApiShapeCard";
 import { Button } from "@/components/ui/button";
 import { LayoutShell } from "@/components/layout/LayoutShell";
 import { apiExamples, fetchWikiGroups, fetchWikiNav, getDefaultPathForGroup, popularDocs, recentDocs, tenantInfo, wikiGroups, wikiNavTree } from "@/lib/wikiData";
-import { BookOpen, GitBranch, Search, Server, ShieldCheck, Zap } from "lucide-react";
+import { BookOpen, GitBranch, Search, Server, ShieldCheck, Zap } from "@/components/icons";
 
 export default async function HomePage() {
   const groupsResponse = await fetchWikiGroups();

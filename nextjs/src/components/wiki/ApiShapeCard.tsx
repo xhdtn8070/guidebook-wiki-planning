@@ -1,5 +1,5 @@
-import { Code2 } from "lucide-react";
 import { clsx } from "clsx";
+import { Code2 } from "@/components/icons";
 
 interface ApiShapeCardProps {
   title: string;

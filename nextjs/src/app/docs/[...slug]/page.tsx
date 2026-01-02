@@ -13,7 +13,7 @@ import {
   wikiGroups,
   wikiNavTree,
 } from "@/lib/wikiData";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "@/components/icons";
 import { notFound, redirect } from "next/navigation";
 
 interface DocsPageProps {

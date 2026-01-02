@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronRight, FileText, Folder, Lock } from "lucide-react";
 import { WikiNavNode } from "@/lib/wikiData";
 import { clsx } from "clsx";
+import { ChevronRight, FileText, Folder, Lock } from "@/components/icons";
 
 interface SidebarNavProps {
   groupId: string;
