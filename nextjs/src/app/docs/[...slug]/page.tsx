@@ -16,17 +16,22 @@ import {
 import { ChevronLeft, ChevronRight } from "@/components/icons";
 import { notFound, redirect } from "next/navigation";
 
+type DocsPageSearchParams = Promise<Record<string, string | string[] | undefined>> | Record<string, string | string[] | undefined>;
+type DocsPageParams = Promise<{ slug?: string[] }> | { slug?: string[] };
+
 interface DocsPageProps {
-  params: { slug?: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  params: DocsPageParams;
+  searchParams: DocsPageSearchParams;
 }
 
 export default async function DocsPage({ params, searchParams }: DocsPageProps) {
   const groupsResponse = await fetchWikiGroups();
   const groups = groupsResponse.data?.groups ?? wikiGroups;
-  const groupId = (searchParams.groupId as string | undefined) ?? groups[0]?.id;
+  const resolvedSearchParams = await searchParams;
+  const groupId = (resolvedSearchParams.groupId as string | undefined) ?? groups[0]?.id;
 
-  const slugArray = params.slug ?? [];
+  const resolvedParams = await params;
+  const slugArray = resolvedParams.slug ?? [];
   const joinedSlug = slugArray.join("/");
 
   if (!joinedSlug) {
