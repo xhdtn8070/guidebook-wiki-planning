@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Sans_KR, Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
 
+const sans = IBM_Plex_Sans_KR({
+  variable: "--font-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const serif = Noto_Serif_KR({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
-  title: "Guidebook Wiki – Next.js Prototype",
-  description: "API 실전 플레이북 테넌트용 Next.js 위키 프론트엔드",
+  title: "Guidebook Wiki",
+  description: "Guidebook Wiki Next.js shell aligned to the live backend API contract.",
 };
 
 export default function RootLayout({
@@ -12,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="light">
-      <body className="bg-background text-foreground antialiased">{children}</body>
+    <html lang="ko">
+      <body className={`${sans.variable} ${serif.variable} bg-background text-foreground antialiased`}>{children}</body>
     </html>
   );
 }

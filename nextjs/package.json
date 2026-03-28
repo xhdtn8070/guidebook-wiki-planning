@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "test": "npm run test:build && node -r ./scripts/register-path-aliases.cjs dist-tests/__tests__/home.test.js",
+    "test": "npm run test:build && node -r ./scripts/register-path-aliases.cjs dist-tests/__tests__/routes.test.js && node -r ./scripts/register-path-aliases.cjs dist-tests/__tests__/sections.test.js",
     "test:build": "tsc -p tsconfig.test.json"
   },
   "dependencies": {
