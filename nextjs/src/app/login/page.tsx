@@ -12,10 +12,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const viewer = await loadViewerSession();
   const resolvedSearchParams = await searchParams;
   const redirectTo = typeof resolvedSearchParams.redirect === "string" ? resolvedSearchParams.redirect : "/";
+  const mode = resolvedSearchParams.mode === "signup" ? "signup" : "login";
 
   return (
     <AppShell viewer={viewer}>
-      <LoginPanel redirectTo={redirectTo} />
+      <LoginPanel viewer={viewer} redirectTo={redirectTo} mode={mode} />
     </AppShell>
   );
 }

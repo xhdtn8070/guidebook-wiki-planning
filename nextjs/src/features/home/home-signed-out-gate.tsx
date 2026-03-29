@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowRight, Bell, BookOpen, Layers, Search as SearchIcon, Star } from "@/shared/icons";
+import { buildSignupHref } from "@/shared/lib/routes";
 import { buttonStyles } from "@/shared/ui/button";
 
 export function HomeSignedOutGate() {
@@ -19,6 +20,9 @@ export function HomeSignedOutGate() {
             <Link href="/login" className={buttonStyles({ size: "lg" })}>
               로그인하고 내 홈 보기
               <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href={buildSignupHref()} className={buttonStyles({ variant: "outline", size: "lg" })}>
+              회원가입
             </Link>
             <Link href="/introduce" className={buttonStyles({ variant: "outline", size: "lg" })}>
               서비스 소개 보기

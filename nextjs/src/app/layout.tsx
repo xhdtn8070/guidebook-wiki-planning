@@ -18,23 +18,6 @@ export default function RootLayout({
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
       </head>
       <body className="bg-background text-foreground antialiased">
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                var themeKey = "guidebook_theme";
-                var modeKey = "guidebook_mode";
-                var root = document.documentElement;
-                var theme = localStorage.getItem(themeKey) || "midnight";
-                var mode = localStorage.getItem(modeKey) || "light";
-                root.setAttribute("data-theme", theme);
-                root.setAttribute("data-mode", mode);
-                root.classList.remove("light", "dark");
-                root.classList.add(mode);
-              })();
-            `,
-          }}
-        />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

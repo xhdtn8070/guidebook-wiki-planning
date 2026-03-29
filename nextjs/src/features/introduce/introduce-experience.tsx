@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { ArrowRight, BookOpen, Layers, Search as SearchIcon, Spark, Star, Zap } from "@/shared/icons";
-import { buildLoginHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
+import { buildLoginHref, buildSearchHref, buildSignupHref, buildTenantHref } from "@/shared/lib/routes";
 import { buttonStyles } from "@/shared/ui/button";
 
 const quickStartCards = [
@@ -93,6 +93,9 @@ export function IntroduceExperience() {
                 <Link href="/login" className={buttonStyles({ size: "lg" })}>
                   카카오로 시작하기
                   <ArrowRight className="h-4 w-4" />
+                </Link>
+                <Link href={buildSignupHref()} className={buttonStyles({ variant: "outline", size: "lg" })}>
+                  회원가입
                 </Link>
                 <Link href={buildTenantHref(1) as Route} className={buttonStyles({ variant: "outline", size: "lg" })}>
                   데모 워크스페이스 보기

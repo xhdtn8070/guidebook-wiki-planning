@@ -32,7 +32,12 @@ export async function loadViewerSession(): Promise<ViewerSession> {
   ]);
 
   return {
-    user: userResult.ok ? userResult.data : null,
+    user: userResult.ok
+      ? {
+          ...userResult.data,
+          linkedProviders: userResult.data.linkedProviders ?? [],
+        }
+      : null,
     tenants: tenantResult.ok ? tenantResult.data.items : [],
     activeTenantId: session.tenantId,
   };

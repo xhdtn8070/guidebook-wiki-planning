@@ -27,6 +27,10 @@ export function buildIntroduceHref() {
   return "/introduce";
 }
 
+export function buildMeHref() {
+  return "/me";
+}
+
 export function buildTenantHref(tenantId: number | string) {
   return `/tenant/${tenantId}`;
 }
@@ -75,6 +79,14 @@ export function buildLoginHref(redirectTo?: string | null): Route {
   }
 
   return `/login?redirect=${encodeURIComponent(redirectTo)}` as Route;
+}
+
+export function buildSignupHref(redirectTo?: string | null): Route {
+  if (!redirectTo || redirectTo === "/" || redirectTo.startsWith("/login") || redirectTo.startsWith("/auth")) {
+    return "/login?mode=signup" as Route;
+  }
+
+  return `/login?mode=signup&redirect=${encodeURIComponent(redirectTo)}` as Route;
 }
 
 export function parseBackendPageUrl(url: string): ParsedBackendPageUrl | null {

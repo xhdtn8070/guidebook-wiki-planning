@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { clsx } from "clsx";
 import type { ViewerSession } from "@/shared/lib/api-types";
-import { buildIntroduceHref, buildLoginHref, buildOnboardingHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
+import { buildIntroduceHref, buildLoginHref, buildMeHref, buildOnboardingHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
 import {
   BookOpen,
   ChevronDown,
@@ -36,6 +36,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
   const [isPending, startTransition] = useTransition();
   const [isTenantOpen, setIsTenantOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [isAccountOpen, setIsAccountOpen] = useState(false);
 
   const activeTenantId = useMemo(() => {
     if (typeof searchParams.get("tenantId") === "string") {
@@ -59,6 +60,12 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
   }, [searchParams]);
+
+  useEffect(() => {
+    setIsTenantOpen(false);
+    setIsThemeOpen(false);
+    setIsAccountOpen(false);
+  }, [pathname, searchParams]);
 
   useEffect(() => {
     if (!preferredTenantId || viewer.activeTenantId === preferredTenantId) {
@@ -176,6 +183,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
               onClick={() => {
                 setIsThemeOpen((current) => !current);
                 setIsTenantOpen(false);
+                setIsAccountOpen(false);
               }}
             >
               <Palette className="h-4 w-4" />
@@ -233,6 +241,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
                 onClick={() => {
                   setIsTenantOpen((current) => !current);
                   setIsThemeOpen(false);
+                  setIsAccountOpen(false);
                 }}
               >
                 <Layers className="h-4 w-4" />
@@ -273,14 +282,50 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
                 </Link>
               )}
 
-              <Link href="/me" className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), "hidden lg:inline-flex")}>
-                <User className="h-4 w-4" />
-                Session
-              </Link>
-              <button type="button" onClick={logout} className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-[hsl(var(--surface-elevated))]")}>
-                <User className="h-4 w-4" />
-                <span className="hidden sm:inline">{isPending ? "..." : viewer.user.displayName}</span>
-              </button>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAccountOpen((current) => !current);
+                    setIsTenantOpen(false);
+                    setIsThemeOpen(false);
+                  }}
+                  className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-[hsl(var(--surface-elevated))]")}
+                >
+                  <User className="h-4 w-4" />
+                  <span className="hidden sm:inline">{isPending ? "..." : viewer.user.displayName}</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+                {isAccountOpen ? (
+                  <div className="absolute right-0 mt-3 w-72 rounded-2xl border border-border bg-[hsl(var(--surface-elevated))] p-2 shadow-theme-lg">
+                    <div className="rounded-xl border border-border bg-background/40 px-4 py-4">
+                      <p className="text-sm font-semibold text-foreground">{viewer.user.displayName}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">{viewer.user.status}</p>
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      <Link href={buildMeHref() as Route} className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-background/60">
+                        <span>마이페이지</span>
+                        <User className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                      <Link
+                        href={activeTenantId ? (buildTenantHref(activeTenantId) as Route) : (buildOnboardingHref(pathname) as Route)}
+                        className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-background/60"
+                      >
+                        <span>워크스페이스 설정</span>
+                        <Layers className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => void logout()}
+                        className="flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm text-foreground transition-colors hover:bg-background/60"
+                      >
+                        <span>로그아웃</span>
+                        <User className="h-4 w-4 text-muted-foreground" />
+                      </button>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
             </>
           ) : (
             <Link href={loginHref} className={buttonStyles({ size: "sm" })}>

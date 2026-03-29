@@ -29,6 +29,7 @@ export type BackendResult<T> =
 export type TenantVisibility = "PUBLIC" | "PRIVATE";
 export type TenantRole = "OWNER" | "ADMIN" | "MEMBER";
 export type UserStatus = "ACTIVE" | "BLOCKED" | "WITHDRAWN";
+export type OAuthProvider = "KAKAO" | "GOOGLE" | "NAVER" | "APPLE";
 export type GuidebookStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED";
 export type PageStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED";
 export type PageAccessPolicy = "INHERIT" | "PUBLIC" | "TENANT_ONLY";
@@ -101,6 +102,7 @@ export type UserMeResponse = {
   userId: number;
   displayName: string;
   status: UserStatus;
+  linkedProviders: OAuthProvider[];
 };
 
 export type TenantMeItem = {
@@ -265,6 +267,13 @@ export type GuidebookCreateRequest = {
   status?: GuidebookStatus;
 };
 
+export type GuidebookUpdateRequest = {
+  name?: string | null;
+  description?: string | null;
+  status?: GuidebookStatus | null;
+  orderInTenant?: number | null;
+};
+
 export type GuidebookSummary = {
   guidebookId: number;
   tenantId: number;
@@ -278,6 +287,26 @@ export type GuidebookSummary = {
 
 export type PageListResponse = {
   items: PageResponse[];
+};
+
+export type PageCreateRequest = {
+  title: string;
+  parentPageId?: number | null;
+  orderInParent?: number | null;
+  sections: GuidebookSection[];
+  meta?: Record<string, unknown> | null;
+  status?: PageStatus;
+  accessPolicy?: PageAccessPolicy;
+  isUsable?: boolean;
+};
+
+export type PageUpdateRequest = {
+  title?: string | null;
+  sections?: GuidebookSection[] | null;
+  meta?: Record<string, unknown> | null;
+  status?: PageStatus | null;
+  accessPolicy?: PageAccessPolicy | null;
+  isUsable?: boolean | null;
 };
 
 export type ViewerSession = {
