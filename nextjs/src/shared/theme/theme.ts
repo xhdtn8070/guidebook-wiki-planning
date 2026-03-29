@@ -17,7 +17,7 @@ export const themeModes: Record<ThemeMode, { label: string }> = {
 };
 
 export const DEFAULT_THEME: ThemePreset = "midnight";
-export const DEFAULT_MODE: ThemeMode = "dark";
+export const DEFAULT_MODE: ThemeMode = "light";
 
 export function isThemePreset(value: string | null | undefined): value is ThemePreset {
   return value === "midnight";

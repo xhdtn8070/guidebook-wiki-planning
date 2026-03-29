@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typedRoutes: true,
-  allowedDevOrigins: ["http://127.0.0.1:3100"],
+  allowedDevOrigins: ["http://localhost:3000", "http://127.0.0.1:3000"],
 };
 
 export default nextConfig;

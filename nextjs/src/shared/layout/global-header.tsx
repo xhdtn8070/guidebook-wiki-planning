@@ -81,20 +81,20 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-[hsl(var(--surface-strong)/0.94)] backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-3 px-4 md:px-6 xl:px-8">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-[hsl(var(--background)/0.88)] backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-4 md:px-6 xl:px-8">
         <Link href="/" className="flex min-w-0 items-center gap-3 text-foreground transition-opacity hover:opacity-90">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-primary/15 text-sm font-extrabold text-primary shadow-glow">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-foreground text-sm font-extrabold text-background shadow-theme-sm">
             G
           </div>
           <div className="hidden min-w-0 sm:block">
             <p className="truncate text-sm font-bold tracking-tight">Guidebook Wiki</p>
-            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-muted-foreground">API Docs Shell</p>
+            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Operational Docs</p>
           </div>
         </Link>
 
         <div className="mx-auto flex min-w-0 flex-1 items-center justify-center gap-3">
-          <Link href="/" className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "hidden md:inline-flex border-border/70 bg-background/40")}>
+          <Link href="/" className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "hidden md:inline-flex border-border/70 bg-background/65")}>
             <BookOpen className="h-4 w-4" />
             Docs
           </Link>
@@ -105,7 +105,7 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search pages, terms, and code identifiers"
-              className="h-10 border-border/70 bg-background/50 pl-10 pr-20"
+              className="h-11 rounded-2xl border-border/80 bg-background/80 pl-10 pr-20"
             />
             <kbd className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md border border-border bg-background/70 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground md:block">
               Search
@@ -156,7 +156,7 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
                     </button>
                     <span className="inline-flex h-9 items-center gap-2 rounded-xl border border-border bg-background/50 px-3 text-xs font-medium text-muted-foreground">
                       <Monitor className="h-4 w-4" />
-                      Active
+                      Synced
                     </span>
                   </div>
                 </div>

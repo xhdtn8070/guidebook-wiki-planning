@@ -21,7 +21,7 @@
 각 파일 상단에도 선행/후행 문서 안내를 추가했으니 필요한 부분만 찾아볼 때 참고하세요.
 
 ## Next.js 실행/검증
-- **개발 서버**: `cd nextjs && npm run dev -- --hostname 127.0.0.1 --port 3100`
+- **개발 서버**: `cd nextjs && npm run dev -- --hostname localhost --port 3000`
 - **테스트**: `cd nextjs && npm test`
 - **린트**: `cd nextjs && npm run lint`
 

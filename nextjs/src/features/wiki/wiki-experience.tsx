@@ -60,9 +60,9 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
         <header className="hero-gradient border-b border-border px-6 py-7 md:px-8 md:py-8">
           <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
             <span className="pill pill-ghost">Document</span>
-            <span className="pill pill-ghost">Guidebook {page.guidebookId}</span>
-            <span className="pill pill-ghost">{page.status}</span>
-            <span className="pill pill-ghost">{page.accessPolicy}</span>
+            <span className="rounded-full border border-border/70 bg-background/55 px-3 py-1.5">Guidebook {page.guidebookId}</span>
+            <span className="rounded-full border border-border/70 bg-background/55 px-3 py-1.5">{page.status}</span>
+            <span className="rounded-full border border-border/70 bg-background/55 px-3 py-1.5">{page.accessPolicy}</span>
           </div>
 
           <nav className="mt-5 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
@@ -79,8 +79,14 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
           <div className="mt-6 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
               <h1 className="max-w-4xl text-4xl font-extrabold tracking-[-0.05em] text-foreground md:text-5xl">{page.title}</h1>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-foreground/78">
-                page #{page.pageId} · status {page.status} · access {page.accessPolicy} · tenant {page.tenantId}
+              <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm text-foreground/78">
+                <span>page #{page.pageId}</span>
+                <span>tenant {page.tenantId}</span>
+                <span>status {page.status}</span>
+                <span>access {page.accessPolicy}</span>
+              </div>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-foreground/72">
+                reader는 page id 기준 canonical route를 유지하고, 좌측 nav와 우측 toc는 같은 tenant/session context 위에서 움직입니다.
               </p>
             </div>
 

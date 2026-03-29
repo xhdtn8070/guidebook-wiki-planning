@@ -26,7 +26,7 @@ export default function RootLayout({
                 var modeKey = "guidebook_mode";
                 var root = document.documentElement;
                 var theme = localStorage.getItem(themeKey) || "midnight";
-                var mode = localStorage.getItem(modeKey) || "dark";
+                var mode = localStorage.getItem(modeKey) || "light";
                 root.setAttribute("data-theme", theme);
                 root.setAttribute("data-mode", mode);
                 root.classList.remove("light", "dark");

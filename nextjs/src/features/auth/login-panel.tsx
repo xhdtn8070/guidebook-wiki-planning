@@ -50,11 +50,11 @@ export function LoginPanel({ redirectTo }: LoginPanelProps) {
         <dl className="mt-6 space-y-5 text-sm">
           <div className="rounded-2xl border border-border bg-background/35 px-4 py-4">
             <dt className="text-muted-foreground">1. Redirect</dt>
-            <dd className="mt-1 leading-7 text-foreground">백엔드의 `/oauth/login` 테스트 페이지처럼 provider redirect를 시작하되, Next가 복귀 경로를 쿠키로 보존합니다.</dd>
+            <dd className="mt-1 leading-7 text-foreground">Next가 backend `/api/oauth/:provider/login/frontend`로 로그인 시작을 넘기고, 원래 복귀 경로는 httpOnly 쿠키로 보존합니다.</dd>
           </div>
           <div className="rounded-2xl border border-border bg-background/35 px-4 py-4">
             <dt className="text-muted-foreground">2. Ticket exchange</dt>
-            <dd className="mt-1 leading-7 text-foreground">백엔드 `auth.html`과 동일하게 `/auth#ticket=...`를 읽지만, 저장은 browser storage 대신 httpOnly 쿠키로 끝냅니다.</dd>
+            <dd className="mt-1 leading-7 text-foreground">OAuth 완료 후 프론트 `/auth#ticket=...`가 ticket를 읽고 실제 토큰으로 교환한 뒤, 저장은 browser storage 대신 httpOnly 쿠키로 끝냅니다.</dd>
           </div>
           <div className="rounded-2xl border border-border bg-background/35 px-4 py-4">
             <dt className="text-muted-foreground">3. BFF ready</dt>

@@ -15,16 +15,22 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
 
   return (
     <div className="space-y-8">
-      <section className="hero-gradient overflow-hidden rounded-[32px] border border-border px-6 py-8 shadow-theme-lg md:px-10 md:py-10">
+      <section className="hero-gradient overflow-hidden rounded-[36px] border border-border px-6 py-8 shadow-theme-lg md:px-10 md:py-10">
         <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
             <span className="pill pill-ghost">Workspace</span>
             <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.05em] text-foreground md:text-5xl">
-              {home.me.displayName}님의 문서 작업면을 product docs shell로 다시 엮었습니다.
+              {home.me.displayName}님의 문서 작업면을 탐색 중심의 docs workspace로 정리했습니다.
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-8 text-foreground/78">
-              홈 대시보드는 <code>/api/home</code>를 그대로 사용합니다. 최근 문서, starred, notification, tenant 목록을 같은 응답에서 받고, 문서 링크는 프론트 canonical route로 정규화합니다.
+              홈 대시보드는 <code>/api/home</code>를 그대로 사용합니다. 최근 문서, starred, notification, tenant 목록을 한 응답에서 받고, 문서 링크는 프론트
+              canonical route로 정규화합니다.
             </p>
+            <div className="mt-6 flex flex-wrap gap-3 text-sm text-muted-foreground">
+              <span className="rounded-full border border-border bg-background/65 px-3 py-1.5">Search-first access</span>
+              <span className="rounded-full border border-border bg-background/65 px-3 py-1.5">Reader + admin handoff</span>
+              <span className="rounded-full border border-border bg-background/65 px-3 py-1.5">Tenant-aware session shell</span>
+            </div>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
@@ -66,6 +72,7 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
               <Layers className="h-4 w-4 text-primary" />
               <p className="text-sm font-semibold text-foreground">Workspace rail</p>
             </div>
+            <p className="mt-3 text-sm leading-7 text-muted-foreground">실제 tenant 컨텍스트를 전환하는 작업면입니다. reader와 search는 이 축을 그대로 공유합니다.</p>
             <div className="mt-5 space-y-3">
               {home.tenants?.map((tenant) => (
                 <div key={tenant.tenantId} className="rounded-2xl border border-border bg-background/40 px-4 py-4">

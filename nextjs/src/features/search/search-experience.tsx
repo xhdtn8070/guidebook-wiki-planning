@@ -21,7 +21,7 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
 
   return (
     <div className="space-y-8">
-      <section className="hero-gradient overflow-hidden rounded-[32px] border border-border px-6 py-8 shadow-theme-lg md:px-10 md:py-10">
+      <section className="hero-gradient overflow-hidden rounded-[36px] border border-border px-6 py-8 shadow-theme-lg md:px-10 md:py-10">
         <div className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
           <div>
             <span className="pill pill-ghost">Search</span>
@@ -32,6 +32,20 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
               검색은 <code>q</code> search param을 단일 기준으로 사용하고, tenant가 있을 때만 실제 <code>/api/search/pages</code>를 호출합니다.
               결과 링크는 항상 canonical page route로 정규화됩니다.
             </p>
+            <div className="mt-6 grid max-w-2xl gap-3 md:grid-cols-3">
+              <div className="rounded-2xl border border-border/70 bg-background/55 px-4 py-4 text-sm text-muted-foreground">
+                <p className="font-semibold text-foreground">One query model</p>
+                <p className="mt-2 leading-7">검색 기준은 항상 <code>q</code> 하나입니다.</p>
+              </div>
+              <div className="rounded-2xl border border-border/70 bg-background/55 px-4 py-4 text-sm text-muted-foreground">
+                <p className="font-semibold text-foreground">Tenant gated</p>
+                <p className="mt-2 leading-7">tenant가 없으면 호출보다 gate를 먼저 보여줍니다.</p>
+              </div>
+              <div className="rounded-2xl border border-border/70 bg-background/55 px-4 py-4 text-sm text-muted-foreground">
+                <p className="font-semibold text-foreground">Reader handoff</p>
+                <p className="mt-2 leading-7">결과 클릭은 항상 canonical reader route로 이동합니다.</p>
+              </div>
+            </div>
           </div>
 
           <aside className="surface-elevated rounded-[28px] border border-border px-5 py-5 shadow-theme-md">
@@ -48,10 +62,10 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
       <form action="/search" className="surface-elevated grid gap-4 rounded-[28px] border border-border px-5 py-5 shadow-theme-md md:grid-cols-[minmax(0,1fr)_150px_170px]">
         <div className="relative">
           <SearchIcon className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input name="q" defaultValue={query} placeholder="문서, 용어, 코드 식별자를 검색하세요" className="h-11 pl-11" />
+          <Input name="q" defaultValue={query} placeholder="문서, 용어, 코드 식별자를 검색하세요" className="h-12 rounded-2xl pl-11" />
         </div>
-        <Input name="guidebookId" defaultValue={guidebookId ?? ""} placeholder="guidebook id" inputMode="numeric" className="h-11" />
-        <Input name="tenantId" defaultValue={tenantId ?? ""} placeholder="tenant id" inputMode="numeric" className="h-11" />
+        <Input name="guidebookId" defaultValue={guidebookId ?? ""} placeholder="guidebook id" inputMode="numeric" className="h-12 rounded-2xl" />
+        <Input name="tenantId" defaultValue={tenantId ?? ""} placeholder="tenant id" inputMode="numeric" className="h-12 rounded-2xl" />
       </form>
 
       {requiresLogin ? (
@@ -99,15 +113,15 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
                   <Link
                     key={item.pageId}
                     href={buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }) as Route}
-                    className="block py-5 first:pt-4 hover:bg-foreground/[0.02]"
+                    className="block rounded-2xl px-3 py-5 first:mt-2 hover:bg-foreground/[0.03]"
                   >
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <h2 className="text-lg font-semibold tracking-tight text-foreground">{item.title}</h2>
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook {item.guidebookId} · Page {item.pageId}</p>
+                        <h2 className="mt-2 text-lg font-semibold tracking-tight text-foreground">{item.title}</h2>
                         <p className="mt-2 text-sm leading-7 text-muted-foreground">
                           {item.snippet?.replace(/<[^>]+>/g, "") || "스니펫이 아직 없는 결과입니다."}
                         </p>
-                        <p className="mt-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook {item.guidebookId} · Page {item.pageId}</p>
                       </div>
                       <span className="shrink-0 text-xs uppercase tracking-[0.18em] text-muted-foreground">{formatDate(item.updatedAt)}</span>
                     </div>

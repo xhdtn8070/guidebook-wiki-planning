@@ -296,7 +296,7 @@ app/
 
 ```tsx
 function getTenantFromHost(host: string): string {
-  // 예: playbook.guidebook.wiki 또는 localhost:3100
+  // 예: playbook.guidebook.wiki 또는 localhost:3000
   // dev에서는 쿼리나 환경변수로 오버라이드하는 옵션도 두기
 }
 
