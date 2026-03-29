@@ -194,7 +194,7 @@ export async function fetchWithAuth(
 ### 5-2. 로컬 개발
 
 - 기본:
-    - `http://localhost:3000` 에서 접속할 때,
+    - `http://localhost:3100` 에서 접속할 때,
     - 쿼리 `?tenant=playbook` 이 있으면 그걸 우선.
     - 없으면 `.env`의 `NEXT_PUBLIC_DEFAULT_TENANT` 사용.
 

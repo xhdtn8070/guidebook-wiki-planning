@@ -21,9 +21,11 @@
 각 파일 상단에도 선행/후행 문서 안내를 추가했으니 필요한 부분만 찾아볼 때 참고하세요.
 
 ## Next.js 실행/검증
-- **개발 서버**: `cd nextjs && npm run dev`
+- **개발 서버**: `cd nextjs && npm run dev -- --hostname 127.0.0.1 --port 3100`
 - **테스트**: `cd nextjs && npm test`
 - **린트**: `cd nextjs && npm run lint`
+
+워크스페이스 전체 실행, 백엔드 동시 기동, 캡처/리디자인 비교는 루트 orchestration 저장소 `/Users/xhddlf8070/Desktop/git/guidebook-wiki`의 `make` 명령으로 관리합니다.
 
 ## 사용 방법
 - 새로운 내용이 생기면 기존 문서의 관련 섹션을 업데이트하거나, README에 새 파일을 추가로 연결해 주세요.
