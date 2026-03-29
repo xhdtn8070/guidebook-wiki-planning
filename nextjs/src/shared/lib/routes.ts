@@ -35,6 +35,10 @@ export function buildTenantHref(tenantId: number | string) {
   return `/tenant/${tenantId}`;
 }
 
+export function buildTenantSettingsHref(tenantId: number | string) {
+  return `/tenant/${tenantId}/settings`;
+}
+
 export function buildOnboardingHref(redirectTo?: string | null) {
   if (!redirectTo || redirectTo === "/" || redirectTo.startsWith("/onboarding")) {
     return "/onboarding";

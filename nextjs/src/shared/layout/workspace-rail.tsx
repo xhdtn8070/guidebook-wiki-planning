@@ -7,7 +7,7 @@ import { Bell, BookOpen, FileText, Layers, Pencil, Star, User } from "@/shared/i
 
 type WorkspaceRailProps = {
   viewer: ViewerSession;
-  activeItem?: "home" | "recent" | "starred" | "workspaces" | "drafts" | "admin" | "me";
+  activeItem?: "home" | "recent" | "starred" | "workspaces" | "directory" | "admin" | "me";
   activeTenantId?: number | null;
   adminHref?: string | null;
 };
@@ -38,7 +38,7 @@ export function WorkspaceRail({ viewer, activeItem = "home", activeTenantId = nu
     {
       key: "recent",
       label: "Recent",
-      description: "최근 문서",
+      description: "최근 흐름",
       href: "/#recent",
       icon: FileText,
     },
@@ -52,21 +52,21 @@ export function WorkspaceRail({ viewer, activeItem = "home", activeTenantId = nu
     {
       key: "workspaces",
       label: "Workspaces",
-      description: "내 공간",
+      description: "현재 공간",
       href: effectiveTenantId != null ? buildTenantHref(effectiveTenantId) : buildOnboardingHref("/"),
       icon: Layers,
     },
     {
-      key: "drafts",
-      label: "Drafts",
-      description: "운영 진입",
+      key: "directory",
+      label: "Directory",
+      description: "가이드북 목록",
       href: effectiveTenantId != null ? `${buildTenantHref(effectiveTenantId)}#directory` : null,
       icon: Pencil,
     },
     {
       key: "admin",
       label: "Admin",
-      description: "관리 화면",
+      description: "운영 진입",
       href: adminHref,
       icon: Bell,
     },

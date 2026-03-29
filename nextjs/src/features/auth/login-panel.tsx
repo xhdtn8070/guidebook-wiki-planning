@@ -43,7 +43,7 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
             <p className="mt-4 max-w-xl text-sm leading-8 text-foreground/80">
               {isSignup
                 ? "회원가입은 별도 폼이 아니라 첫 인증 자체로 끝납니다. 아직 워크스페이스가 없으면 onboarding으로, 이미 공간이 있으면 개인 홈으로 바로 이동합니다."
-                : "Auth Hub는 세션을 만드는 표면입니다. 이후 `/auth` bridge가 ticket를 교환하고, 홈과 워크스페이스 허브는 같은 httpOnly session shell 위에서 이어집니다."}
+                : "Auth Hub는 세션을 만드는 표면입니다. `/auth` bridge가 ticket를 실제 토큰으로 교환하고, 이후 개인 홈과 워크스페이스 허브가 같은 session shell 안에서 이어집니다."}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -87,51 +87,48 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
             <div className="rounded-[26px] border border-border bg-background/55 px-5 py-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                 <Zap className="h-4 w-4 text-primary" />
-                OAuth flow
+                인증 흐름
               </div>
-              <ol className="mt-5 space-y-4 text-sm leading-7 text-muted-foreground">
-                <li>1. provider 인증을 시작하면 원래 복귀 경로를 httpOnly 쿠키로 잠깐 보관합니다.</li>
-                <li>2. backend callback이 ticket를 만들고 프론트 `/auth` bridge로 다시 내려옵니다.</li>
-                <li>3. 프론트가 ticket를 실제 토큰으로 교환하고, 이후 화면은 모두 같은 session shell로 이어집니다.</li>
-              </ol>
+              <div className="mt-5 space-y-5">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">{isSignup ? "첫 OAuth 인증으로 바로 가입" : "로그인 후 이전 흐름으로 복귀"}</p>
+                  <p className="mt-2 text-sm leading-7 text-muted-foreground">
+                    {isSignup
+                      ? "첫 provider 인증 자체가 계정 생성입니다. 이후 tenant가 없으면 onboarding으로, 있으면 개인 홈으로 넘어갑니다."
+                      : "provider 인증을 시작하면 원래 보던 경로를 잠깐 저장하고, 인증 뒤에는 그 위치를 우선 복구합니다."}
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  <StepRow number="1" text="provider 인증 시작" />
+                  <StepRow number="2" text="backend callback이 ticket 생성" />
+                  <StepRow number="3" text="프론트 /auth bridge가 토큰 교환" />
+                </div>
+              </div>
             </div>
 
             <div className="mt-4 rounded-[26px] border border-border bg-background/55 px-5 py-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
                 <CheckCircle className="h-4 w-4 text-primary" />
-                로그인 뒤 분기
+                로그인 뒤 화면
               </div>
-              <ul className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-                <li>워크스페이스가 없으면 바로 onboarding으로 이동합니다.</li>
-                <li>이미 공간이 있으면 개인 홈에서 최근 문서와 워크스페이스를 먼저 보여줍니다.</li>
-                <li>원래 보던 reader나 tenant 허브가 있으면 그 경로를 우선 복구합니다.</li>
-              </ul>
-            </div>
-
-            <div className="mt-4 rounded-[26px] border border-border bg-background/55 px-5 py-5">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Layers className="h-4 w-4 text-primary" />
-                현재 세션
-              </div>
-              {viewer.user ? (
-                <div className="mt-4 space-y-2 text-sm leading-7 text-muted-foreground">
-                  <p>
-                    이미 <span className="font-semibold text-foreground">{viewer.user.displayName}</span> 계정으로 로그인되어 있습니다.
-                  </p>
-                  <p>다른 계정으로 다시 인증하려면 위 provider 버튼을 사용하면 됩니다.</p>
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    <Link href="/" className={buttonStyles({ variant: "outline", size: "sm" })}>
-                      개인 홈
-                    </Link>
-                    <Link href="/me" className={buttonStyles({ variant: "quiet", size: "sm" })}>
-                      마이페이지
-                    </Link>
+              <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
+                <p>첫 사용자는 onboarding으로 이어지고, 기존 사용자는 개인 홈 또는 원래 보던 reader/tenant 허브로 돌아갑니다.</p>
+                {viewer.user ? (
+                  <div className="rounded-2xl border border-border bg-background px-4 py-4">
+                    <p>
+                      이미 <span className="font-semibold text-foreground">{viewer.user.displayName}</span> 계정으로 로그인되어 있습니다.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <Link href="/" className={buttonStyles({ variant: "outline", size: "sm" })}>
+                        개인 홈
+                      </Link>
+                      <Link href="/me" className={buttonStyles({ variant: "quiet", size: "sm" })}>
+                        마이페이지
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div className="mt-4 space-y-2 text-sm leading-7 text-muted-foreground">
-                  <p>첫 인증은 계정 생성으로 처리되고, 이후부터는 같은 provider 목록에서 로그인과 계정 전환을 모두 처리합니다.</p>
-                  <div className="flex flex-wrap gap-2 pt-2">
+                ) : (
+                  <div className="flex flex-wrap gap-2 pt-1">
                     <Link href="/introduce" className={buttonStyles({ variant: "outline", size: "sm" })}>
                       서비스 소개
                     </Link>
@@ -139,22 +136,21 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
                       Auth bridge 보기
                     </a>
                   </div>
-                </div>
-              )}
-            </div>
-
-            <div className="mt-4 rounded-[26px] border border-border bg-background/40 px-5 py-5">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <BookOpen className="h-4 w-4 text-primary" />
-                Signup model
+                )}
               </div>
-              <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                회원가입은 별도 폼 대신 OAuth 첫 로그인으로 끝납니다. 이 단계에서 개인 계정을 만들고, tenant와 첫 guidebook 생성은 onboarding에서 이어집니다.
-              </p>
             </div>
           </aside>
         </div>
       </div>
     </section>
+  );
+}
+
+function StepRow({ number, text }: { number: string; text: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl border border-border bg-background px-4 py-3">
+      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{number}</span>
+      <p className="text-sm text-foreground">{text}</p>
+    </div>
   );
 }

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Route } from "next";
 import type { GuidebookListResponse, HomeResponse, TenantResponse, ViewerSession } from "@/shared/lib/api-types";
 import { Bell, BookOpen, External, Layers, Search as SearchIcon, Star, Zap } from "@/shared/icons";
-import { buildAdminGuidebookHref, buildLoginHref, buildPageHref, buildSearchHref } from "@/shared/lib/routes";
+import { buildAdminGuidebookHref, buildLoginHref, buildPageHref, buildSearchHref, buildTenantSettingsHref } from "@/shared/lib/routes";
 import { StatusPanel } from "@/shared/ui/status-panel";
 
 type TenantWorkspaceExperienceProps = {
@@ -62,23 +62,28 @@ export function TenantWorkspaceExperience({
   const workspaceNotifications = home?.notifications.recent.slice(0, 3) ?? [];
   const primaryGuidebook = guidebooks?.items[0] ?? null;
   const guidebookItems = guidebooks?.items ?? [];
+  const membership = viewer.tenants.find((item) => item.tenantId === tenantId) ?? null;
   const hasActivity = workspaceRecent.length > 0 || workspaceStarred.length > 0;
 
   return (
     <div className="space-y-6">
       <section className="surface-elevated rounded-[30px] border border-border px-6 py-6 shadow-theme-md">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-5">
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspace hub</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{tenant.name}</h1>
             <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              개인 홈에서 공간을 고른 뒤에는 이 허브에서 최근 작업과 대표 guidebook, 디렉터리를 같은 문맥으로 이어서 봅니다.
+              이 화면은 워크스페이스 정체성과 guidebook 디렉터리를 먼저 보여주고, 그 아래에 내 최근 작업과 중요 문서를 이어 붙이는 허브입니다.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href={buildSearchHref("", tenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-4 text-sm font-medium text-background">
               이 워크스페이스 검색
               <SearchIcon className="h-4 w-4" />
+            </Link>
+            <Link href={buildTenantSettingsHref(tenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-foreground">
+              워크스페이스 설정
+              <Layers className="h-4 w-4" />
             </Link>
             {primaryGuidebook ? (
               <Link href={buildAdminGuidebookHref(primaryGuidebook.guidebookId, tenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-foreground">
@@ -92,9 +97,8 @@ export function TenantWorkspaceExperience({
         <div className="mt-5 flex flex-wrap gap-2 text-sm text-muted-foreground">
           <SignalChip label="Code" value={tenant.tenantCode} />
           <SignalChip label="Visibility" value={tenant.visibility} />
+          <SignalChip label="Role" value={membership?.role ?? "member"} />
           <SignalChip label="Guidebooks" value={guidebookItems.length} />
-          <SignalChip label="Recent" value={workspaceRecent.length} />
-          <SignalChip label="Starred" value={workspaceStarred.length} />
         </div>
       </section>
 
@@ -106,40 +110,6 @@ export function TenantWorkspaceExperience({
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.06fr)_360px]">
         <div className="space-y-6">
-          {!hasActivity ? (
-            <section className="hero-gradient rounded-[30px] border border-border px-6 py-7 shadow-theme-md">
-              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">First activity</p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">이 공간의 첫 guidebook과 첫 문서를 열면 허브가 자동으로 개인화됩니다.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/78">
-                최근 작업과 중요 문서는 아직 비어 있습니다. 먼저 대표 guidebook을 열거나 새 guidebook을 만들어 운영 흐름을 시작하세요.
-              </p>
-            </section>
-          ) : null}
-
-          <WorkspaceList
-            id="recent"
-            eyebrow="Recent"
-            title="내 최근 작업"
-            items={workspaceRecent.map((item) => ({
-              href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
-              title: item.title,
-              meta: `${item.viewedAt ? formatDateTime(item.viewedAt) : "recent"} · Guidebook ${item.guidebookId}`,
-            }))}
-            emptyMessage="아직 이 워크스페이스에서 읽은 문서가 없습니다."
-          />
-
-          <WorkspaceList
-            id="starred"
-            eyebrow="Starred"
-            title="내 중요 문서"
-            items={workspaceStarred.map((item) => ({
-              href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
-              title: item.title,
-              meta: `${item.starredAt ? formatDateTime(item.starredAt) : "starred"} · Guidebook ${item.guidebookId}`,
-            }))}
-            emptyMessage="아직 중요 문서로 고른 페이지가 없습니다."
-          />
-
           {primaryGuidebook ? (
             <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
@@ -147,7 +117,7 @@ export function TenantWorkspaceExperience({
                   <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Featured guidebook</p>
                   <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{primaryGuidebook.name}</h2>
                   <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-                    {primaryGuidebook.description || "이 워크스페이스에서 reader, search, 운영 진입을 가장 먼저 연결하는 대표 guidebook입니다."}
+                    {primaryGuidebook.description || "reader, search, 운영 동선을 가장 먼저 연결하는 대표 guidebook입니다."}
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -160,25 +130,29 @@ export function TenantWorkspaceExperience({
                 </div>
               </div>
               <div className="mt-5 grid gap-3 md:grid-cols-3">
-                {[
-                  { label: "Status", value: primaryGuidebook.status },
-                  { label: "Tenant", value: tenant.tenantCode },
-                  { label: "Directory", value: `${guidebookItems.length} guidebooks` },
-                ].map((item) => (
-                  <div key={item.label} className="rounded-[22px] border border-border bg-background/55 px-4 py-4">
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{item.label}</p>
-                    <p className="mt-2 text-base font-semibold text-foreground">{item.value}</p>
-                  </div>
-                ))}
+                <SummaryBlock label="Status" value={primaryGuidebook.status} />
+                <SummaryBlock label="Directory" value={`${guidebookItems.length} guidebooks`} />
+                <SummaryBlock label="Workspace" value={tenant.tenantCode} />
               </div>
             </section>
-          ) : null}
+          ) : (
+            <section className="hero-gradient rounded-[30px] border border-border px-6 py-7 shadow-theme-md">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">First guidebook</p>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">대표 guidebook이 아직 없어 이 허브가 비어 보입니다.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/78">
+                아래 운영 시작 영역에서 첫 guidebook을 만들면 검색, reader, 관리 동선이 이 공간 기준으로 묶이기 시작합니다.
+              </p>
+            </section>
+          )}
 
           <section id="directory" className="surface-elevated scroll-mt-24 rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
             <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook directory</p>
                 <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">guidebook 디렉터리</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
+                  공간의 문서 묶음을 먼저 훑고, 그 안으로 들어간 뒤 reader와 관리 화면으로 이동하는 진입면입니다.
+                </p>
               </div>
               <span className="rounded-full border border-border bg-background/60 px-3 py-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 {guidebookItems.length} entries
@@ -202,14 +176,90 @@ export function TenantWorkspaceExperience({
               <p className="mt-6 text-sm leading-7 text-muted-foreground">등록된 guidebook이 아직 없습니다.</p>
             )}
           </section>
+
+          {!hasActivity ? (
+            <section className="rounded-[26px] border border-border bg-[hsl(var(--surface-elevated))] px-6 py-5 shadow-theme-md">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Personalized next</p>
+              <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                최근 작업과 중요 문서는 아직 비어 있습니다. guidebook 하나를 열고 reader를 사용하기 시작하면 이 허브가 자동으로 개인화됩니다.
+              </p>
+            </section>
+          ) : null}
+
+          <WorkspaceList
+            id="recent"
+            eyebrow="Recent"
+            title="내 최근 작업"
+            description="이 워크스페이스에서 최근에 열었던 페이지와 흐름을 먼저 보여줍니다."
+            items={workspaceRecent.map((item) => ({
+              href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
+              title: item.title,
+              meta: `${item.viewedAt ? formatDateTime(item.viewedAt) : "recent"} · Guidebook ${item.guidebookId}`,
+            }))}
+            emptyMessage="아직 이 워크스페이스에서 읽은 문서가 없습니다."
+          />
+
+          <WorkspaceList
+            id="starred"
+            eyebrow="Starred"
+            title="내 중요 문서"
+            description="다시 봐야 하는 문서를 개인 홈과 같은 기준으로 좁혀 보여줍니다."
+            items={workspaceStarred.map((item) => ({
+              href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
+              title: item.title,
+              meta: `${item.starredAt ? formatDateTime(item.starredAt) : "starred"} · Guidebook ${item.guidebookId}`,
+            }))}
+            emptyMessage="아직 중요 문서로 고른 페이지가 없습니다."
+          />
         </div>
 
         <aside className="space-y-6">
           <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Bell className="h-4 w-4 text-primary" />
+              Workspace notifications
+            </div>
+            <div className="mt-5 divide-y divide-border">
+              {workspaceNotifications.length > 0 ? (
+                workspaceNotifications.map((item) => (
+                  <article key={item.id} className="py-4 first:pt-0 last:pb-0">
+                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
+                  </article>
+                ))
+              ) : (
+                <p className="py-1 text-sm leading-7 text-muted-foreground">아직 워크스페이스 알림이 없습니다.</p>
+              )}
+            </div>
+          </section>
+
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <Layers className="h-4 w-4 text-primary" />
+              Workspace context
+            </div>
+            <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
+              <p>이 허브는 워크스페이스 정체성과 guidebook 디렉터리를 먼저 보여주고, 그 아래에 개인 흐름을 다시 연결합니다.</p>
+              <p>운영 수정은 settings와 admin으로 분리해, 메인 surface가 생성 폼으로 무거워지지 않게 유지합니다.</p>
+            </div>
+            <div className="mt-5 flex flex-wrap gap-2">
+              <Link href={buildTenantSettingsHref(tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                공간 설정
+              </Link>
+              {primaryGuidebook ? (
+                <Link href={buildAdminGuidebookHref(primaryGuidebook.guidebookId, tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  대표 guidebook 관리
+                </Link>
+              ) : null}
+            </div>
+          </section>
+
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
               <Zap className="h-4 w-4 text-primary" />
               운영 시작
             </div>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">새 guidebook 생성은 여기서 시작하고, 세부 운영은 admin과 settings에서 이어갑니다.</p>
             <form action={createGuidebookAction} className="mt-5 space-y-4">
               <label className="block">
                 <span className="text-sm font-medium text-foreground">Guidebook 이름</span>
@@ -240,36 +290,6 @@ export function TenantWorkspaceExperience({
               </button>
             </form>
           </section>
-
-          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Bell className="h-4 w-4 text-primary" />
-              Workspace notifications
-            </div>
-            <div className="mt-5 divide-y divide-border">
-              {workspaceNotifications.length > 0 ? (
-                workspaceNotifications.map((item) => (
-                  <article key={item.id} className="py-4 first:pt-0 last:pb-0">
-                    <p className="text-sm font-semibold text-foreground">{item.title}</p>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
-                  </article>
-                ))
-              ) : (
-                <p className="py-1 text-sm leading-7 text-muted-foreground">아직 워크스페이스 알림이 없습니다.</p>
-              )}
-            </div>
-          </section>
-
-          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Layers className="h-4 w-4 text-primary" />
-              Workspace context
-            </div>
-            <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-              <p>이 화면은 내 흐름과 guidebook 디렉터리를 함께 보여주는 워크스페이스 허브입니다.</p>
-              <p>reader와 search, 운영 진입은 모두 현재 tenant 문맥을 유지한 채 이어집니다.</p>
-            </div>
-          </section>
         </aside>
       </div>
     </div>
@@ -283,7 +303,7 @@ function SignedOutWorkspaceGate({ tenant }: { tenant: TenantResponse }) {
         <span className="pill">Secure workspace</span>
         <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.05em] text-foreground md:text-6xl">{tenant.name}</h1>
         <p className="mt-5 max-w-2xl text-base leading-8 text-foreground/78">
-          이 공간은 팀의 지식과 운영 문서를 관리하는 private workspace입니다. 로그인하면 최근 문서, 대표 guidebook, 디렉터리를 같은 셸에서 이어서 볼 수 있습니다.
+          이 공간은 팀의 지식과 운영 문서를 관리하는 private workspace입니다. 로그인하면 대표 guidebook, 디렉터리, 내 최근 작업이 같은 셸 안에서 이어집니다.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <Link href={buildLoginHref(`/tenant/${tenant.tenantId}`)} className="inline-flex h-12 items-center gap-2 rounded-2xl bg-foreground px-5 text-sm font-semibold text-background transition-transform hover:-translate-y-0.5">
@@ -301,22 +321,22 @@ function SignedOutWorkspaceGate({ tenant }: { tenant: TenantResponse }) {
           <div className="rounded-[24px] border border-border bg-[hsl(var(--surface-strong))] px-4 py-4">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspace</p>
             <p className="mt-2 text-lg font-semibold text-foreground">{tenant.tenantCode}</p>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">로그인 후에는 내 최근 작업, 중요 문서, guidebook 디렉터리가 이 공간 기준으로 다시 좁혀집니다.</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">로그인 후에는 이 공간 기준으로 guidebook 디렉터리와 내 흐름이 함께 좁혀집니다.</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-[24px] border border-border bg-[hsl(var(--surface-strong))] px-4 py-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <SearchIcon className="h-5 w-5" />
               </div>
-              <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground">Global search</h2>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">이 워크스페이스 안의 문서, 용어, 코드 식별자를 바로 찾습니다.</p>
+              <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground">Workspace search</h2>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">문서, 용어, 코드 식별자를 이 공간 범위 안에서 빠르게 찾습니다.</p>
             </div>
             <div className="rounded-[24px] border border-border bg-[hsl(var(--surface-strong))] px-4 py-4">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Layers className="h-5 w-5" />
               </div>
-              <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground">Workspace hub</h2>
-              <p className="mt-2 text-sm leading-7 text-muted-foreground">대표 guidebook, 디렉터리, 최근 흐름을 같은 셸에서 엽니다.</p>
+              <h2 className="mt-4 text-lg font-semibold tracking-tight text-foreground">Guidebook hub</h2>
+              <p className="mt-2 text-sm leading-7 text-muted-foreground">대표 guidebook과 디렉터리가 워크스페이스의 기본 진입면이 됩니다.</p>
             </div>
           </div>
         </div>
@@ -371,16 +391,27 @@ function SignalChip({ label, value }: { label: string; value: number | string })
   );
 }
 
+function SummaryBlock({ label, value }: { label: string; value: number | string }) {
+  return (
+    <div className="rounded-[22px] border border-border bg-background/55 px-4 py-4">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+      <p className="mt-2 text-base font-semibold text-foreground">{value}</p>
+    </div>
+  );
+}
+
 function WorkspaceList({
   id,
   eyebrow,
   title,
+  description,
   items,
   emptyMessage,
 }: {
   id: string;
   eyebrow: string;
   title: string;
+  description: string;
   items: { href: string; title: string; meta: string }[];
   emptyMessage: string;
 }) {
@@ -389,6 +420,7 @@ function WorkspaceList({
       <div className="border-b border-border pb-4">
         <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{eyebrow}</p>
         <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{title}</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{description}</p>
       </div>
       <div className="mt-3 divide-y divide-border">
         {items.length > 0 ? (

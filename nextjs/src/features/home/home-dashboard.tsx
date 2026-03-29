@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { HomeResponse, ViewerSession } from "@/shared/lib/api-types";
-import { Bell, External, Layers, Search as SearchIcon, Star } from "@/shared/icons";
-import { buildSearchHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
+import { Bell, External, Layers, Star } from "@/shared/icons";
+import { buildTenantHref, buildTenantSettingsHref, toFrontendHref } from "@/shared/lib/routes";
 
 type HomeDashboardProps = {
   home: HomeResponse;
@@ -20,14 +20,14 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
   return (
     <div className="space-y-6">
       <section className="surface-elevated rounded-[30px] border border-border px-6 py-6 shadow-theme-md">
-        <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-5">
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Personal home</p>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">
-              {primaryRecent ? `${home.me.displayName}님, 마지막 흐름부터 다시 이어가면 됩니다.` : `${home.me.displayName}님의 작업면을 준비했습니다.`}
+            <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground">
+              {primaryRecent ? `${home.me.displayName}님, 최근 흐름부터 다시 열면 됩니다.` : `${home.me.displayName}님의 작업 재개 화면입니다.`}
             </h1>
-            <p className="mt-3 text-sm leading-7 text-muted-foreground">
-              개인 홈은 소개 페이지가 아니라 지금 다시 열어야 할 문서와 공간을 빠르게 스캔하는 자리입니다.
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">
+              소개보다 재개가 먼저 보이도록 최근 문서, 즐겨찾기, 알림, 워크스페이스만 남겼습니다.
             </p>
           </div>
 
@@ -41,49 +41,42 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
                 }) as Route}
                 className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-4 text-sm font-medium text-background"
               >
-                이어서 보기
+                최근 문서 열기
                 <External className="h-4 w-4" />
               </Link>
             ) : null}
             {activeTenantId ? (
               <Link href={buildTenantHref(activeTenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-foreground">
-                워크스페이스 열기
+                현재 공간
                 <Layers className="h-4 w-4" />
-              </Link>
-            ) : null}
-            {activeTenantId ? (
-              <Link href={buildSearchHref("", activeTenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-foreground">
-                검색
-                <SearchIcon className="h-4 w-4" />
               </Link>
             ) : null}
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2 text-sm text-muted-foreground">
-          <SignalChip label="Unread" value={home.notifications.unreadCount} />
-          <SignalChip label="Recent" value={home.recentPages.length} />
-          <SignalChip label="Starred" value={home.starredPages.length} />
-          <SignalChip label="Workspaces" value={viewer.tenants.length} />
-          {activeWorkspace ? <SignalChip label="Active" value={activeWorkspace.name} /> : null}
+        <div className="mt-5 grid gap-3 md:grid-cols-4">
+          <ResumeMetric label="Unread" value={home.notifications.unreadCount} />
+          <ResumeMetric label="Recent" value={home.recentPages.length} />
+          <ResumeMetric label="Starred" value={home.starredPages.length} />
+          <ResumeMetric label="Workspace" value={activeWorkspace?.name ?? viewer.tenants.length} />
         </div>
       </section>
 
       {!hasHistory ? (
-        <section className="hero-gradient rounded-[30px] border border-border px-6 py-7 shadow-theme-md">
+        <section className="rounded-[26px] border border-border bg-[hsl(var(--surface-elevated))] px-6 py-6 shadow-theme-md">
           <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">First run</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">첫 문서 흐름을 만들면 홈이 자동으로 개인화됩니다.</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/78">
-            최근 문서나 즐겨찾기가 아직 없으니, 먼저 워크스페이스 허브로 들어가 대표 guidebook을 열거나 새 guidebook을 만들면 이 화면이 바로 작업 재개 표면으로 바뀝니다.
+          <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">아직 기록이 없으니 첫 공간만 열면 홈이 바로 개인화됩니다.</h2>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
+            최근 문서와 즐겨찾기는 아직 비어 있습니다. 워크스페이스 하나를 열거나 첫 guidebook을 만들면 이 화면이 자동으로 작업 재개 표면으로 바뀝니다.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
             {activeTenantId ? (
               <Link href={buildTenantHref(activeTenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-4 text-sm font-medium text-background">
-                활성 워크스페이스 열기
+                워크스페이스 열기
               </Link>
             ) : null}
             <Link href="/onboarding" className="inline-flex h-11 items-center gap-2 rounded-xl border border-border bg-background/70 px-4 text-sm font-medium text-foreground">
-              워크스페이스 만들기
+              첫 워크스페이스 만들기
             </Link>
           </div>
         </section>
@@ -191,6 +184,11 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
                   활성 공간 열기
                 </Link>
               ) : null}
+              {activeTenantId ? (
+                <Link href={buildTenantSettingsHref(activeTenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  공간 설정
+                </Link>
+              ) : null}
             </div>
           </section>
         </aside>
@@ -199,12 +197,12 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
   );
 }
 
-function SignalChip({ label, value }: { label: string; value: number | string }) {
+function ResumeMetric({ label, value }: { label: string; value: number | string }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/68 px-3 py-1.5">
-      <span className="text-[11px] uppercase tracking-[0.18em]">{label}</span>
-      <span className="font-semibold text-foreground">{value}</span>
-    </span>
+    <div className="rounded-[22px] border border-border bg-background/55 px-4 py-4">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{label}</p>
+      <p className="mt-2 truncate text-base font-semibold text-foreground">{value}</p>
+    </div>
   );
 }
 

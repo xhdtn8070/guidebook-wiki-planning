@@ -260,6 +260,11 @@ export type TenantCreateRequest = {
   visibility: TenantVisibility;
 };
 
+export type TenantUpdateRequest = {
+  name?: string | null;
+  visibility?: TenantVisibility | null;
+};
+
 export type GuidebookCreateRequest = {
   code: string;
   name: string;

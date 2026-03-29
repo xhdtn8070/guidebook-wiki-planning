@@ -6,7 +6,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { clsx } from "clsx";
 import type { ViewerSession } from "@/shared/lib/api-types";
-import { buildIntroduceHref, buildLoginHref, buildMeHref, buildOnboardingHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
+import { buildIntroduceHref, buildLoginHref, buildMeHref, buildOnboardingHref, buildSearchHref, buildTenantHref, buildTenantSettingsHref } from "@/shared/lib/routes";
 import {
   BookOpen,
   ChevronDown,
@@ -308,7 +308,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
                         <User className="h-4 w-4 text-muted-foreground" />
                       </Link>
                       <Link
-                        href={activeTenantId ? (buildTenantHref(activeTenantId) as Route) : (buildOnboardingHref(pathname) as Route)}
+                        href={activeTenantId ? (buildTenantSettingsHref(activeTenantId) as Route) : (buildOnboardingHref(pathname) as Route)}
                         className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-foreground transition-colors hover:bg-background/60"
                       >
                         <span>워크스페이스 설정</span>
