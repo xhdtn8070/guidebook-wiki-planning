@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { BackendResult, PageSearchResponse, ViewerSession } from "@/shared/lib/api-types";
-import { buildPageHref } from "@/shared/lib/routes";
+import { buildOnboardingHref, buildPageHref, buildTenantHref } from "@/shared/lib/routes";
 import { Layers, Search as SearchIcon, Zap } from "@/shared/icons";
 import { Input } from "@/shared/ui/input";
 import { StatusPanel } from "@/shared/ui/status-panel";
@@ -18,6 +18,10 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
   const hasTenant = tenantId != null;
   const requiresLogin = !viewer.user;
   const trimmedQuery = query.trim();
+  const fallbackTenantId = viewer.activeTenantId ?? viewer.tenants[0]?.tenantId ?? null;
+  const tenantGateHref =
+    fallbackTenantId != null ? buildTenantHref(fallbackTenantId) : buildOnboardingHref(trimmedQuery ? `/search?q=${encodeURIComponent(trimmedQuery)}` : "/search");
+  const tenantGateLabel = fallbackTenantId != null ? "워크스페이스 열기" : "워크스페이스 만들기";
 
   return (
     <div className="space-y-8">
@@ -84,6 +88,8 @@ export function SearchExperience({ viewer, query, guidebookId, tenantId, result 
           title="tenant id가 아직 고정되지 않았습니다."
           description="검색 API는 `X-Tenant-Id` 없이는 호출되지 않습니다. 상단 workspace를 고르거나 검색 폼에 tenant id를 넣어 시작하세요."
           tone="warning"
+          actionHref={tenantGateHref as Route}
+          actionLabel={tenantGateLabel}
         />
       ) : !trimmedQuery ? (
         <StatusPanel

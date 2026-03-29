@@ -5,18 +5,19 @@ import { GlobalHeader } from "@/shared/layout/global-header";
 
 type AppShellProps = {
   viewer: ViewerSession;
+  preferredTenantId?: number | null;
   sidebar?: ReactNode;
   aside?: ReactNode;
   children: ReactNode;
 };
 
-export function AppShell({ viewer, sidebar, aside, children }: AppShellProps) {
+export function AppShell({ viewer, preferredTenantId = null, sidebar, aside, children }: AppShellProps) {
   const hasSidebar = Boolean(sidebar);
   const hasAside = Boolean(aside);
 
   return (
     <div className="page-shell bg-background text-foreground">
-      <GlobalHeader viewer={viewer} />
+      <GlobalHeader viewer={viewer} preferredTenantId={preferredTenantId} />
       <div
         className={clsx(
           "mx-auto w-full px-4 pb-12 pt-6 md:px-6 xl:px-8",

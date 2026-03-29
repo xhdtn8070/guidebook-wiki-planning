@@ -7,6 +7,7 @@ import type {
   PageListResponse,
   PageSearchResponse,
   PermissionGateState,
+  TenantResponse,
   TenantMeResponse,
   UserMeResponse,
   ViewerSession,
@@ -98,6 +99,13 @@ export async function loadGuidebooks(tenantId: number | null) {
   return requestBackend<GuidebookListResponse>({
     path: "/api/guidebooks",
     tenantId,
+  });
+}
+
+export async function loadTenant(tenantId: number) {
+  return requestBackend<TenantResponse>({
+    path: `/api/tenants/${tenantId}`,
+    tenantId: null,
   });
 }
 

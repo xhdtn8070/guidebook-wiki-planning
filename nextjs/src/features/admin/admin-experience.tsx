@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { GuidebookListResponse, PageDetail, PageListResponse, PermissionGateState, ViewerSession } from "@/shared/lib/api-types";
-import { buildAdminGuidebookHref, buildAdminPageHref, buildLoginHref, buildPageHref } from "@/shared/lib/routes";
+import { buildAdminGuidebookHref, buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildTenantHref } from "@/shared/lib/routes";
 import { External, Lock, Pencil } from "@/shared/icons";
 import { StatusPanel } from "@/shared/ui/status-panel";
 import { summarizeSections } from "@/shared/lib/sections";
@@ -34,12 +34,15 @@ export function AdminGuidebookExperience({
   }
 
   if (!tenantId) {
+    const fallbackTenantId = viewer.activeTenantId ?? viewer.tenants[0]?.tenantId ?? null;
     return (
       <StatusPanel
         eyebrow="Tenant"
         title="관리 진입에는 tenant가 필요합니다."
         description="관리자 화면은 guidebook/page permission과 tenant 컨텍스트를 함께 사용합니다."
         tone="warning"
+        actionHref={(fallbackTenantId != null ? buildTenantHref(fallbackTenantId) : buildOnboardingHref(buildAdminGuidebookHref(guidebookId))) as Route}
+        actionLabel={fallbackTenantId != null ? "워크스페이스 열기" : "워크스페이스 만들기"}
       />
     );
   }
@@ -136,12 +139,15 @@ export function AdminPageExperience({
   }
 
   if (!tenantId) {
+    const fallbackTenantId = viewer.activeTenantId ?? viewer.tenants[0]?.tenantId ?? null;
     return (
       <StatusPanel
         eyebrow="Tenant"
         title="페이지 관리자 진입에는 tenant가 필요합니다."
         description="관리자 화면도 읽기 화면과 같은 tenant context를 요구합니다."
         tone="warning"
+        actionHref={(fallbackTenantId != null ? buildTenantHref(fallbackTenantId) : buildOnboardingHref(buildAdminPageHref(pageId))) as Route}
+        actionLabel={fallbackTenantId != null ? "워크스페이스 열기" : "워크스페이스 만들기"}
       />
     );
   }

@@ -6,6 +6,10 @@ type CookieReader = {
   get(name: string): { value: string } | undefined;
 };
 
+type CookieWriter = {
+  set(name: string, value: string, options: typeof sharedCookieOptions & { maxAge?: number }): unknown;
+};
+
 export type SessionSnapshot = {
   accessToken: string | null;
   refreshToken: string | null;
@@ -40,6 +44,10 @@ export function clearAuthCookies(response: NextResponse) {
 
 export function setTenantCookie(response: NextResponse, tenantId: number | string) {
   response.cookies.set(sessionCookieNames.tenantId, String(tenantId), sharedCookieOptions);
+}
+
+export function writeTenantCookie(cookieWriter: CookieWriter, tenantId: number | string) {
+  cookieWriter.set(sessionCookieNames.tenantId, String(tenantId), sharedCookieOptions);
 }
 
 export function clearTenantCookie(response: NextResponse) {

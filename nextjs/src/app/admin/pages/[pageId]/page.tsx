@@ -17,7 +17,7 @@ export default async function AdminPage({ params, searchParams }: AdminPageProps
   const [detailResult, permissionResult] = await Promise.all([loadPageDetail(pageId, tenantId), loadPagePermissionMe(pageId, tenantId)]);
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} preferredTenantId={tenantId}>
       <AdminPageExperience
         viewer={viewer}
         pageId={pageId}

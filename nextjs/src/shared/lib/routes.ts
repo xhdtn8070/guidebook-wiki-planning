@@ -23,6 +23,21 @@ export function buildPageHref(input: PageLinkInput) {
   return `${path}?tenantId=${tenantId}`;
 }
 
+export function buildIntroduceHref() {
+  return "/introduce";
+}
+
+export function buildTenantHref(tenantId: number | string) {
+  return `/tenant/${tenantId}`;
+}
+
+export function buildOnboardingHref(redirectTo?: string | null) {
+  if (!redirectTo || redirectTo === "/" || redirectTo.startsWith("/onboarding")) {
+    return "/onboarding";
+  }
+  return `/onboarding?redirect=${encodeURIComponent(redirectTo)}`;
+}
+
 export function buildAdminGuidebookHref(guidebookId: number | string, tenantId?: number | string | null) {
   const base = `/admin/guidebooks/${guidebookId}`;
   if (tenantId == null) {

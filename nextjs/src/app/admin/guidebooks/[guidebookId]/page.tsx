@@ -21,7 +21,7 @@ export default async function AdminGuidebookPage({ params, searchParams }: Admin
   ]);
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} preferredTenantId={tenantId}>
       <AdminGuidebookExperience
         viewer={viewer}
         guidebookId={guidebookId}

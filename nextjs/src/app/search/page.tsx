@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const result = query.trim() && tenantId ? await loadSearch({ query, tenantId, guidebookId, cursor }) : null;
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} preferredTenantId={tenantId ?? viewer.activeTenantId}>
       <SearchExperience viewer={viewer} query={query} guidebookId={guidebookId} tenantId={tenantId} result={result} />
     </AppShell>
   );

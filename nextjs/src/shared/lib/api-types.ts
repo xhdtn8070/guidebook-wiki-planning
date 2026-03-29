@@ -31,7 +31,7 @@ export type TenantRole = "OWNER" | "ADMIN" | "MEMBER";
 export type UserStatus = "ACTIVE" | "BLOCKED" | "WITHDRAWN";
 export type GuidebookStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED";
 export type PageStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED";
-export type PageAccessPolicy = "INHERIT" | "FREE" | "AFTER_AD" | "SUBSCRIBER";
+export type PageAccessPolicy = "INHERIT" | "PUBLIC" | "TENANT_ONLY";
 export type NotificationType =
   | "TENANT_INVITED"
   | "GUIDEBOOK_INVITED"
@@ -86,6 +86,13 @@ export type HomePageItem = {
 
 export type HomeTenantItem = {
   tenantId: number;
+  name: string;
+  visibility: TenantVisibility;
+};
+
+export type TenantResponse = {
+  tenantId: number;
+  tenantCode: string;
   name: string;
   visibility: TenantVisibility;
 };
@@ -243,6 +250,19 @@ export type PermissionGateState = {
 
 export type GuidebookListResponse = {
   items: GuidebookSummary[];
+};
+
+export type TenantCreateRequest = {
+  tenantCode: string;
+  name: string;
+  visibility: TenantVisibility;
+};
+
+export type GuidebookCreateRequest = {
+  code: string;
+  name: string;
+  description?: string | null;
+  status?: GuidebookStatus;
 };
 
 export type GuidebookSummary = {

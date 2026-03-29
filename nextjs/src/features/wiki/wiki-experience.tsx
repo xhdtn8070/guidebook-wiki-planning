@@ -5,7 +5,7 @@ import type { Route } from "next";
 import { useState } from "react";
 import { clsx } from "clsx";
 import type { GuidebookSection, NavItem, PageDetail, ViewerSession, WikiNavTree } from "@/shared/lib/api-types";
-import { buildAdminPageHref, buildLoginHref, buildPageHref, toFrontendHref } from "@/shared/lib/routes";
+import { buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
 import { extractTableOfContents } from "@/shared/lib/sections";
 import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Lock, PanelLeft, Pencil } from "@/shared/icons";
 import { StatusPanel } from "@/shared/ui/status-panel";
@@ -37,12 +37,15 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
   }
 
   if (!tenantId) {
+    const fallbackTenantId = viewer.activeTenantId ?? viewer.tenants[0]?.tenantId ?? null;
     return (
       <StatusPanel
         eyebrow="Tenant"
         title="tenant 컨텍스트가 아직 없습니다."
         description="문서 상세와 네비게이션은 모두 `X-Tenant-Id` 헤더를 요구합니다. 상단 workspace를 고르거나 URL에 `tenantId`를 포함해 진입하세요."
         tone="warning"
+        actionHref={(fallbackTenantId != null ? buildTenantHref(fallbackTenantId) : buildOnboardingHref(buildPageHref({ guidebookId, pageId }))) as Route}
+        actionLabel={fallbackTenantId != null ? "워크스페이스 열기" : "워크스페이스 만들기"}
       />
     );
   }

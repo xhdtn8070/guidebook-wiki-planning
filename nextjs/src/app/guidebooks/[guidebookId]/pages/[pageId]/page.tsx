@@ -24,6 +24,7 @@ export default async function GuidebookPage({ params, searchParams }: GuidebookP
   return (
     <AppShell
       viewer={viewer}
+      preferredTenantId={tenantId}
       sidebar={tenantId && detailResult.ok ? <WikiSidebarPanel nav={navResult?.ok ? navResult.data : null} tenantId={tenantId} activePageId={pageId} /> : undefined}
       aside={detailResult.ok ? <WikiTocPanel sections={detailResult.data.page.sections} /> : undefined}
     >

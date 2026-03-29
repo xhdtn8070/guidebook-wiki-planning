@@ -3,10 +3,10 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { clsx } from "clsx";
 import type { ViewerSession } from "@/shared/lib/api-types";
-import { buildLoginHref, buildSearchHref } from "@/shared/lib/routes";
+import { buildIntroduceHref, buildLoginHref, buildOnboardingHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
 import {
   BookOpen,
   ChevronDown,
@@ -24,9 +24,10 @@ import { Input } from "@/shared/ui/input";
 
 type GlobalHeaderProps = {
   viewer: ViewerSession;
+  preferredTenantId?: number | null;
 };
 
-export function GlobalHeader({ viewer }: GlobalHeaderProps) {
+export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -36,19 +37,65 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
   const [isTenantOpen, setIsTenantOpen] = useState(false);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
 
-  const activeTenantId = searchParams.get("tenantId") ?? (viewer.activeTenantId != null ? String(viewer.activeTenantId) : null);
+  const activeTenantId = useMemo(() => {
+    if (typeof searchParams.get("tenantId") === "string") {
+      return searchParams.get("tenantId");
+    }
+    if (preferredTenantId != null) {
+      return String(preferredTenantId);
+    }
+    if (viewer.activeTenantId != null) {
+      return String(viewer.activeTenantId);
+    }
+    return null;
+  }, [preferredTenantId, searchParams, viewer.activeTenantId]);
+
   const currentSearch = searchParams.toString();
   const loginHref = buildLoginHref(pathname ? `${pathname}${currentSearch ? `?${currentSearch}` : ""}` : null);
+  const hasWorkspaces = viewer.tenants.length > 0;
+  const brandHref = viewer.user ? "/" : buildIntroduceHref();
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
   }, [searchParams]);
+
+  useEffect(() => {
+    if (!preferredTenantId || viewer.activeTenantId === preferredTenantId) {
+      return;
+    }
+
+    void fetch("/api/session/tenant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ tenantId: preferredTenantId }),
+    });
+  }, [preferredTenantId, viewer.activeTenantId]);
 
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     startTransition(() => {
       router.push(buildSearchHref(query, activeTenantId) as Route);
     });
+  };
+
+  const buildTenantDestination = (tenantId: string) => {
+    if (
+      !pathname ||
+      pathname === "/" ||
+      pathname === "/introduce" ||
+      pathname === "/onboarding" ||
+      pathname === "/login" ||
+      pathname.startsWith("/auth") ||
+      pathname.startsWith("/tenant")
+    ) {
+      return buildTenantHref(tenantId);
+    }
+
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("tenantId", tenantId);
+    return `${pathname}${next.toString() ? `?${next.toString()}` : ""}`;
   };
 
   const setTenant = async (tenantId: string) => {
@@ -60,12 +107,8 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
       body: JSON.stringify({ tenantId }),
     });
 
-    const next = new URLSearchParams(searchParams.toString());
-    next.set("tenantId", tenantId);
-    const nextUrl = `${pathname}${next.toString() ? `?${next.toString()}` : ""}`;
-
     startTransition(() => {
-      router.replace(nextUrl as Route);
+      router.replace(buildTenantDestination(tenantId) as Route);
       router.refresh();
     });
 
@@ -75,36 +118,39 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
   const logout = async () => {
     await fetch("/api/session/logout", { method: "POST" });
     startTransition(() => {
-      router.push("/" as Route);
+      router.push(buildIntroduceHref() as Route);
       router.refresh();
     });
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-[hsl(var(--background)/0.88)] backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-[hsl(var(--background)/0.86)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-4 md:px-6 xl:px-8">
-        <Link href="/" className="flex min-w-0 items-center gap-3 text-foreground transition-opacity hover:opacity-90">
+        <Link href={brandHref as Route} className="flex min-w-0 items-center gap-3 text-foreground transition-opacity hover:opacity-90">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-foreground text-sm font-extrabold text-background shadow-theme-sm">
             G
           </div>
           <div className="hidden min-w-0 sm:block">
             <p className="truncate text-sm font-bold tracking-tight">Guidebook Wiki</p>
-            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Operational Docs</p>
+            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Knowledge Product</p>
           </div>
         </Link>
 
         <div className="mx-auto flex min-w-0 flex-1 items-center justify-center gap-3">
-          <Link href="/" className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "hidden md:inline-flex border-border/70 bg-background/65")}>
+          <Link
+            href={(viewer.user ? "/" : buildIntroduceHref()) as Route}
+            className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "hidden border-border/70 bg-background/65 md:inline-flex")}
+          >
             <BookOpen className="h-4 w-4" />
-            Docs
+            {viewer.user ? "Home" : "Introduce"}
           </Link>
 
-          <form onSubmit={submitSearch} className="relative w-full max-w-xl">
+          <form onSubmit={submitSearch} className="relative w-full max-w-2xl">
             <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search pages, terms, and code identifiers"
+              placeholder="문서, 용어, 코드 식별자를 검색하세요"
               className="h-11 rounded-2xl border-border/80 bg-background/80 pl-10 pr-20"
             />
             <kbd className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md border border-border bg-background/70 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground md:block">
@@ -170,26 +216,26 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
 
           {viewer.user ? (
             <>
-              <div className="relative">
-                <button
-                  type="button"
-                  className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-background/40")}
-                  onClick={() => {
-                    setIsTenantOpen((current) => !current);
-                    setIsThemeOpen(false);
-                  }}
-                >
-                  <Layers className="h-4 w-4" />
-                  <span className="hidden lg:inline">Workspace</span>
-                  <ChevronDown className="h-4 w-4" />
-                </button>
-                {isTenantOpen ? (
-                  <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[hsl(var(--surface-elevated))] p-2 shadow-theme-lg">
-                    <div className="px-3 pb-2 pt-1">
-                      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspaces</p>
-                    </div>
-                    {viewer.tenants.length > 0 ? (
-                      viewer.tenants.map((tenant) => {
+              {hasWorkspaces ? (
+                <div className="relative">
+                  <button
+                    type="button"
+                    className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-background/40")}
+                    onClick={() => {
+                      setIsTenantOpen((current) => !current);
+                      setIsThemeOpen(false);
+                    }}
+                  >
+                    <Layers className="h-4 w-4" />
+                    <span className="hidden lg:inline">내 공간</span>
+                    <ChevronDown className="h-4 w-4" />
+                  </button>
+                  {isTenantOpen ? (
+                    <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[hsl(var(--surface-elevated))] p-2 shadow-theme-lg">
+                      <div className="px-3 pb-2 pt-1">
+                        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspaces</p>
+                      </div>
+                      {viewer.tenants.map((tenant) => {
                         const active = activeTenantId === String(tenant.tenantId);
                         return (
                           <button
@@ -208,13 +254,15 @@ export function GlobalHeader({ viewer }: GlobalHeaderProps) {
                             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{tenant.role}</span>
                           </button>
                         );
-                      })
-                    ) : (
-                      <div className="rounded-xl px-3 py-4 text-sm text-muted-foreground">연결된 워크스페이스가 없습니다.</div>
-                    )}
-                  </div>
-                ) : null}
-              </div>
+                      })}
+                    </div>
+                  ) : null}
+                </div>
+              ) : (
+                <Link href={buildOnboardingHref(pathname) as Route} className={clsx(buttonStyles({ size: "sm" }), "hidden md:inline-flex")}>
+                  첫 워크스페이스 만들기
+                </Link>
+              )}
 
               <Link href="/me" className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), "hidden lg:inline-flex")}>
                 <User className="h-4 w-4" />

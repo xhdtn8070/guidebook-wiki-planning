@@ -4,13 +4,14 @@
 
 ## 목적
 - 현재 Next 프로젝트를 기준으로 2차 리디자인을 요청한다.
-- 이번 요청은 구조 변경이 아니라 재해석 중심이다.
+- 이번 요청은 시각 재해석만이 아니라, 소개 → 워크스페이스 → 리더로 이어지는 정보 구조를 더 제품답게 다듬는 데 초점을 둔다.
 - 목표는 “예쁜 시안”이 아니라 실제 Next 프로젝트의 완성도를 올릴 수 있는 full-flow 디자인 세트를 받는 것이다.
 
 ## Source of truth
 - 현재 Next 구현과 캡처
 - `frontend/guidebook-wiki-frontend-api-sync.md`
 - 로컬 비교 팩: `.local/guidebook-wiki/reports/redesign-reference-pack.md`
+- 실제 seed 이후 데이터 예시: `.local/guidebook-wiki/reports/normalized-demo-content.json`
 
 ## Locked constraints
 - 백엔드 API 계약은 추가하지 않는다.
@@ -22,36 +23,41 @@
   - `GET /api/tenants/me`
   - permission endpoints
 - canonical route는 유지한다.
+  - `/introduce`
   - `/`
+  - `/tenant/[tenantId]`
+  - `/onboarding`
   - `/search`
   - `/guidebooks/[guidebookId]/pages/[pageId]`
   - `/login`
   - `/auth`
   - `/admin/guidebooks/[guidebookId]`
   - `/admin/pages/[pageId]`
-- tenant는 route segment가 아니라 context다.
+- tenant는 reader/search/admin에서 context를 유지하고, workspace hub에서는 `/tenant/[tenantId]` segment로 표현한다.
 - editor 본체, 파일/VOD, 권한 편집 UI는 이번 범위 밖이다.
 
 ## Screen scope
-1. Signed-out home
-2. Signed-in home
-3. Search results
-4. Search empty state
-5. Search auth gate
-6. Search tenant gate
-7. Reader layout
-8. Login
-9. Auth bridge
-10. Admin guidebook entry
-11. Admin page entry
-12. Permission denied / auth-required states
+1. `/introduce` signed-out 제품 소개
+2. `/` signed-in 통합 workspace home
+3. `/tenant/[tenantId]` workspace hub
+4. `/onboarding` 최소 생성 플로우
+5. Search results
+6. Search empty state
+7. Search auth gate
+8. Search tenant gate
+9. Reader layout
+10. Login
+11. Auth bridge
+12. Admin guidebook entry
+13. Admin page entry
+14. Permission denied / auth-required states
 
 ## Visual direction
 - Lovable의 제품형 docs shell 감각은 유지한다.
 - 다만 과한 콘솔/개발자 무드와 복고적인 위키 인상은 줄인다.
 - 더 밝고 정제된 modern minimal docs UI로 간다.
 - 얇은 보더, 절제된 accent, 높은 가독성, 더 강한 정보 위계를 원한다.
-- 랜딩 페이지보다 실제 문서 제품처럼 보여야 한다.
+- 랜딩 페이지처럼만 보이지 않고, 첫 방문 순간부터 “문서 제품”의 성격이 읽혀야 한다.
 
 ## Mode strategy
 - Light/Dark를 동등한 품질로 설계한다.
@@ -72,14 +78,16 @@
 
 ## Design asks
 - 홈은 current Next보다 더 강한 first impression이 필요하다.
+- `/introduce`는 제품 정체성과 workspace model을 한 번에 설명해야 한다.
+- `/`는 개인화된 통합 허브로, `/tenant/[tenantId]`는 특정 워크스페이스 허브로 명확히 달라 보여야 한다.
 - 검색은 결과 리스트 자체가 제품의 중심 기능처럼 보여야 한다.
 - 리더는 breadcrumb, metadata, actions, nav, toc가 자연스럽게 정리된 docs product shell이어야 한다.
-- 로그인/tenant/permission gate는 의도된 상태 화면처럼 디자인해야 한다.
+- onboarding, 로그인, tenant, permission gate는 placeholder가 아니라 의도된 상태 화면처럼 디자인해야 한다.
 - 관리자 진입 화면도 단순 표가 아니라 실제 운영면의 시작점처럼 보여야 한다.
 
 ## Acceptance
 - 현재 API 계약 위에서 바로 구현 가능해야 한다.
 - Light/Dark 둘 다 제공되어야 한다.
 - 로그인 전/후, tenant 없음, 권한 없음, 결과 없음 상태가 빠지지 않아야 한다.
-- current Next보다 홈과 검색의 첫인상이 명확히 강해야 한다.
+- current Next보다 introduce, home, search의 첫인상이 명확히 강해야 한다.
 - reader가 docs product로 읽히는 shell 완성도를 가져야 한다.
