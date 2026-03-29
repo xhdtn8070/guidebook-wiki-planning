@@ -3,10 +3,11 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { useState } from "react";
+import { clsx } from "clsx";
 import type { GuidebookSection, NavItem, PageDetail, ViewerSession, WikiNavTree } from "@/shared/lib/api-types";
 import { buildAdminPageHref, buildLoginHref, buildPageHref, toFrontendHref } from "@/shared/lib/routes";
 import { extractTableOfContents } from "@/shared/lib/sections";
-import { ArrowLeft, ArrowRight, Lock, PanelLeft, Pencil } from "@/shared/icons";
+import { ArrowLeft, ArrowRight, PanelLeft, Pencil } from "@/shared/icons";
 import { StatusPanel } from "@/shared/ui/status-panel";
 
 type WikiExperienceProps = {
@@ -47,19 +48,29 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
   }
 
   if (error || !detail) {
-    return <StatusPanel eyebrow={error?.code ?? "PAGE"} title="문서를 불러오지 못했습니다." description={error?.message ?? "페이지 상세 응답이 비어 있습니다."} tone="warning" />;
+    return (
+      <StatusPanel
+        eyebrow={error?.code ?? "PAGE"}
+        title="문서를 불러오지 못했습니다."
+        description={error?.message ?? "페이지 상세 응답이 비어 있습니다."}
+        tone="warning"
+      />
+    );
   }
 
   const page = detail.page;
   const toc = extractTableOfContents(page.sections);
+  const lead = summarizeLead(page.sections);
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)_220px]">
-      <aside className="hidden lg:block">
-        <div className="sticky top-24 rounded-[28px] border border-border bg-panel px-4 py-5">
-          <div className="flex items-center gap-2 border-b border-border pb-3 text-sm font-medium">
-            <PanelLeft className="h-4 w-4" />
-            Navigation
+    <div className="animate-rise-in grid gap-8 xl:grid-cols-12">
+      <aside className="hidden xl:col-span-3 xl:block">
+        <div className="sticky top-24">
+          <div className="border-b border-border pb-3">
+            <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+              <PanelLeft className="h-4 w-4" />
+              Navigation
+            </div>
           </div>
           <div className="mt-4">
             {nav ? <NavTree items={nav.items} tenantId={tenantId} activePageId={page.pageId} /> : <p className="text-sm text-muted-foreground">네비게이션이 비어 있습니다.</p>}
@@ -67,58 +78,95 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
         </div>
       </aside>
 
-      <div className="min-w-0">
-        <article className="rounded-[32px] border border-border bg-background px-0">
-          <header className="border-b border-border pb-8">
-            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Document</p>
-            <nav className="mt-4 flex flex-wrap gap-2 text-sm text-muted-foreground">
-              {detail.navContext?.breadcrumb.map((item) => (
-                <Link key={item.pageId} href={toFrontendHref(item.url) as Route} className="hover:text-foreground">
-                  {item.title}
-                </Link>
+      <div className="min-w-0 xl:col-span-6">
+        <article>
+          <header className="border-b border-border pb-10">
+            <p className="editorial-eyebrow">Archive / document page</p>
+            <nav className="mt-3 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+              {detail.navContext?.breadcrumb.map((item, index) => (
+                <span key={item.pageId} className="flex items-center gap-2">
+                  {index > 0 ? <span>/</span> : null}
+                  <Link href={toFrontendHref(item.url) as Route} className="hover:text-foreground">
+                    {item.title}
+                  </Link>
+                </span>
               ))}
             </nav>
-            <div className="mt-5 flex items-start justify-between gap-6">
-              <div>
-                <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.04em] text-foreground">{page.title}</h1>
+
+            <div className="mt-5 grid gap-8 lg:grid-cols-12">
+              <div className="lg:col-span-9">
+                <h1 className="max-w-4xl text-5xl text-foreground md:text-6xl">{page.title}</h1>
+                {lead ? <p className="mt-6 max-w-3xl text-sm leading-8 text-muted-foreground">{lead}</p> : null}
+                <div className="mt-6 flex flex-wrap gap-5 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                  <span>Guidebook {page.guidebookId}</span>
+                  <span>Page {page.pageId}</span>
+                  <span>Status {page.status}</span>
+                  <span>Access {page.accessPolicy}</span>
+                </div>
+              </div>
+
+              <div className="border-l border-border pl-5 lg:col-span-3">
+                <Link
+                  href={buildAdminPageHref(page.pageId, tenantId) as Route}
+                  className="inline-flex items-center gap-2 rounded-[6px] border border-primary bg-primary px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-primary-foreground"
+                >
+                  <Pencil className="h-4 w-4" />
+                  관리 진입
+                </Link>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                  guidebook #{page.guidebookId} · page #{page.pageId} · status {page.status} · access {page.accessPolicy}
+                  읽기 화면과 관리자 화면은 같은 page id를 공유합니다. 검색과 운영 흐름이 별도 URL 체계로 갈라지지 않도록 고정했습니다.
                 </p>
               </div>
-              <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-panel-soft">
-                <Pencil className="h-4 w-4" />
-                관리 진입
-              </Link>
             </div>
           </header>
 
-          <div className="pt-8">
+          <div className="pt-10">
             <SectionRenderer sections={page.sections} />
           </div>
         </article>
 
-        <nav className="mt-10 grid gap-3 md:grid-cols-2">
+        <nav className="mt-14 grid gap-4 md:grid-cols-2">
           <PagePagerCard direction="prev" item={detail.navContext?.prev ?? null} tenantId={tenantId} />
           <PagePagerCard direction="next" item={detail.navContext?.next ?? null} tenantId={tenantId} />
         </nav>
       </div>
 
-      <aside className="hidden xl:block">
-        <div className="sticky top-24 rounded-[28px] border border-border bg-panel px-4 py-5">
-          <p className="border-b border-border pb-3 text-sm font-medium">On this page</p>
-          <ol className="mt-4 space-y-3">
-            {toc.length > 0 ? (
-              toc.map((item) => (
-                <li key={item.id}>
-                  <a href={`#${item.id}`} className="text-sm text-muted-foreground hover:text-foreground" style={{ paddingLeft: `${(item.level - 1) * 10}px` }}>
-                    {item.label}
-                  </a>
-                </li>
-              ))
-            ) : (
-              <li className="text-sm text-muted-foreground">헤딩 섹션이 아직 없습니다.</li>
-            )}
-          </ol>
+      <aside className="hidden xl:col-span-3 xl:block">
+        <div className="sticky top-24 space-y-8">
+          <div className="border-l border-border pl-5">
+            <p className="editorial-eyebrow">Page meta</p>
+            <dl className="mt-4 space-y-3 text-sm text-muted-foreground">
+              <div>
+                <dt className="text-[11px] uppercase tracking-[0.16em]">Tenant</dt>
+                <dd className="mt-1 text-foreground">{tenantId}</dd>
+              </div>
+              <div>
+                <dt className="text-[11px] uppercase tracking-[0.16em]">Guidebook</dt>
+                <dd className="mt-1 text-foreground">{guidebookId}</dd>
+              </div>
+              <div>
+                <dt className="text-[11px] uppercase tracking-[0.16em]">Access</dt>
+                <dd className="mt-1 text-foreground">{page.accessPolicy}</dd>
+              </div>
+            </dl>
+          </div>
+
+          <div className="border-l border-border pl-5">
+            <p className="editorial-eyebrow">On this page</p>
+            <ol className="mt-4 space-y-3">
+              {toc.length > 0 ? (
+                toc.map((item) => (
+                  <li key={item.id}>
+                    <a href={`#${item.id}`} className="text-sm text-muted-foreground hover:text-foreground" style={{ paddingLeft: `${(item.level - 1) * 10}px` }}>
+                      {item.label}
+                    </a>
+                  </li>
+                ))
+              ) : (
+                <li className="text-sm text-muted-foreground">헤딩 섹션이 아직 없습니다.</li>
+              )}
+            </ol>
+          </div>
         </div>
       </aside>
     </div>
@@ -153,7 +201,10 @@ function NavTreeItem({
     <li>
       <Link
         href={buildPageHref({ guidebookId: parseGuidebookId(item.url), pageId: item.pageId, tenantId }) as Route}
-        className={`block rounded-[18px] px-3 py-2 text-sm ${isActive ? "bg-panel-soft text-foreground" : isParent ? "text-foreground" : "text-muted-foreground hover:bg-panel-soft hover:text-foreground"}`}
+        className={clsx(
+          "block rounded-[6px] px-3 py-2.5 text-sm",
+          isActive ? "bg-panel text-foreground" : isParent ? "text-foreground" : "text-muted-foreground hover:bg-panel hover:text-foreground",
+        )}
         style={{ paddingLeft: `${12 + depth * 14}px` }}
       >
         {item.title}
@@ -183,20 +234,16 @@ function PagePagerCard({
   tenantId: number;
 }) {
   if (!item) {
-    return (
-      <div className="rounded-[24px] border border-border bg-panel px-5 py-5 text-sm text-muted-foreground">
-        {direction === "prev" ? "이전 문서가 없습니다." : "다음 문서가 없습니다."}
-      </div>
-    );
+    return <div className="border border-border bg-panel px-5 py-5 text-sm text-muted-foreground">{direction === "prev" ? "이전 문서가 없습니다." : "다음 문서가 없습니다."}</div>;
   }
 
   return (
-    <Link href={buildPageHref({ guidebookId: parseGuidebookId(item.url), pageId: item.pageId, tenantId }) as Route} className="rounded-[24px] border border-border bg-panel px-5 py-5 hover:bg-panel-soft">
+    <Link href={buildPageHref({ guidebookId: parseGuidebookId(item.url), pageId: item.pageId, tenantId }) as Route} className="border border-border bg-panel px-5 py-5 hover:bg-panel-soft">
       <div className="flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-muted-foreground">
         {direction === "prev" ? <ArrowLeft className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
         {direction === "prev" ? "Previous" : "Next"}
       </div>
-      <p className="mt-3 text-lg font-medium tracking-tight text-foreground">{item.title}</p>
+      <p className="mt-3 text-2xl text-foreground">{item.title}</p>
     </Link>
   );
 }
@@ -216,7 +263,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 
         if (section.type === "CALLOUT") {
           return (
-            <div key={`callout-${index}`} className="rounded-[24px] border border-border bg-panel px-5 py-4">
+            <div key={`callout-${index}`} className="border border-border bg-panel px-5 py-4">
               <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{section.variant}</p>
               {section.title ? <p className="mt-2 text-base font-medium text-foreground">{section.title}</p> : null}
               <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-muted-foreground">{section.content}</p>
@@ -226,7 +273,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 
         if (section.type === "CODE") {
           return (
-            <div key={`code-${index}`} className="overflow-hidden rounded-[24px] border border-border bg-panel">
+            <div key={`code-${index}`} className="overflow-hidden border border-border bg-panel">
               <div className="border-b border-border px-4 py-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">{section.lang || "code"}</div>
               <pre className="overflow-x-auto px-4 py-4 text-sm leading-7 text-foreground">
                 <code>{section.content}</code>
@@ -237,7 +284,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 
         if (section.type === "TABLE") {
           return (
-            <div key={`table-${index}`} className="overflow-hidden rounded-[24px] border border-border">
+            <div key={`table-${index}`} className="overflow-hidden border border-border">
               <table className="w-full border-collapse text-sm">
                 {section.headers?.length ? (
                   <thead className="bg-panel-soft text-left">
@@ -268,7 +315,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 
         if (section.type === "IMAGE") {
           return (
-            <div key={`image-${index}`} className="rounded-[24px] border border-dashed border-border bg-panel-soft px-5 py-8 text-sm text-muted-foreground">
+            <div key={`image-${index}`} className="border border-dashed border-border bg-panel-soft px-5 py-8 text-sm text-muted-foreground">
               이미지 섹션
               {section.alt ? ` · ${section.alt}` : ""}
               {section.url ? ` · ${section.url}` : ""}
@@ -278,7 +325,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 
         if (section.type === "VIDEO") {
           return (
-            <div key={`video-${index}`} className="rounded-[24px] border border-dashed border-border bg-panel-soft px-5 py-8 text-sm text-muted-foreground">
+            <div key={`video-${index}`} className="border border-dashed border-border bg-panel-soft px-5 py-8 text-sm text-muted-foreground">
               비디오 섹션 · file #{section.fileId}
             </div>
           );
@@ -289,7 +336,7 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
         }
 
         return (
-          <div key={`unknown-${index}`} className="rounded-[24px] border border-border bg-panel-soft px-5 py-5 text-sm text-muted-foreground">
+          <div key={`unknown-${index}`} className="border border-border bg-panel-soft px-5 py-5 text-sm text-muted-foreground">
             알 수 없는 섹션입니다.
           </div>
         );
@@ -299,7 +346,12 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
 }
 
 function renderHeading(level: number, id: string, text: string, index: number) {
-  const className = "scroll-mt-24 text-2xl font-semibold tracking-tight text-foreground";
+  const className = clsx(
+    "scroll-mt-24 text-foreground",
+    level <= 2 && "text-4xl",
+    level === 3 && "text-3xl",
+    level >= 4 && "text-2xl",
+  );
   const key = `${id}-${index}`;
 
   if (level <= 1) {
@@ -350,7 +402,7 @@ function MarkdownBlock({ content }: { content: string }) {
     .map((entry) => entry.trim())
     .filter(Boolean);
   return (
-    <div className="space-y-4 text-base leading-8 text-foreground">
+    <div className="space-y-5 text-base leading-8 text-foreground">
       {blocks.map((block, index) => {
         if (block.startsWith("- ")) {
           const items = block.split("\n").map((line) => line.replace(/^- /, "").trim());
@@ -382,13 +434,16 @@ function TabsBlock({ items }: { items: { key: string; label: string; content: Gu
   }
 
   return (
-    <div className="rounded-[24px] border border-border bg-panel">
+    <div className="border border-border bg-panel">
       <div className="flex flex-wrap gap-2 border-b border-border px-4 py-3">
         {items.map((item) => (
           <button
             key={item.key}
             type="button"
-            className={`rounded-full px-3 py-1.5 text-sm ${item.key === active.key ? "bg-foreground text-background" : "text-muted-foreground hover:bg-panel-soft hover:text-foreground"}`}
+            className={clsx(
+              "rounded-[6px] px-3 py-1.5 text-sm",
+              item.key === active.key ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-panel-soft hover:text-foreground",
+            )}
             onClick={() => setActiveKey(item.key)}
           >
             {item.label}
@@ -405,4 +460,16 @@ function TabsBlock({ items }: { items: { key: string; label: string; content: Gu
 function parseGuidebookId(url: string) {
   const match = url.match(/\/g\/(\d+)\//);
   return match ? Number(match[1]) : 0;
+}
+
+function summarizeLead(sections: GuidebookSection[]) {
+  for (const section of sections) {
+    if (section.type === "MARKDOWN") {
+      const text = section.content.replace(/[#*_`>-]/g, " ").replace(/\s+/g, " ").trim();
+      if (text) {
+        return text.slice(0, 220);
+      }
+    }
+  }
+  return null;
 }

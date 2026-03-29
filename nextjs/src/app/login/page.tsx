@@ -14,7 +14,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const redirectTo = typeof resolvedSearchParams.redirect === "string" ? resolvedSearchParams.redirect : "/";
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} variant="minimal">
       <LoginPanel redirectTo={redirectTo} />
     </AppShell>
   );

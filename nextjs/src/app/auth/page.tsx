@@ -8,7 +8,7 @@ export default async function AuthPage() {
   const viewer = await loadViewerSession();
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} variant="minimal">
       <AuthTicketBridge providerLabel="Auth ticket" />
     </AppShell>
   );

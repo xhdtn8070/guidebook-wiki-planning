@@ -54,17 +54,37 @@ export function AuthTicketBridge({ providerLabel = "OAuth" }: AuthTicketBridgePr
   }, [providerLabel, router]);
 
   return (
-    <section className="mx-auto max-w-2xl rounded-[32px] border border-border bg-panel px-7 py-10 text-center">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{providerLabel}</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-foreground">
-        {state === "success" ? "세션 연결 완료" : "세션 연결 중"}
-      </h1>
-      <p className="mt-4 text-sm leading-7 text-muted-foreground">{message}</p>
-      {state === "error" ? (
-        <a href="/login" className="mt-6 inline-flex rounded-full border border-border px-4 py-2 text-sm font-medium">
-          로그인으로 돌아가기
-        </a>
-      ) : null}
+    <section className="animate-rise-in grid min-h-[calc(100vh-12rem)] gap-0 overflow-hidden border border-border bg-panel lg:grid-cols-2">
+      <div className="flex items-center px-8 py-12 md:px-14">
+        <div className="max-w-[480px]">
+          <p className="editorial-eyebrow">{providerLabel}</p>
+          <h1 className="mt-5 text-5xl text-foreground">{state === "success" ? "세션 연결 완료" : state === "error" ? "세션 연결 실패" : "세션 연결 중"}</h1>
+          <p className="mt-5 text-sm leading-8 text-muted-foreground">{message}</p>
+          {state === "error" ? (
+            <a href="/login" className="mt-8 inline-flex rounded-[6px] border border-border px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground">
+              로그인으로 돌아가기
+            </a>
+          ) : null}
+        </div>
+      </div>
+
+      <aside className="border-l border-border bg-[linear-gradient(180deg,#f8f5ef_0%,#efe8de_100%)] px-8 py-12 md:px-12">
+        <p className="editorial-eyebrow">Bridge status</p>
+        <div className="mt-6 space-y-6">
+          <div>
+            <p className="text-sm font-medium text-foreground">Ticket discovery</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">Hash fragment와 query parameter 모두에서 ticket를 확인합니다.</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-foreground">Session storage</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">브라우저 저장소가 아니라 httpOnly cookie에 세션을 고정해 이후 BFF 요청에서 사용합니다.</p>
+          </div>
+          <div>
+            <p className="text-sm font-medium text-foreground">Redirect restore</p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">성공 시 저장된 redirect 경로로 복귀하고, 실패 시 로그인 화면으로 되돌립니다.</p>
+          </div>
+        </div>
+      </aside>
     </section>
   );
 }

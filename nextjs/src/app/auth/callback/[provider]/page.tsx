@@ -13,7 +13,7 @@ export default async function AuthCallbackPage({ params }: AuthCallbackPageProps
   const resolvedParams = await params;
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell viewer={viewer} variant="minimal">
       <AuthTicketBridge providerLabel={`${resolvedParams.provider} callback`} />
     </AppShell>
   );

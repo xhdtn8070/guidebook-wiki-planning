@@ -56,55 +56,69 @@ export function AdminGuidebookExperience({
   }
 
   return (
-    <div className="space-y-10">
+    <div className="animate-rise-in space-y-10">
       <section className="border-b border-border pb-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Admin entry</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-foreground">가이드북 #{guidebookId} 관리 골격</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
-          이 단계에서는 editor 본체를 열지 않고, 목록과 권한 게이트만 먼저 실제 API로 연결합니다.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="editorial-eyebrow">Core platform</p>
+            <h1 className="mt-3 text-5xl text-foreground">가이드북 #{guidebookId} 운영 면</h1>
+          </div>
+          <div className="flex gap-2">
+            <span className="inline-flex items-center rounded-[6px] border border-border px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Permissions</span>
+            <span className="inline-flex items-center rounded-[6px] border border-border px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Archive</span>
+            <span className="inline-flex items-center rounded-[6px] bg-primary px-3 py-2 text-[11px] uppercase tracking-[0.16em] text-primary-foreground">New page</span>
+          </div>
+        </div>
+
+        <div className="mt-8 grid gap-6 border-t border-border pt-6 md:grid-cols-3">
+          <MetricRow label="Total documentation" value={`${pages?.items.length ?? 0} articles`} />
+          <MetricRow label="Active contributors" value="12 engineers" />
+          <MetricRow label="System health" value="Stable v4.2.0" />
+        </div>
       </section>
 
       {guidebooks?.items.length ? (
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
-          <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Guidebooks in tenant</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {guidebooks.items.map((item) => (
-              <Link
-                key={item.guidebookId}
-                href={`/admin/guidebooks/${item.guidebookId}?tenantId=${tenantId}` as Route}
-                className={`rounded-full px-3 py-2 text-sm ${item.guidebookId === guidebookId ? "bg-foreground text-background" : "border border-border text-foreground hover:bg-panel-soft"}`}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
+        <section className="flex flex-wrap gap-2">
+          {guidebooks.items.map((item) => (
+            <Link
+              key={item.guidebookId}
+              href={`/admin/guidebooks/${item.guidebookId}?tenantId=${tenantId}` as Route}
+              className={`rounded-[6px] px-3 py-2 text-[11px] uppercase tracking-[0.16em] ${item.guidebookId === guidebookId ? "bg-primary text-primary-foreground" : "border border-border text-muted-foreground hover:text-foreground"}`}
+            >
+              {item.name}
+            </Link>
+          ))}
         </section>
       ) : null}
 
-      <section className="divide-y divide-border border-t border-border">
+      <section className="overflow-hidden border border-border bg-panel">
+        <div className="hidden gap-4 border-b border-border px-5 py-4 text-[11px] uppercase tracking-[0.16em] text-muted-foreground lg:grid lg:grid-cols-12">
+          <span className="lg:col-span-6">Page title / summary</span>
+          <span className="lg:col-span-2">Status</span>
+          <span className="lg:col-span-2">Access</span>
+          <span className="lg:col-span-2">Actions</span>
+        </div>
         {pages?.items.map((page) => (
-          <div key={page.pageId} className="flex flex-col gap-4 py-5 md:flex-row md:items-start md:justify-between">
-            <div className="min-w-0">
-              <p className="text-lg font-medium tracking-tight text-foreground">{page.title}</p>
+          <div key={page.pageId} className="grid gap-4 border-b border-border px-5 py-5 last:border-b-0 lg:grid-cols-12">
+            <div className="min-w-0 lg:col-span-6">
+              <p className="text-xl text-foreground">{page.title}</p>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">{summarizeSections(page.sections) || "본문 요약이 아직 없습니다."}</p>
-              <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                status {page.status} · usable {String(page.isUsable)} · access {page.accessPolicy}
-              </p>
             </div>
-            <div className="flex shrink-0 gap-2">
-              <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium">
-                읽기
+            <div className="text-sm text-muted-foreground lg:col-span-2">{page.status}</div>
+            <div className="text-sm text-muted-foreground lg:col-span-2">{page.accessPolicy}</div>
+            <div className="flex flex-col gap-2 lg:col-span-2">
+              <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground hover:text-foreground">
+                Open
                 <External className="h-4 w-4" />
               </Link>
-              <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background">
-                편집 진입
+              <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-foreground">
+                Edit
                 <Pencil className="h-4 w-4" />
               </Link>
             </div>
           </div>
         ))}
-        {!pages?.items.length ? <p className="py-5 text-sm text-muted-foreground">등록된 페이지가 없습니다.</p> : null}
+        {!pages?.items.length ? <p className="px-5 py-5 text-sm text-muted-foreground">등록된 페이지가 없습니다.</p> : null}
       </section>
     </div>
   );
@@ -162,44 +176,53 @@ export function AdminPageExperience({
   }
 
   return (
-    <div className="space-y-8">
+    <div className="animate-rise-in space-y-8">
       <section className="border-b border-border pb-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Admin page</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-foreground">{detail.page.title}</h1>
+        <p className="editorial-eyebrow">Admin page</p>
+        <h1 className="mt-3 text-5xl text-foreground">{detail.page.title}</h1>
         <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
-          editor 본체 대신, 지금은 sections/meta/status/accessPolicy를 그대로 읽어와 다음 단계의 편집기 구조를 확인할 수 있게 둡니다.
+          editor 본체 대신, 지금은 sections/meta/status/accessPolicy를 그대로 보여 주면서 다음 단계 편집기 구조를 위한 inspection view를 제공합니다.
         </p>
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
+      <div className="grid gap-6 lg:grid-cols-12">
+        <section className="border border-border bg-panel px-6 py-6 lg:col-span-4">
           <div className="flex items-center gap-2 text-sm font-medium">
             <Lock className="h-4 w-4" />
             Effective permission
           </div>
           <dl className="mt-5 space-y-4 text-sm">
             <div>
-              <dt className="text-muted-foreground">Action</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.effectiveAction}</dd>
+              <dt className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Action</dt>
+              <dd className="mt-1 text-foreground">{permission.effectiveAction}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Permission</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.effectivePermission ?? "NONE"}</dd>
+              <dt className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Permission</dt>
+              <dd className="mt-1 text-foreground">{permission.effectivePermission ?? "NONE"}</dd>
             </div>
             <div>
-              <dt className="text-muted-foreground">Source</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.source}</dd>
+              <dt className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Source</dt>
+              <dd className="mt-1 text-foreground">{permission.source}</dd>
             </div>
           </dl>
         </section>
 
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
-          <p className="text-sm font-medium text-foreground">Raw page payload</p>
-          <pre className="mt-5 overflow-x-auto whitespace-pre-wrap rounded-[24px] bg-background px-4 py-4 text-xs leading-6 text-muted-foreground">
+        <section className="border border-border bg-panel px-6 py-6 lg:col-span-8">
+          <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Raw page payload</p>
+          <pre className="mt-5 overflow-x-auto whitespace-pre-wrap bg-background px-4 py-4 text-xs leading-6 text-muted-foreground">
             {JSON.stringify(detail.page, null, 2)}
           </pre>
         </section>
       </div>
+    </div>
+  );
+}
+
+function MetricRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+      <p className="mt-3 text-2xl text-foreground">{value}</p>
     </div>
   );
 }
