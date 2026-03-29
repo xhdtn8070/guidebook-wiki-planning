@@ -3,6 +3,8 @@ node_modules/
 out/
 dist/
 dist-tests/
+.playwright-cli/
+output/
 .env
 .env.*
 npm-debug.log*
