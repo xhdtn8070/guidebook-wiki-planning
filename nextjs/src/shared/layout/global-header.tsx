@@ -54,6 +54,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
   const loginHref = buildLoginHref(pathname ? `${pathname}${currentSearch ? `?${currentSearch}` : ""}` : null);
   const hasWorkspaces = viewer.tenants.length > 0;
   const brandHref = viewer.user ? "/" : buildIntroduceHref();
+  const activeTenant = activeTenantId ? viewer.tenants.find((tenant) => String(tenant.tenantId) === activeTenantId) ?? null : null;
 
   useEffect(() => {
     setQuery(searchParams.get("q") ?? "");
@@ -124,26 +125,34 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border/80 bg-[hsl(var(--background)/0.86)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center gap-3 px-4 md:px-6 xl:px-8">
+    <header className="sticky top-0 z-50 border-b border-border/80 bg-[hsl(var(--surface-strong))/0.94] shadow-[0_1px_0_hsl(var(--border)/0.4)] backdrop-blur-xl">
+      <div className="mx-auto flex h-14 max-w-[1600px] items-center gap-3 px-4 md:px-6 xl:px-8">
         <Link href={brandHref as Route} className="flex min-w-0 items-center gap-3 text-foreground transition-opacity hover:opacity-90">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-foreground text-sm font-extrabold text-background shadow-theme-sm">
-            G
-          </div>
           <div className="hidden min-w-0 sm:block">
-            <p className="truncate text-sm font-bold tracking-tight">Guidebook Wiki</p>
-            <p className="truncate text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Knowledge Product</p>
+            <p className="truncate text-base font-bold tracking-[-0.04em]">Guidebook Wiki</p>
+            <p className="truncate text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Modern knowledge product</p>
           </div>
         </Link>
 
-        <div className="mx-auto flex min-w-0 flex-1 items-center justify-center gap-3">
-          <Link
-            href={(viewer.user ? "/" : buildIntroduceHref()) as Route}
-            className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "hidden border-border/70 bg-background/65 md:inline-flex")}
-          >
-            <BookOpen className="h-4 w-4" />
-            {viewer.user ? "Home" : "Introduce"}
-          </Link>
+        <div className="mx-auto flex min-w-0 flex-1 items-center justify-center gap-2">
+          <div className="hidden items-center gap-1 xl:flex">
+            <Link
+              href={(viewer.user ? "/" : buildIntroduceHref()) as Route}
+              className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), pathname === "/" || pathname === "/introduce" ? "bg-foreground/[0.05] text-foreground" : "")}
+            >
+              <BookOpen className="h-4 w-4" />
+              {viewer.user ? "Home" : "Introduce"}
+            </Link>
+            {viewer.user && activeTenant ? (
+              <Link
+                href={buildTenantHref(activeTenant.tenantId) as Route}
+                className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), pathname?.startsWith("/tenant") ? "bg-foreground/[0.05] text-foreground" : "")}
+              >
+                <Layers className="h-4 w-4" />
+                {activeTenant.name}
+              </Link>
+            ) : null}
+          </div>
 
           <form onSubmit={submitSearch} className="relative w-full max-w-2xl">
             <SearchIcon className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -151,9 +160,9 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="문서, 용어, 코드 식별자를 검색하세요"
-              className="h-11 rounded-2xl border-border/80 bg-background/80 pl-10 pr-20"
+              className="h-10 rounded-full border-border/80 bg-[hsl(var(--surface-elevated))] pl-10 pr-20 shadow-theme-sm"
             />
-            <kbd className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md border border-border bg-background/70 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground md:block">
+            <kbd className="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-md border border-border bg-background/80 px-2 py-1 text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground md:block">
               Search
             </kbd>
           </form>
@@ -163,7 +172,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
           <div className="relative hidden md:block">
             <button
               type="button"
-              className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), "border border-transparent")}
+              className={clsx(buttonStyles({ variant: "quiet", size: "sm" }), "border border-transparent bg-transparent")}
               onClick={() => {
                 setIsThemeOpen((current) => !current);
                 setIsTenantOpen(false);
@@ -218,18 +227,18 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
             <>
               {hasWorkspaces ? (
                 <div className="relative">
-                  <button
-                    type="button"
-                    className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-background/40")}
-                    onClick={() => {
-                      setIsTenantOpen((current) => !current);
-                      setIsThemeOpen(false);
-                    }}
-                  >
-                    <Layers className="h-4 w-4" />
-                    <span className="hidden lg:inline">내 공간</span>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
+              <button
+                type="button"
+                className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-[hsl(var(--surface-elevated))]")}
+                onClick={() => {
+                  setIsTenantOpen((current) => !current);
+                  setIsThemeOpen(false);
+                }}
+              >
+                <Layers className="h-4 w-4" />
+                <span className="hidden lg:inline">{activeTenant?.name ?? "내 공간"}</span>
+                <ChevronDown className="h-4 w-4" />
+              </button>
                   {isTenantOpen ? (
                     <div className="absolute right-0 mt-3 w-80 rounded-2xl border border-border bg-[hsl(var(--surface-elevated))] p-2 shadow-theme-lg">
                       <div className="px-3 pb-2 pt-1">
@@ -268,7 +277,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
                 <User className="h-4 w-4" />
                 Session
               </Link>
-              <button type="button" onClick={logout} className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-background/40")}>
+              <button type="button" onClick={logout} className={clsx(buttonStyles({ variant: "outline", size: "sm" }), "border-border/70 bg-[hsl(var(--surface-elevated))]")}>
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">{isPending ? "..." : viewer.user.displayName}</span>
               </button>

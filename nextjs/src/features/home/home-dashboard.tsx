@@ -1,9 +1,8 @@
 import Link from "next/link";
 import type { Route } from "next";
-import type { ReactNode } from "react";
 import type { HomeResponse, ViewerSession } from "@/shared/lib/api-types";
-import { Bell, External, Layers, Search as SearchIcon, Star, Zap } from "@/shared/icons";
-import { buildPageHref, buildSearchHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
+import { Bell, External, Layers, Search as SearchIcon, Star } from "@/shared/icons";
+import { buildSearchHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
 
 type HomeDashboardProps = {
   home: HomeResponse;
@@ -14,20 +13,22 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
   const activeTenantId = viewer.activeTenantId ?? home.tenants?.[0]?.tenantId ?? null;
   const workspaceById = new Map(viewer.tenants.map((tenant) => [tenant.tenantId, tenant]));
   const primaryRecent = home.recentPages[0] ?? null;
-  const primaryStarred = home.starredPages[0] ?? null;
+  const unreadNotifications = home.notifications.recent.slice(0, 3);
+  const activeWorkspace = activeTenantId ? workspaceById.get(activeTenantId) ?? null : null;
+  const topWorkspaces = viewer.tenants.slice(0, 4);
 
   return (
     <div className="space-y-8">
       <section className="hero-gradient overflow-hidden rounded-[36px] border border-border px-6 py-8 shadow-theme-lg md:px-10 md:py-10">
-        <div className="grid gap-8 lg:grid-cols-[1.08fr_0.92fr] lg:items-end">
-          <div className="max-w-3xl">
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.04fr)_460px] xl:items-end">
+          <div className="max-w-4xl">
             <span className="pill">Personal home</span>
-            <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.05em] text-foreground md:text-6xl">
-              {home.me.displayName}님과 직접 연결된 문서 흐름만 먼저 모았습니다.
+            <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.06em] text-foreground md:text-6xl">
+              {home.me.displayName}님이 지금 다시 이어야 할 문서 흐름과 워크스페이스만 먼저 정리했습니다.
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-8 text-foreground/78">
-              홈은 소개 페이지가 아니라 다시 일을 시작하는 표면입니다. 최근 이어서 보던 문서, 중요 문서, 읽지 않은 이벤트, 내가 속한 워크스페이스를 먼저 보여주고
-              구체적인 작업은 각 워크스페이스 허브로 넘깁니다.
+              개인 홈은 서비스 소개가 아니라 다시 작업을 시작하는 표면입니다. 최근 문서, 중요 문서, 읽지 않은 이벤트, 내가 속한 워크스페이스를 먼저 보여주고
+              실제 운영과 상세 탐색은 각 workspace hub로 이어집니다.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               {primaryRecent ? (
@@ -44,109 +45,98 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
                 </Link>
               ) : null}
               {activeTenantId ? (
-                <Link href={buildTenantHref(activeTenantId) as Route} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-border bg-background/70 px-5 text-sm font-semibold text-foreground">
+                <Link href={buildTenantHref(activeTenantId) as Route} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-border bg-background/72 px-5 text-sm font-semibold text-foreground">
                   내 워크스페이스 열기
                   <Layers className="h-4 w-4" />
                 </Link>
               ) : null}
-              {activeTenantId ? (
-                <Link href={buildSearchHref("", activeTenantId) as Route} className="inline-flex h-12 items-center gap-2 rounded-2xl border border-border bg-background/70 px-5 text-sm font-semibold text-foreground">
-                  검색으로 시작
-                  <SearchIcon className="h-4 w-4" />
-                </Link>
-              ) : null}
+            </div>
+            <div className="mt-8 flex flex-wrap gap-3 text-sm text-muted-foreground">
+              <SignalChip label="Unread" value={home.notifications.unreadCount} />
+              <SignalChip label="Recent" value={home.recentPages.length} />
+              <SignalChip label="Starred" value={home.starredPages.length} />
+              <SignalChip label="Workspaces" value={viewer.tenants.length} />
             </div>
           </div>
 
-          <aside className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            <MetricCard label="Unread" value={home.notifications.unreadCount} icon={<Bell className="h-4 w-4" />} />
-            <MetricCard label="Recent" value={home.recentPages.length} icon={<Zap className="h-4 w-4" />} />
-            <MetricCard label="Workspaces" value={viewer.tenants.length} icon={<Layers className="h-4 w-4" />} />
+          <aside className="relative overflow-hidden rounded-[30px] border border-border bg-[hsl(var(--surface-strong))] px-5 py-5 shadow-theme-md">
+            <div className="absolute inset-y-0 right-0 hidden w-28 bg-gradient-to-l from-primary/10 via-primary/5 to-transparent md:block" />
+            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Resume now</p>
+            {primaryRecent ? (
+              <>
+                <p className="mt-3 text-sm text-primary">{workspaceById.get(primaryRecent.tenantId)?.name ?? `Workspace ${primaryRecent.tenantId}`}</p>
+                <h2 className="mt-2 max-w-sm text-3xl font-semibold tracking-tight text-foreground">{primaryRecent.title}</h2>
+                <p className="mt-3 max-w-md text-sm leading-7 text-muted-foreground">
+                  reader route와 tenant 문맥을 그대로 유지한 채, 마지막으로 보던 문서로 다시 복귀합니다. 개인 홈은 이 active surface 하나로 오늘의 시작점을 먼저
+                  제시합니다.
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                  <span>{primaryRecent.viewedAt ? formatDateTime(primaryRecent.viewedAt) : "recent"}</span>
+                  <span>•</span>
+                  <span>Guidebook {primaryRecent.guidebookId}</span>
+                  {activeWorkspace ? (
+                    <>
+                      <span>•</span>
+                      <span>{activeWorkspace.tenantCode}</span>
+                    </>
+                  ) : null}
+                </div>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  <Link
+                    href={toFrontendHref(primaryRecent.url, {
+                      tenantId: primaryRecent.tenantId,
+                      guidebookId: primaryRecent.guidebookId,
+                      pageId: primaryRecent.pageId,
+                    }) as Route}
+                    className="rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+                  >
+                    이어서 보기
+                  </Link>
+                  <Link href={buildTenantHref(primaryRecent.tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                    워크스페이스 열기
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">아직 최근 문서가 없습니다.</h2>
+                <p className="mt-3 text-sm leading-7 text-muted-foreground">
+                  먼저 워크스페이스를 열고 문서를 읽기 시작하면, 홈이 개인 흐름을 다시 모아 보여줍니다.
+                </p>
+              </>
+            )}
           </aside>
         </div>
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.15fr)_380px]">
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1.12fr)_380px]">
         <div className="space-y-6">
-          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Continue</p>
-                <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">최근 이어서 보기</h2>
-              </div>
-              <span className="rounded-full border border-border bg-background/60 px-3 py-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-                personal flow
-              </span>
-            </div>
-            <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-              <div className="rounded-[26px] border border-border bg-background/45 px-5 py-5">
-                {primaryRecent ? (
-                  <>
-                    <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                      Workspace {workspaceById.get(primaryRecent.tenantId)?.tenantCode ?? primaryRecent.tenantId}
-                    </p>
-                    <h3 className="mt-3 text-2xl font-semibold tracking-tight text-foreground">{primaryRecent.title}</h3>
-                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                      마지막으로 이어 보던 문서입니다. reader route와 tenant 문맥을 그대로 유지한 채 복귀합니다.
-                    </p>
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      <Link
-                        href={toFrontendHref(primaryRecent.url, {
-                          tenantId: primaryRecent.tenantId,
-                          guidebookId: primaryRecent.guidebookId,
-                          pageId: primaryRecent.pageId,
-                        }) as Route}
-                        className="rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-                      >
-                        이어서 보기
-                      </Link>
-                      <Link href={buildTenantHref(primaryRecent.tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
-                        워크스페이스 열기
-                      </Link>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <h3 className="text-xl font-semibold tracking-tight text-foreground">아직 최근 문서가 없습니다.</h3>
-                    <p className="mt-3 text-sm leading-7 text-muted-foreground">문서를 읽기 시작하면 이곳에 이어서 봐야 할 흐름이 생깁니다.</p>
-                  </>
-                )}
-              </div>
+          <ListSurface
+            eyebrow="Daily flow"
+            title="최근 이어서 보기"
+            description="오늘 다시 열어야 하는 문서를 시간순으로 정리했습니다. 여기서 reader로 바로 복귀하거나, 해당 워크스페이스 허브로 내려갈 수 있습니다."
+            items={home.recentPages.map((item) => ({
+              href: toFrontendHref(item.url, {
+                tenantId: item.tenantId,
+                guidebookId: item.guidebookId,
+                pageId: item.pageId,
+              }),
+              title: item.title,
+              meta: `${workspaceById.get(item.tenantId)?.name ?? `Workspace ${item.tenantId}`} · ${item.viewedAt ? formatDateTime(item.viewedAt) : "recent"}`,
+            }))}
+            emptyMessage="아직 최근 활동이 없습니다."
+          />
 
-              <div className="divide-y divide-border rounded-[26px] border border-border bg-background/45 px-5 py-3">
-                {home.recentPages.length > 0 ? (
-                  home.recentPages.slice(0, 5).map((item) => (
-                    <Link
-                      key={item.pageId}
-                      href={toFrontendHref(item.url, {
-                        tenantId: item.tenantId,
-                        guidebookId: item.guidebookId,
-                        pageId: item.pageId,
-                      }) as Route}
-                      className="flex items-center justify-between gap-3 py-4 first:pt-2 last:pb-2"
-                    >
-                      <div className="min-w-0">
-                        <p className="truncate text-base font-semibold text-foreground">{item.title}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          {workspaceById.get(item.tenantId)?.name ?? `Workspace ${item.tenantId}`} · {item.viewedAt ? formatDateTime(item.viewedAt) : "recent"}
-                        </p>
-                      </div>
-                      <External className="h-4 w-4 shrink-0 text-muted-foreground" />
-                    </Link>
-                  ))
-                ) : (
-                  <p className="py-4 text-sm text-muted-foreground">아직 문서 활동이 없습니다.</p>
-                )}
-              </div>
-            </div>
-          </section>
-
-          <DashboardList
+          <ListSurface
             eyebrow="Pinned"
             title="중요 문서"
-            description="즐겨찾기한 문서는 개인 홈에서 먼저 모아서 보여주고, 각 워크스페이스 허브에서는 그 공간 기준으로 다시 좁혀 보여줍니다."
+            description="즐겨찾기한 문서는 개인 홈에서 먼저 보이고, 각 워크스페이스 허브에서는 그 공간 기준으로 다시 좁혀집니다."
             items={home.starredPages.map((item) => ({
-              href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId: item.tenantId }),
+              href: toFrontendHref(item.url, {
+                tenantId: item.tenantId,
+                guidebookId: item.guidebookId,
+                pageId: item.pageId,
+              }),
               title: item.title,
               meta: `${workspaceById.get(item.tenantId)?.name ?? `Workspace ${item.tenantId}`} · ${item.starredAt ? formatDateTime(item.starredAt) : "starred"}`,
             }))}
@@ -160,18 +150,31 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
               <Layers className="h-4 w-4 text-primary" />
               내 워크스페이스
             </div>
-            <div className="mt-5 space-y-3">
-              {viewer.tenants.map((tenant) => (
-                <Link key={tenant.tenantId} href={buildTenantHref(tenant.tenantId) as Route} className="block rounded-2xl border border-border bg-background/45 px-4 py-4 transition-transform hover:-translate-y-0.5">
-                  <div className="flex items-center justify-between gap-3">
+            <div className="mt-5 space-y-2">
+              {topWorkspaces.map((tenant, index) => (
+                <Link
+                  key={tenant.tenantId}
+                  href={buildTenantHref(tenant.tenantId) as Route}
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background/45 px-4 py-4 transition-transform hover:-translate-y-0.5"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-primary/10 text-sm font-semibold text-primary">
+                      {tenant.name.slice(0, 1).toUpperCase()}
+                    </div>
                     <div className="min-w-0">
                       <p className="truncate text-base font-semibold text-foreground">{tenant.name}</p>
-                      <p className="mt-1 text-sm text-muted-foreground">{tenant.tenantCode}</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        {tenant.tenantCode}
+                        {index === 0 && tenant.tenantId === activeTenantId ? " · active" : ""}
+                      </p>
                     </div>
-                    <span className="rounded-full border border-border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{tenant.role}</span>
                   </div>
+                  <span className="rounded-full border border-border px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">{tenant.role}</span>
                 </Link>
               ))}
+              {viewer.tenants.length === 0 ? (
+                <p className="rounded-2xl border border-border bg-background/45 px-4 py-4 text-sm leading-7 text-muted-foreground">아직 속한 워크스페이스가 없습니다.</p>
+              ) : null}
             </div>
           </section>
 
@@ -180,88 +183,64 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
               <Bell className="h-4 w-4 text-primary" />
               읽지 않은 이벤트
             </div>
-            <div className="mt-5 space-y-4">
-              {home.notifications.recent.length > 0 ? (
-                home.notifications.recent.map((item) => (
-                  <article key={item.id} className="rounded-2xl border border-border bg-background/40 px-4 py-4">
+            <div className="mt-5 divide-y divide-border">
+              {unreadNotifications.length > 0 ? (
+                unreadNotifications.map((item) => (
+                  <article key={item.id} className="py-4 first:pt-0 last:pb-0">
                     <p className="text-sm font-semibold text-foreground">{item.title}</p>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">{item.body}</p>
                     <p className="mt-3 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{formatDateTime(item.createdAt)}</p>
                   </article>
                 ))
               ) : (
-                <p className="text-sm leading-7 text-muted-foreground">아직 나와 직접 연결된 새 이벤트가 없습니다.</p>
+                <p className="py-1 text-sm leading-7 text-muted-foreground">아직 나와 직접 연결된 새 이벤트가 없습니다.</p>
               )}
             </div>
           </section>
 
           <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
             <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-              <Star className="h-4 w-4 text-primary" />
-              지금 바로 할 수 있는 일
+              <SearchIcon className="h-4 w-4 text-primary" />
+              Quick routes
             </div>
             <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-              <p>개인 홈에서는 나와 관련된 문서 흐름만 빠르게 스캔합니다.</p>
-              <p>공간 단위 탐색과 운영 진입은 각 워크스페이스 허브에서 이어집니다.</p>
-              <p>검색은 현재 활성 워크스페이스를 기본 문맥으로 삼습니다.</p>
+              <p>개인 홈은 나와 직접 연결된 문서와 공간만 먼저 스캔하는 자리입니다.</p>
+              <p>더 깊은 탐색과 운영은 해당 workspace hub에서 계속 이어집니다.</p>
             </div>
-            {activeTenantId ? (
-              <Link href={buildSearchHref("", activeTenantId) as Route} className="mt-5 inline-flex rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
-                현재 워크스페이스 검색
-              </Link>
-            ) : null}
+            <div className="mt-5 flex flex-wrap gap-2">
+              {activeTenantId ? (
+                <Link href={buildSearchHref("", activeTenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  현재 워크스페이스 검색
+                </Link>
+              ) : null}
+              {activeTenantId ? (
+                <Link href={buildTenantHref(activeTenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  활성 공간 열기
+                </Link>
+              ) : null}
+              {primaryRecent ? (
+                <Link href={buildTenantHref(primaryRecent.tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  최근 문서 공간 열기
+                </Link>
+              ) : null}
+            </div>
           </section>
         </aside>
       </section>
-
-      {primaryStarred ? (
-        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-          <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Spotlight</p>
-          <div className="mt-4 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight text-foreground">{primaryStarred.title}</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-8 text-muted-foreground">
-                즐겨찾기로 올려 둔 문서는 홈에서 가장 안정적인 진입점입니다. 워크스페이스가 달라도 중요한 문서는 이곳에서 다시 연결됩니다.
-              </p>
-            </div>
-            <div className="rounded-[24px] border border-border bg-background/45 px-5 py-5">
-              <p className="text-sm font-semibold text-foreground">
-                {workspaceById.get(primaryStarred.tenantId)?.name ?? `Workspace ${primaryStarred.tenantId}`}
-              </p>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Guidebook {primaryStarred.guidebookId} · {primaryStarred.starredAt ? formatDateTime(primaryStarred.starredAt) : "starred"}
-              </p>
-              <Link
-                href={buildPageHref({
-                  guidebookId: primaryStarred.guidebookId,
-                  pageId: primaryStarred.pageId,
-                  tenantId: primaryStarred.tenantId,
-                }) as Route}
-                className="mt-5 inline-flex rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-              >
-                문서 열기
-              </Link>
-            </div>
-          </div>
-        </section>
-      ) : null}
     </div>
   );
 }
 
-function MetricCard({ label, value, icon }: { label: string; value: number; icon: ReactNode }) {
+function SignalChip({ label, value }: { label: string; value: number }) {
   return (
-    <div className="surface-elevated rounded-[24px] border border-border px-5 py-5 shadow-theme-md">
-      <div className="flex items-center justify-between text-muted-foreground">
-        <span className="text-sm">{label}</span>
-        {icon}
-      </div>
-      <p className="mt-4 text-3xl font-extrabold tracking-tight text-foreground">{value}</p>
-    </div>
+    <span className="inline-flex items-center gap-2 rounded-full border border-border bg-background/68 px-3 py-1.5">
+      <span className="text-[11px] uppercase tracking-[0.18em]">{label}</span>
+      <span className="font-semibold text-foreground">{value}</span>
+    </span>
   );
 }
 
-function DashboardList({
+function ListSurface({
   eyebrow,
   title,
   description,
@@ -276,16 +255,23 @@ function DashboardList({
 }) {
   return (
     <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{eyebrow}</p>
-      <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{title}</h2>
-      <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{description}</p>
-      <div className="mt-5 divide-y divide-border">
+      <div className="border-b border-border pb-4">
+        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{eyebrow}</p>
+        <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{title}</h2>
+        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{description}</p>
+      </div>
+      <div className="mt-3 divide-y divide-border">
         {items.length > 0 ? (
-          items.map((item) => (
-            <Link key={`${item.href}-${item.title}`} href={item.href as Route} className="flex items-center justify-between gap-4 py-4 first:pt-0">
-              <div className="min-w-0">
-                <p className="truncate text-base font-semibold text-foreground">{item.title}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{item.meta}</p>
+          items.map((item, index) => (
+            <Link key={`${item.href}-${item.title}`} href={item.href as Route} className="group flex items-center justify-between gap-4 py-4 first:pt-0 last:pb-0">
+              <div className="flex min-w-0 items-center gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--surface-elevated))] text-sm font-semibold text-primary">
+                  {index + 1}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-base font-semibold text-foreground group-hover:text-primary">{item.title}</p>
+                  <p className="mt-1 text-sm text-muted-foreground">{item.meta}</p>
+                </div>
               </div>
               <External className="h-4 w-4 shrink-0 text-muted-foreground" />
             </Link>
