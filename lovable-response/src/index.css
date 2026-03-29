@@ -1,8 +1,8 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 @layer base {
   :root {
@@ -51,9 +51,9 @@
     --hero-to: 199 89% 20%;
     
     /* Font families */
-    --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    --font-mono: 'Space Mono', SFMono-Regular, Menlo, monospace;
+    --font-heading: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-body: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
     
     /* Shadows */
     --shadow-sm: 0 2px 8px hsl(222 47% 4% / 0.3);

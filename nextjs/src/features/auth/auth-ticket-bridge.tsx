@@ -54,14 +54,14 @@ export function AuthTicketBridge({ providerLabel = "OAuth" }: AuthTicketBridgePr
   }, [providerLabel, router]);
 
   return (
-    <section className="mx-auto max-w-2xl rounded-[32px] border border-border bg-panel px-7 py-10 text-center">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-muted-foreground">{providerLabel}</p>
-      <h1 className="mt-4 text-3xl font-semibold tracking-[-0.04em] text-foreground">
+    <section className="mx-auto max-w-2xl surface-elevated rounded-[32px] border border-border px-7 py-10 text-center shadow-theme-lg">
+      <p className="pill mx-auto w-fit">{providerLabel}</p>
+      <h1 className="mt-4 text-3xl font-extrabold tracking-[-0.04em] text-foreground">
         {state === "success" ? "세션 연결 완료" : "세션 연결 중"}
       </h1>
       <p className="mt-4 text-sm leading-7 text-muted-foreground">{message}</p>
       {state === "error" ? (
-        <a href="/login" className="mt-6 inline-flex rounded-full border border-border px-4 py-2 text-sm font-medium">
+        <a href="/login" className="mt-6 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-medium">
           로그인으로 돌아가기
         </a>
       ) : null}

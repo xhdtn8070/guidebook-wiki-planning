@@ -1,18 +1,6 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans_KR, Noto_Serif_KR } from "next/font/google";
+import { ThemeProvider } from "@/shared/theme/theme-provider";
 import "./globals.css";
-
-const sans = IBM_Plex_Sans_KR({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const serif = Noto_Serif_KR({
-  variable: "--font-serif",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Guidebook Wiki",
@@ -25,8 +13,30 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko">
-      <body className={`${sans.variable} ${serif.variable} bg-background text-foreground antialiased`}>{children}</body>
+    <html lang="ko" suppressHydrationWarning>
+      <head>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+      </head>
+      <body className="bg-background text-foreground antialiased">
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                var themeKey = "guidebook_theme";
+                var modeKey = "guidebook_mode";
+                var root = document.documentElement;
+                var theme = localStorage.getItem(themeKey) || "midnight";
+                var mode = localStorage.getItem(modeKey) || "dark";
+                root.setAttribute("data-theme", theme);
+                root.setAttribute("data-mode", mode);
+                root.classList.remove("light", "dark");
+                root.classList.add(mode);
+              })();
+            `,
+          }}
+        />
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

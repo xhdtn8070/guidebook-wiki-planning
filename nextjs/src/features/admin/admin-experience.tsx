@@ -56,24 +56,24 @@ export function AdminGuidebookExperience({
   }
 
   return (
-    <div className="space-y-10">
-      <section className="border-b border-border pb-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Admin entry</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-foreground">가이드북 #{guidebookId} 관리 골격</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
+    <div className="space-y-8">
+      <section className="hero-gradient overflow-hidden rounded-[32px] border border-border px-6 py-8 shadow-theme-lg md:px-8">
+        <p className="pill pill-ghost">Admin entry</p>
+        <h1 className="mt-4 text-4xl font-extrabold tracking-[-0.05em] text-foreground">가이드북 #{guidebookId} 관리 골격</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-foreground/80">
           이 단계에서는 editor 본체를 열지 않고, 목록과 권한 게이트만 먼저 실제 API로 연결합니다.
         </p>
       </section>
 
       {guidebooks?.items.length ? (
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
+        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
           <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Guidebooks in tenant</p>
           <div className="mt-4 flex flex-wrap gap-2">
             {guidebooks.items.map((item) => (
               <Link
                 key={item.guidebookId}
                 href={`/admin/guidebooks/${item.guidebookId}?tenantId=${tenantId}` as Route}
-                className={`rounded-full px-3 py-2 text-sm ${item.guidebookId === guidebookId ? "bg-foreground text-background" : "border border-border text-foreground hover:bg-panel-soft"}`}
+                className={`rounded-xl px-3 py-2 text-sm ${item.guidebookId === guidebookId ? "bg-primary text-primary-foreground" : "border border-border text-foreground hover:bg-background/45"}`}
               >
                 {item.name}
               </Link>
@@ -82,22 +82,22 @@ export function AdminGuidebookExperience({
         </section>
       ) : null}
 
-      <section className="divide-y divide-border border-t border-border">
+      <section className="surface-elevated divide-y divide-border rounded-[28px] border border-border px-6 py-2 shadow-theme-md">
         {pages?.items.map((page) => (
           <div key={page.pageId} className="flex flex-col gap-4 py-5 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0">
-              <p className="text-lg font-medium tracking-tight text-foreground">{page.title}</p>
+              <p className="text-lg font-semibold tracking-tight text-foreground">{page.title}</p>
               <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">{summarizeSections(page.sections) || "본문 요약이 아직 없습니다."}</p>
               <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
                 status {page.status} · usable {String(page.isUsable)} · access {page.accessPolicy}
               </p>
             </div>
             <div className="flex shrink-0 gap-2">
-              <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-sm font-medium">
+              <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-medium">
                 읽기
                 <External className="h-4 w-4" />
               </Link>
-              <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex items-center gap-2 rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background">
+              <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
                 편집 진입
                 <Pencil className="h-4 w-4" />
               </Link>
@@ -163,18 +163,18 @@ export function AdminPageExperience({
 
   return (
     <div className="space-y-8">
-      <section className="border-b border-border pb-8">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Admin page</p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-[-0.04em] text-foreground">{detail.page.title}</h1>
-        <p className="mt-4 max-w-2xl text-sm leading-7 text-muted-foreground">
+      <section className="hero-gradient overflow-hidden rounded-[32px] border border-border px-6 py-8 shadow-theme-lg md:px-8">
+        <p className="pill pill-ghost">Admin page</p>
+        <h1 className="mt-4 text-4xl font-extrabold tracking-[-0.05em] text-foreground">{detail.page.title}</h1>
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-foreground/80">
           editor 본체 대신, 지금은 sections/meta/status/accessPolicy를 그대로 읽어와 다음 단계의 편집기 구조를 확인할 수 있게 둡니다.
         </p>
       </section>
 
       <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
+        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
           <div className="flex items-center gap-2 text-sm font-medium">
-            <Lock className="h-4 w-4" />
+            <Lock className="h-4 w-4 text-primary" />
             Effective permission
           </div>
           <dl className="mt-5 space-y-4 text-sm">
@@ -193,9 +193,9 @@ export function AdminPageExperience({
           </dl>
         </section>
 
-        <section className="rounded-[28px] border border-border bg-panel px-6 py-6">
+        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
           <p className="text-sm font-medium text-foreground">Raw page payload</p>
-          <pre className="mt-5 overflow-x-auto whitespace-pre-wrap rounded-[24px] bg-background px-4 py-4 text-xs leading-6 text-muted-foreground">
+          <pre className="mt-5 overflow-x-auto whitespace-pre-wrap rounded-[24px] border border-border bg-background/35 px-4 py-4 text-xs leading-6 text-muted-foreground">
             {JSON.stringify(detail.page, null, 2)}
           </pre>
         </section>

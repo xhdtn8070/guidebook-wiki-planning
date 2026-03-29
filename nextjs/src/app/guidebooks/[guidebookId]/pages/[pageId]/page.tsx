@@ -1,5 +1,5 @@
 import { AppShell } from "@/shared/layout/app-shell";
-import { WikiExperience } from "@/features/wiki/wiki-experience";
+import { WikiExperience, WikiSidebarPanel, WikiTocPanel } from "@/features/wiki/wiki-experience";
 import { getActiveTenantId, loadGuidebookNav, loadPageDetail, loadViewerSession } from "@/server/api";
 
 type GuidebookPageProps = {
@@ -22,7 +22,11 @@ export default async function GuidebookPage({ params, searchParams }: GuidebookP
       : null;
 
   return (
-    <AppShell viewer={viewer}>
+    <AppShell
+      viewer={viewer}
+      sidebar={tenantId && detailResult.ok ? <WikiSidebarPanel nav={navResult?.ok ? navResult.data : null} tenantId={tenantId} activePageId={pageId} /> : undefined}
+      aside={detailResult.ok ? <WikiTocPanel sections={detailResult.data.page.sections} /> : undefined}
+    >
       <WikiExperience
         viewer={viewer}
         tenantId={tenantId}

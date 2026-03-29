@@ -23,13 +23,13 @@ export function StatusPanel({
   return (
     <section
       className={clsx(
-        "rounded-[28px] border px-6 py-7",
-        tone === "default" && "border-border bg-panel",
-        tone === "warning" && "border-accent/40 bg-accent-soft",
-        tone === "muted" && "border-border bg-panel-soft",
+        "surface-elevated rounded-[28px] border px-6 py-7 shadow-theme-md",
+        tone === "default" && "border-border",
+        tone === "warning" && "border-primary/40 bg-primary/10",
+        tone === "muted" && "border-border bg-secondary/50",
       )}
     >
-      {eyebrow ? <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">{eyebrow}</p> : null}
+      {eyebrow ? <p className="pill text-[10px]">{eyebrow}</p> : null}
       <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">{title}</h2>
       <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{description}</p>
       {actionLabel && actionHref ? (
