@@ -38,23 +38,25 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
           <div className="hero-gradient border-b border-border px-7 py-8 lg:border-b-0 lg:border-r lg:px-8 lg:py-10">
             <span className="pill">{isSignup ? "Create account" : "Auth hub"}</span>
             <h1 className="mt-5 text-4xl font-extrabold tracking-[-0.05em] text-foreground md:text-5xl">
-              {isSignup ? "첫 OAuth 인증으로 계정을 만들고 바로 워크스페이스를 시작합니다." : "로그인 후 바로 개인 홈과 워크스페이스 허브로 이어집니다."}
+              {isSignup ? "첫 OAuth 인증으로 가입하고, 바로 첫 워크스페이스를 시작합니다." : "로그인하면 바로 개인 홈과 워크스페이스 허브로 이어집니다."}
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-8 text-foreground/80">
               {isSignup
-                ? "회원가입은 별도 폼이 아니라 첫 인증 자체로 끝납니다. 아직 워크스페이스가 없으면 onboarding으로, 이미 공간이 있으면 개인 홈으로 바로 이동합니다."
-                : "Auth Hub는 세션을 만드는 표면입니다. `/auth` bridge가 ticket를 실제 토큰으로 교환하고, 이후 개인 홈과 워크스페이스 허브가 같은 session shell 안에서 이어집니다."}
+                ? "회원가입은 별도 입력 폼이 아니라 첫 OAuth 인증으로 끝납니다. 공간이 없으면 onboarding으로, 이미 있으면 개인 홈으로 바로 이동합니다."
+                : "세션이 만들어지면 먼저 개인 홈으로, 이후 워크스페이스 허브와 reader·관리 화면이 같은 shell 안에서 이어집니다."}
             </p>
 
             <div className="mt-8 flex flex-wrap gap-2">
               <Link
                 href={buildLoginHref(redirectTo)}
+                prefetch={false}
                 className={`rounded-full px-4 py-2 text-sm font-semibold ${!isSignup ? "bg-foreground text-background" : "border border-border bg-background/70 text-foreground"}`}
               >
                 로그인
               </Link>
               <Link
                 href={buildSignupHref(redirectTo)}
+                prefetch={false}
                 className={`rounded-full px-4 py-2 text-sm font-semibold ${isSignup ? "bg-foreground text-background" : "border border-border bg-background/70 text-foreground"}`}
               >
                 회원가입
@@ -65,10 +67,10 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
               {providerCards.map((provider) => {
                 const href = provider.key === "kakao" ? kakaoHref : googleHref;
                 return (
-                  <Link
+                  <a
                     key={provider.key}
-                    href={href as Route}
-                    className={`rounded-[26px] px-5 py-5 transition-transform hover:-translate-y-0.5 ${provider.tone}`}
+                    href={href}
+                    className={`block rounded-[26px] px-5 py-5 transition-transform hover:-translate-y-0.5 ${provider.tone}`}
                   >
                     <div className="flex items-center justify-between gap-4">
                       <div className="min-w-0">
@@ -77,7 +79,7 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
                       </div>
                       <ArrowRight className="h-5 w-5 shrink-0" />
                     </div>
-                  </Link>
+                  </a>
                 );
               })}
             </div>
@@ -90,7 +92,7 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
                 인증 흐름
               </div>
               <div className="mt-5 space-y-5">
-                <div>
+              <div>
                   <p className="text-sm font-semibold text-foreground">{isSignup ? "첫 OAuth 인증으로 바로 가입" : "로그인 후 이전 흐름으로 복귀"}</p>
                   <p className="mt-2 text-sm leading-7 text-muted-foreground">
                     {isSignup
@@ -112,7 +114,7 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
                 로그인 뒤 화면
               </div>
               <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-                <p>첫 사용자는 onboarding으로 이어지고, 기존 사용자는 개인 홈 또는 원래 보던 reader/tenant 허브로 돌아갑니다.</p>
+                <p>첫 사용자는 onboarding으로, 기존 사용자는 개인 홈 또는 원래 보던 reader·워크스페이스 허브로 돌아갑니다.</p>
                 {viewer.user ? (
                   <div className="rounded-2xl border border-border bg-background px-4 py-4">
                     <p>
@@ -132,9 +134,7 @@ export function LoginPanel({ viewer, redirectTo, mode }: LoginPanelProps) {
                     <Link href="/introduce" className={buttonStyles({ variant: "outline", size: "sm" })}>
                       서비스 소개
                     </Link>
-                    <a href="/auth" className={buttonStyles({ variant: "quiet", size: "sm" })}>
-                      Auth bridge 보기
-                    </a>
+                    <p className="rounded-xl border border-border bg-background px-3 py-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">Kakao는 항상 계정 입력을 다시 요구합니다.</p>
                   </div>
                 )}
               </div>

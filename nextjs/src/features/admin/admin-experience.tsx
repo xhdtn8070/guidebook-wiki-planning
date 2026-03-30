@@ -1,10 +1,11 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { GuidebookListResponse, PageDetail, PageListResponse, PermissionGateState, ViewerSession } from "@/shared/lib/api-types";
-import { buildAdminGuidebookHref, buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildTenantHref } from "@/shared/lib/routes";
+import { buildAdminGuidebookHref, buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildSearchHref, buildTenantHref } from "@/shared/lib/routes";
 import { External, Lock, Pencil } from "@/shared/icons";
 import { StatusPanel } from "@/shared/ui/status-panel";
 import { summarizeSections } from "@/shared/lib/sections";
+import { PageSectionEditor } from "@/features/admin/page-section-editor";
 
 export function AdminGuidebookExperience({
   viewer,
@@ -15,6 +16,7 @@ export function AdminGuidebookExperience({
   guidebooks,
   updateGuidebookAction,
   createPageAction,
+  movePageAction,
   status,
   code,
 }: {
@@ -26,6 +28,7 @@ export function AdminGuidebookExperience({
   guidebooks: GuidebookListResponse | null;
   updateGuidebookAction: (formData: FormData) => void | Promise<void>;
   createPageAction: (formData: FormData) => void | Promise<void>;
+  movePageAction: (formData: FormData) => void | Promise<void>;
   status: "updated" | "error" | null;
   code: string | null;
 }) {
@@ -67,16 +70,38 @@ export function AdminGuidebookExperience({
   }
 
   const currentGuidebook = guidebooks?.items.find((item) => item.guidebookId === guidebookId) ?? null;
+  const sortedPages = [...(pages?.items ?? [])].sort((left, right) => {
+    const leftParent = left.parentPageId ?? -1;
+    const rightParent = right.parentPageId ?? -1;
+    if (leftParent !== rightParent) {
+      return leftParent - rightParent;
+    }
+    return left.orderInParent - right.orderInParent;
+  });
 
   return (
     <div className="space-y-6">
       <section className="surface-elevated rounded-[30px] border border-border px-6 py-6 shadow-theme-md">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook admin</p>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{currentGuidebook?.name ?? `Guidebook #${guidebookId}`}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">이 단계에서는 가이드북 수정과 새 페이지 생성을 실제 API로 연결합니다. editor 본체는 아직 제외하고, 운영 동선만 먼저 붙입니다.</p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook admin</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{currentGuidebook?.name ?? `Guidebook #${guidebookId}`}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">이 화면은 페이지 디렉터리와 운영 메타데이터를 한 곳에서 다룹니다. 새 문서 생성, 문서 이동, 가이드북 메타 수정까지 이 표면에서 이어집니다.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href={buildSearchHref("", tenantId, guidebookId) as Route} className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground hover:bg-background">
+              검색
+            </Link>
+            {currentGuidebook && sortedPages[0] ? (
+              <Link href={buildPageHref({ guidebookId: currentGuidebook.guidebookId, pageId: sortedPages[0].pageId, tenantId }) as Route} className="inline-flex h-10 items-center rounded-xl bg-foreground px-4 text-sm font-medium text-background">
+                대표 문서 열기
+              </Link>
+            ) : null}
+          </div>
+        </div>
         {status ? (
           <div className={`mt-5 rounded-2xl px-4 py-3 text-sm ${status === "updated" ? "border border-primary/30 bg-primary/10 text-foreground" : "border border-amber-300/50 bg-amber-50 text-amber-900"}`}>
-            {status === "updated" ? "guidebook 정보가 저장되었습니다." : `관리 작업을 완료하지 못했습니다${code ? ` (${code})` : ""}.`}
+            {status === "updated" ? "guidebook 또는 페이지 위치가 저장되었습니다." : `관리 작업을 완료하지 못했습니다${code ? ` (${code})` : ""}.`}
           </div>
         ) : null}
       </section>
@@ -98,35 +123,70 @@ export function AdminGuidebookExperience({
         </section>
       ) : null}
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.05fr)_360px]">
-        <section className="surface-elevated rounded-[28px] border border-border px-6 py-2 shadow-theme-md">
-          {pages?.items.map((page) => (
-            <div key={page.pageId} className="flex flex-col gap-4 border-b border-border py-5 last:border-b-0 md:flex-row md:items-start md:justify-between">
-              <div className="min-w-0">
-                <p className="text-lg font-semibold tracking-tight text-foreground">{page.title}</p>
-                <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">{summarizeSections(page.sections) || "본문 요약이 아직 없습니다."}</p>
-                <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
-                  status {page.status} · usable {String(page.isUsable)} · access {page.accessPolicy}
-                </p>
-              </div>
-              <div className="flex shrink-0 gap-2">
-                <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-medium">
-                  읽기
-                  <External className="h-4 w-4" />
-                </Link>
-                <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
-                  기본 편집
-                  <Pencil className="h-4 w-4" />
-                </Link>
-              </div>
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.08fr)_360px]">
+        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+          <div className="flex items-center justify-between gap-4 border-b border-border pb-4">
+            <div>
+              <p className="text-sm font-semibold text-foreground">Page directory</p>
+              <p className="mt-1 text-sm text-muted-foreground">대표 문서부터 세부 문서까지 같은 hierarchy 기준으로 정렬됩니다.</p>
             </div>
-          ))}
-          {!pages?.items.length ? <p className="py-5 text-sm text-muted-foreground">등록된 페이지가 없습니다.</p> : null}
+            <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">{sortedPages.length} pages</span>
+          </div>
+
+          <div className="divide-y divide-border">
+            {sortedPages.map((page, index) => {
+              const previousSibling = findSibling(sortedPages, page, -1);
+              const nextSibling = findSibling(sortedPages, page, 1);
+              return (
+                <div key={page.pageId} className="grid gap-4 py-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-start">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      <span>order {page.orderInParent}</span>
+                      <span>{page.parentPageId != null ? `parent ${page.parentPageId}` : "root page"}</span>
+                      <span>{page.status}</span>
+                    </div>
+                    <p className="mt-2 text-lg font-semibold tracking-tight text-foreground">{page.title}</p>
+                    <p className="mt-2 max-w-3xl text-sm leading-7 text-muted-foreground">{summarizeSections(page.sections) || "본문 요약이 아직 없습니다."}</p>
+                    <p className="mt-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground">
+                      access {page.accessPolicy} · usable {String(page.isUsable)}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <form action={movePageAction}>
+                      <input type="hidden" name="pageId" value={page.pageId} />
+                      <input type="hidden" name="targetParentId" value={page.parentPageId ?? ""} />
+                      <input type="hidden" name="targetOrder" value={Math.max(0, page.orderInParent - 1)} />
+                      <button type="submit" disabled={!previousSibling} className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-medium text-foreground hover:bg-background disabled:cursor-not-allowed disabled:opacity-40">
+                        위로
+                      </button>
+                    </form>
+                    <form action={movePageAction}>
+                      <input type="hidden" name="pageId" value={page.pageId} />
+                      <input type="hidden" name="targetParentId" value={page.parentPageId ?? ""} />
+                      <input type="hidden" name="targetOrder" value={page.orderInParent + 1} />
+                      <button type="submit" disabled={!nextSibling} className="inline-flex h-9 items-center rounded-xl border border-border px-3 text-xs font-medium text-foreground hover:bg-background disabled:cursor-not-allowed disabled:opacity-40">
+                        아래로
+                      </button>
+                    </form>
+                    <Link href={buildPageHref({ guidebookId, pageId: page.pageId, tenantId }) as Route} className="inline-flex h-9 items-center gap-2 rounded-xl border border-border px-3 text-xs font-medium text-foreground hover:bg-background">
+                      읽기
+                      <External className="h-4 w-4" />
+                    </Link>
+                    <Link href={buildAdminPageHref(page.pageId, tenantId) as Route} className="inline-flex h-9 items-center gap-2 rounded-xl bg-primary px-3 text-xs font-medium text-primary-foreground">
+                      편집
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+            {!sortedPages.length ? <p className="py-5 text-sm text-muted-foreground">등록된 페이지가 없습니다.</p> : null}
+          </div>
         </section>
 
         <aside className="space-y-6">
           <form action={updateGuidebookAction} className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-            <p className="text-sm font-semibold text-foreground">Guidebook 설정</p>
+            <p className="text-sm font-semibold text-foreground">Guidebook settings</p>
             <div className="mt-5 space-y-4">
               <label className="block">
                 <span className="text-sm font-medium text-foreground">이름</span>
@@ -247,7 +307,7 @@ export function AdminPageExperience({
       <StatusPanel
         eyebrow="Permission"
         title="편집 권한이 아직 없습니다."
-        description="현재 단계에서는 관리 화면을 gate 용도로만 만들고, 실제 editor 본체는 다음 단계에서 붙입니다."
+        description="현재 단계에서는 WRITE 이상 권한에서만 페이지 편집을 허용합니다."
         tone="warning"
       />
     );
@@ -260,9 +320,21 @@ export function AdminPageExperience({
   return (
     <div className="space-y-6">
       <section className="surface-elevated rounded-[30px] border border-border px-6 py-6 shadow-theme-md">
-        <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Page admin</p>
-        <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{detail.page.title}</h1>
-        <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">이 라운드에서는 제목, 접근 정책, 상태 같은 기본 운영 속성만 먼저 편집합니다.</p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Page admin</p>
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{detail.page.title}</h1>
+            <p className="mt-3 max-w-3xl text-sm leading-7 text-muted-foreground">페이지 메타데이터와 섹션 배열을 한 번에 수정하는 editor v1입니다. 구조화 UI로 지원하지 않는 블록은 raw JSON 형태로 그대로 보존됩니다.</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Link href={buildPageHref({ guidebookId: detail.page.guidebookId, pageId: detail.page.pageId, tenantId }) as Route} className="inline-flex h-10 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground hover:bg-background">
+              Reader 보기
+            </Link>
+            <Link href={buildAdminGuidebookHref(detail.page.guidebookId, tenantId) as Route} className="inline-flex h-10 items-center rounded-xl bg-foreground px-4 text-sm font-medium text-background">
+              Guidebook admin
+            </Link>
+          </div>
+        </div>
         {status ? (
           <div className={`mt-5 rounded-2xl px-4 py-3 text-sm ${status === "updated" ? "border border-primary/30 bg-primary/10 text-foreground" : "border border-amber-300/50 bg-amber-50 text-amber-900"}`}>
             {status === "updated" ? "페이지 정보가 저장되었습니다." : `페이지 작업을 완료하지 못했습니다${code ? ` (${code})` : ""}.`}
@@ -270,79 +342,100 @@ export function AdminPageExperience({
         ) : null}
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
-        <form action={updatePageAction} className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Pencil className="h-4 w-4 text-primary" />
-            Page settings
-          </div>
-          <div className="mt-5 space-y-4">
-            <label className="block">
-              <span className="text-sm font-medium text-foreground">제목</span>
-              <input
-                name="title"
-                defaultValue={detail.page.title}
-                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
-              />
-            </label>
-            <label className="block">
-              <span className="text-sm font-medium text-foreground">상태</span>
-              <select name="status" defaultValue={detail.page.status} className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary">
-                <option value="PUBLISHED">PUBLISHED</option>
-                <option value="DRAFT">DRAFT</option>
-                <option value="ARCHIVED">ARCHIVED</option>
-              </select>
-            </label>
-            <label className="block">
-              <span className="text-sm font-medium text-foreground">접근 정책</span>
-              <select
-                name="accessPolicy"
-                defaultValue={detail.page.accessPolicy}
-                className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
-              >
-                <option value="INHERIT">INHERIT</option>
-                <option value="PUBLIC">PUBLIC</option>
-                <option value="TENANT_ONLY">TENANT_ONLY</option>
-              </select>
-            </label>
-            <label className="block">
-              <span className="text-sm font-medium text-foreground">Usable</span>
-              <select name="isUsable" defaultValue={String(detail.page.isUsable)} className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary">
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </label>
-            <button type="submit" className="inline-flex h-11 items-center justify-center rounded-xl bg-foreground px-4 text-sm font-medium text-background">
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.1fr)_340px]">
+        <form action={updatePageAction} className="space-y-6">
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block">
+                <span className="text-sm font-medium text-foreground">제목</span>
+                <input
+                  name="title"
+                  defaultValue={detail.page.title}
+                  className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                />
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-foreground">상태</span>
+                <select name="status" defaultValue={detail.page.status} className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary">
+                  <option value="PUBLISHED">PUBLISHED</option>
+                  <option value="DRAFT">DRAFT</option>
+                  <option value="ARCHIVED">ARCHIVED</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-foreground">접근 정책</span>
+                <select
+                  name="accessPolicy"
+                  defaultValue={detail.page.accessPolicy}
+                  className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary"
+                >
+                  <option value="INHERIT">INHERIT</option>
+                  <option value="PUBLIC">PUBLIC</option>
+                  <option value="TENANT_ONLY">TENANT_ONLY</option>
+                </select>
+              </label>
+              <label className="block">
+                <span className="text-sm font-medium text-foreground">Usable</span>
+                <select name="isUsable" defaultValue={String(detail.page.isUsable)} className="mt-2 h-11 w-full rounded-xl border border-border bg-background px-4 text-sm text-foreground outline-none transition-colors focus:border-primary">
+                  <option value="true">true</option>
+                  <option value="false">false</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <PageSectionEditor initialSections={detail.page.sections} />
+          </section>
+
+          <div className="flex justify-end">
+            <button type="submit" className="inline-flex h-11 items-center justify-center rounded-xl bg-foreground px-5 text-sm font-medium text-background">
               페이지 저장
             </button>
           </div>
         </form>
 
-        <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Lock className="h-4 w-4 text-primary" />
-            Effective permission
-          </div>
-          <dl className="mt-5 grid gap-4 md:grid-cols-3 text-sm">
-            <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
-              <dt className="text-muted-foreground">Action</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.effectiveAction}</dd>
+        <aside className="space-y-6">
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Lock className="h-4 w-4 text-primary" />
+              Effective permission
             </div>
-            <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
-              <dt className="text-muted-foreground">Permission</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.effectivePermission ?? "NONE"}</dd>
-            </div>
-            <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
-              <dt className="text-muted-foreground">Source</dt>
-              <dd className="mt-1 font-medium text-foreground">{permission.source}</dd>
-            </div>
-          </dl>
+            <dl className="mt-5 grid gap-4 text-sm">
+              <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
+                <dt className="text-muted-foreground">Action</dt>
+                <dd className="mt-1 font-medium text-foreground">{permission.effectiveAction}</dd>
+              </div>
+              <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
+                <dt className="text-muted-foreground">Permission</dt>
+                <dd className="mt-1 font-medium text-foreground">{permission.effectivePermission ?? "NONE"}</dd>
+              </div>
+              <div className="rounded-2xl border border-border bg-background/45 px-4 py-4">
+                <dt className="text-muted-foreground">Source</dt>
+                <dd className="mt-1 font-medium text-foreground">{permission.source}</dd>
+              </div>
+            </dl>
+          </section>
 
-          <pre className="mt-5 overflow-x-auto whitespace-pre-wrap rounded-[24px] border border-border bg-background/35 px-4 py-4 text-xs leading-6 text-muted-foreground">
-            {JSON.stringify(detail.page, null, 2)}
-          </pre>
-        </section>
+          <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
+            <p className="text-sm font-semibold text-foreground">Raw page snapshot</p>
+            <pre className="mt-4 overflow-x-auto whitespace-pre-wrap rounded-[24px] border border-border bg-background/35 px-4 py-4 text-xs leading-6 text-muted-foreground">
+              {JSON.stringify(detail.page, null, 2)}
+            </pre>
+          </section>
+        </aside>
       </div>
     </div>
   );
+}
+
+function findSibling(items: NonNullable<PageListResponse["items"]>, page: PageListResponse["items"][number], delta: -1 | 1) {
+  const siblings = items
+    .filter((item) => item.parentPageId === page.parentPageId)
+    .sort((left, right) => left.orderInParent - right.orderInParent);
+  const index = siblings.findIndex((item) => item.pageId === page.pageId);
+  if (index < 0) {
+    return null;
+  }
+  return siblings[index + delta] ?? null;
 }

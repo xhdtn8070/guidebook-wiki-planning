@@ -44,21 +44,19 @@ export function MeExperience({ viewer, action, status, code }: MeExperienceProps
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">My page</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{viewer.user.displayName} 계정 설정</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              계정 정보, 연결된 로그인 수단, 현재 워크스페이스 컨텍스트를 한 화면에서 관리합니다.
-            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">계정 정보와 로그인 수단만 여기서 관리하고, 워크스페이스 운영 정보는 각 공간의 settings로 분리합니다.</p>
           </div>
-        <div className="flex flex-wrap gap-2">
-          {activeTenant ? (
-            <Link href={buildTenantHref(activeTenant.tenantId) as Route} className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground">
-              현재 워크스페이스 열기
-            </Link>
-          ) : (
-            <Link href={buildOnboardingHref("/me") as Route} className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground">
-              워크스페이스 만들기
-            </Link>
-          )}
-        </div>
+          <div className="flex flex-wrap gap-2">
+            {activeTenant ? (
+              <Link href={buildTenantHref(activeTenant.tenantId) as Route} className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground">
+                현재 워크스페이스 열기
+              </Link>
+            ) : (
+              <Link href={buildOnboardingHref("/me") as Route} className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground">
+                워크스페이스 만들기
+              </Link>
+            )}
+          </div>
         </div>
 
         {status ? (
@@ -137,10 +135,8 @@ export function MeExperience({ viewer, action, status, code }: MeExperienceProps
                 <div className="mt-5 space-y-3">
                   <div className="rounded-2xl border border-border bg-background px-4 py-4">
                     <p className="text-base font-semibold text-foreground">{activeTenant.name}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{activeTenant.tenantCode}</p>
-                    <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                      현재 active tenant입니다. 검색, reader, 관리 화면은 이 공간 문맥을 기본값으로 사용합니다.
-                    </p>
+                  <p className="mt-1 text-sm text-muted-foreground">{activeTenant.tenantCode}</p>
+                    <p className="mt-3 text-sm leading-7 text-muted-foreground">현재 active tenant입니다. 검색, reader, 관리 화면은 이 공간 문맥을 기본값으로 사용합니다.</p>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Link href={buildTenantHref(activeTenant.tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
@@ -176,6 +172,11 @@ export function MeExperience({ viewer, action, status, code }: MeExperienceProps
               <div className="mt-5 space-y-3 text-sm leading-7 text-muted-foreground">
                 <p>마이페이지는 계정 표면만 다루고, 워크스페이스 이름과 공개 범위 같은 운영 정보는 각 공간의 settings로 분리했습니다.</p>
                 <div className="flex flex-wrap gap-2">
+                  {activeTenant ? (
+                    <Link href={buildTenantSettingsHref(activeTenant.tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                      현재 공간 설정
+                    </Link>
+                  ) : null}
                   <LogoutButton />
                 </div>
               </div>

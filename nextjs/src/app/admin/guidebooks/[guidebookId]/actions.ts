@@ -82,3 +82,32 @@ export async function createPageAction(guidebookId: number, tenantId: number | n
 
   redirect(buildAdminPageHref(result.data.pageId, tenantId) as Route);
 }
+
+export async function movePageAction(guidebookId: number, tenantId: number | null, formData: FormData) {
+  const pageId = Number(readValue(formData, "pageId"));
+  const targetParentIdRaw = readValue(formData, "targetParentId");
+  const targetOrderRaw = readValue(formData, "targetOrder");
+
+  if (!Number.isFinite(pageId) || targetOrderRaw === "") {
+    redirect(buildGuidebookFlashHref(guidebookId, tenantId, "error", "INVALID_PAGE_MOVE") as Route);
+  }
+
+  const targetParentId = targetParentIdRaw ? Number(targetParentIdRaw) : null;
+  const targetOrder = Number(targetOrderRaw);
+
+  const result = await requestBackend<boolean>({
+    path: `/api/pages/${pageId}/move`,
+    method: "POST",
+    tenantId,
+    body: {
+      targetParentId: Number.isFinite(targetParentId as number) ? targetParentId : null,
+      targetOrder,
+    },
+  });
+
+  if (!result.ok) {
+    redirect(buildGuidebookFlashHref(guidebookId, tenantId, "error", result.error.code) as Route);
+  }
+
+  redirect(buildGuidebookFlashHref(guidebookId, tenantId, "updated") as Route);
+}

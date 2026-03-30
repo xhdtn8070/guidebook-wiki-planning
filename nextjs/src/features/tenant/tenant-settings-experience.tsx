@@ -74,9 +74,7 @@ export function TenantSettingsExperience({
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspace settings</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{tenant.name} 설정</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              이 화면은 현재 워크스페이스의 메타데이터와 기본 공개 범위만 다룹니다. guidebook과 page 운영은 별도 허브와 관리 화면에서 이어갑니다.
-            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">이 화면은 현재 워크스페이스의 메타데이터와 기본 공개 범위만 다룹니다. guidebook과 page 운영은 허브와 관리 화면에서 이어갑니다.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href={buildTenantHref(tenantId) as Route} className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground">
@@ -144,7 +142,7 @@ export function TenantSettingsExperience({
               </div>
               <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
                 <p>워크스페이스 설정은 공간의 기본 이름과 공개 범위만 조정합니다.</p>
-                <p>실제 문서 구조, 대표 guidebook, page 운영은 허브와 관리 화면에서 이어집니다.</p>
+                <p>실제 문서 구조와 운영은 허브와 관리 화면에서 이어집니다.</p>
               </div>
             </section>
           </section>
@@ -175,11 +173,11 @@ export function TenantSettingsExperience({
                 빠른 이동
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
-                <Link href={buildSearchHref("", tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
-                  이 공간 검색
-                </Link>
                 <Link href={buildMeHref() as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
                   마이페이지
+                </Link>
+                <Link href={buildSearchHref("", tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  이 공간 검색
                 </Link>
                 {featuredGuidebook ? (
                   <Link href={buildAdminGuidebookHref(featuredGuidebook.guidebookId, tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">

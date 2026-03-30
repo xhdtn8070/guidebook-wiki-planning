@@ -51,8 +51,8 @@ export function WorkspaceRail({ viewer, activeItem = "home", activeTenantId = nu
     },
     {
       key: "workspaces",
-      label: "Workspaces",
-      description: "현재 공간",
+      label: "Spaces",
+      description: "공간 허브",
       href: effectiveTenantId != null ? buildTenantHref(effectiveTenantId) : buildOnboardingHref("/"),
       icon: Layers,
     },
@@ -66,7 +66,7 @@ export function WorkspaceRail({ viewer, activeItem = "home", activeTenantId = nu
     {
       key: "admin",
       label: "Admin",
-      description: "운영 진입",
+      description: "운영 표면",
       href: adminHref,
       icon: Bell,
     },
@@ -80,9 +80,7 @@ export function WorkspaceRail({ viewer, activeItem = "home", activeTenantId = nu
         <div className="rounded-[22px] border border-border bg-background/55 px-4 py-4">
           <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Signed in</p>
           <p className="mt-2 text-lg font-semibold tracking-tight text-foreground">{viewer.user.displayName}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {activeWorkspace ? `${activeWorkspace.name} · ${activeWorkspace.role}` : "워크스페이스를 선택해 흐름을 이어갑니다."}
-          </p>
+          <p className="mt-1 text-sm text-muted-foreground">{activeWorkspace ? `${activeWorkspace.name} · ${activeWorkspace.role}` : "최근 흐름과 공간 컨텍스트를 함께 봅니다."}</p>
           <Link
             href={buildMeHref() as Route}
             className="mt-4 inline-flex h-10 items-center gap-2 rounded-xl border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-background/70"

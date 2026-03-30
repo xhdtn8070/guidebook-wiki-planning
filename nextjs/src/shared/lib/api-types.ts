@@ -244,6 +244,21 @@ export type PageSearchResponse = {
   hasMore: boolean;
 };
 
+export type PageStarItem = {
+  pageId: number;
+  guidebookId: number;
+  tenantId: number;
+  title: string;
+  url: string;
+  starredAt: string;
+};
+
+export type PageStarListResponse = {
+  items: PageStarItem[];
+  nextCursor: string | null;
+  hasMore: boolean;
+};
+
 export type PermissionGateState = {
   effectivePermission: GuidebookPermission | null;
   effectiveAction: EffectiveAction;
@@ -324,4 +339,24 @@ export type FileUploadSession = {
   fileId: number;
   uploadUrl: string;
   accessUrl?: string | null;
+};
+
+export type FileAccessUrlStatus = "OK" | "FORBIDDEN" | "NOT_FOUND";
+
+export type FileAccessUrlItem = {
+  fileId: number;
+  url: string | null;
+  expiresAt: string | null;
+  status: FileAccessUrlStatus;
+};
+
+export type FileAccessUrlResolved = {
+  url: string | null;
+  expiresAt: string | null;
+  status: FileAccessUrlStatus;
+};
+
+export type FileAccessUrlsResponse = {
+  items: FileAccessUrlItem[];
+  byId: Record<string, FileAccessUrlResolved>;
 };

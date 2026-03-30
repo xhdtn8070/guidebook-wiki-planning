@@ -62,7 +62,7 @@ export function buildAdminPageHref(pageId: number | string, tenantId?: number | 
   return `${base}?tenantId=${tenantId}`;
 }
 
-export function buildSearchHref(query: string, tenantId?: number | string | null, guidebookId?: number | string | null) {
+export function buildSearchHref(query: string, tenantId?: number | string | null, guidebookId?: number | string | null, cursor?: string | null) {
   const params = new URLSearchParams();
   if (query.trim()) {
     params.set("q", query.trim());
@@ -72,6 +72,9 @@ export function buildSearchHref(query: string, tenantId?: number | string | null
   }
   if (guidebookId != null) {
     params.set("guidebookId", String(guidebookId));
+  }
+  if (cursor) {
+    params.set("cursor", cursor);
   }
   const suffix = params.toString();
   return suffix ? `/search?${suffix}` : "/search";

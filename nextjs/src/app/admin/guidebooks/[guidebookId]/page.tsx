@@ -1,6 +1,6 @@
 import { AppShell } from "@/shared/layout/app-shell";
 import { WorkspaceRail } from "@/shared/layout/workspace-rail";
-import { createPageAction, updateGuidebookAction } from "@/app/admin/guidebooks/[guidebookId]/actions";
+import { createPageAction, movePageAction, updateGuidebookAction } from "@/app/admin/guidebooks/[guidebookId]/actions";
 import { AdminGuidebookExperience } from "@/features/admin/admin-experience";
 import { getActiveTenantId, loadGuidebookPages, loadGuidebookPermissionMe, loadGuidebooks, loadViewerSession } from "@/server/api";
 
@@ -42,6 +42,7 @@ export default async function AdminGuidebookPage({ params, searchParams }: Admin
         guidebooks={guidebooksResult.ok ? guidebooksResult.data : null}
         updateGuidebookAction={updateGuidebookAction.bind(null, guidebookId, tenantId)}
         createPageAction={createPageAction.bind(null, guidebookId, tenantId)}
+        movePageAction={movePageAction.bind(null, guidebookId, tenantId)}
         status={status}
         code={code}
       />

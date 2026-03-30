@@ -72,9 +72,7 @@ export function TenantWorkspaceExperience({
           <div className="max-w-3xl">
             <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Workspace hub</p>
             <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground">{tenant.name}</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-              이 화면은 워크스페이스 정체성과 guidebook 디렉터리를 먼저 보여주고, 그 아래에 내 최근 작업과 중요 문서를 이어 붙이는 허브입니다.
-            </p>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">guidebook 디렉터리를 먼저 보고, 그 아래에서 내 최근 작업과 중요 문서를 다시 이어 봅니다.</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Link href={buildSearchHref("", tenantId) as Route} className="inline-flex h-11 items-center gap-2 rounded-xl bg-foreground px-4 text-sm font-medium text-background">
@@ -113,13 +111,11 @@ export function TenantWorkspaceExperience({
           {primaryGuidebook ? (
             <section className="surface-elevated rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
               <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border pb-4">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Featured guidebook</p>
-                  <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{primaryGuidebook.name}</h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-                    {primaryGuidebook.description || "reader, search, 운영 동선을 가장 먼저 연결하는 대표 guidebook입니다."}
-                  </p>
-                </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Featured guidebook</p>
+                <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">{primaryGuidebook.name}</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">{primaryGuidebook.description || "reader, search, 운영 동선을 가장 먼저 연결하는 대표 guidebook입니다."}</p>
+              </div>
                 <div className="flex flex-wrap gap-2">
                   <Link href={buildSearchHref("", tenantId, primaryGuidebook.guidebookId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
                     이 guidebook 검색
@@ -138,11 +134,11 @@ export function TenantWorkspaceExperience({
           ) : (
             <section className="hero-gradient rounded-[30px] border border-border px-6 py-7 shadow-theme-md">
               <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">First guidebook</p>
-              <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">대표 guidebook이 아직 없어 이 허브가 비어 보입니다.</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/78">
-                아래 운영 시작 영역에서 첫 guidebook을 만들면 검색, reader, 관리 동선이 이 공간 기준으로 묶이기 시작합니다.
-              </p>
-            </section>
+                <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground">대표 guidebook이 아직 없어 이 허브가 비어 보입니다.</h2>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/78">
+                  첫 guidebook을 만들면 검색, reader, 관리 동선이 이 워크스페이스 기준으로 묶이기 시작합니다.
+                </p>
+              </section>
           )}
 
           <section id="directory" className="surface-elevated scroll-mt-24 rounded-[28px] border border-border px-6 py-6 shadow-theme-md">
@@ -150,9 +146,7 @@ export function TenantWorkspaceExperience({
               <div>
                 <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Guidebook directory</p>
                 <h2 className="mt-3 text-2xl font-bold tracking-tight text-foreground">guidebook 디렉터리</h2>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">
-                  공간의 문서 묶음을 먼저 훑고, 그 안으로 들어간 뒤 reader와 관리 화면으로 이동하는 진입면입니다.
-                </p>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-muted-foreground">문서 묶음을 먼저 훑고, 각 guidebook의 reader와 운영 화면으로 이어집니다.</p>
               </div>
               <span className="rounded-full border border-border bg-background/60 px-3 py-1 text-xs uppercase tracking-[0.18em] text-muted-foreground">
                 {guidebookItems.length} entries
@@ -190,7 +184,7 @@ export function TenantWorkspaceExperience({
             id="recent"
             eyebrow="Recent"
             title="내 최근 작업"
-            description="이 워크스페이스에서 최근에 열었던 페이지와 흐름을 먼저 보여줍니다."
+            description="이 워크스페이스에서 바로 다시 열 문서입니다."
             items={workspaceRecent.map((item) => ({
               href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
               title: item.title,
@@ -203,7 +197,7 @@ export function TenantWorkspaceExperience({
             id="starred"
             eyebrow="Starred"
             title="내 중요 문서"
-            description="다시 봐야 하는 문서를 개인 홈과 같은 기준으로 좁혀 보여줍니다."
+            description="개인 홈과 같은 기준으로 중요한 문서만 다시 좁혀 보여줍니다."
             items={workspaceStarred.map((item) => ({
               href: buildPageHref({ guidebookId: item.guidebookId, pageId: item.pageId, tenantId }),
               title: item.title,
@@ -239,8 +233,8 @@ export function TenantWorkspaceExperience({
               Workspace context
             </div>
             <div className="mt-4 space-y-3 text-sm leading-7 text-muted-foreground">
-              <p>이 허브는 워크스페이스 정체성과 guidebook 디렉터리를 먼저 보여주고, 그 아래에 개인 흐름을 다시 연결합니다.</p>
-              <p>운영 수정은 settings와 admin으로 분리해, 메인 surface가 생성 폼으로 무거워지지 않게 유지합니다.</p>
+              <p>이 허브는 guidebook 디렉터리를 먼저 보여주고, 그 아래에 개인 흐름을 다시 연결합니다.</p>
+              <p>운영 수정은 settings와 admin으로 분리해 메인 surface가 무거워지지 않게 유지합니다.</p>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
               <Link href={buildTenantSettingsHref(tenantId) as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
@@ -259,7 +253,7 @@ export function TenantWorkspaceExperience({
               <Zap className="h-4 w-4 text-primary" />
               운영 시작
             </div>
-            <p className="mt-4 text-sm leading-7 text-muted-foreground">새 guidebook 생성은 여기서 시작하고, 세부 운영은 admin과 settings에서 이어갑니다.</p>
+            <p className="mt-4 text-sm leading-7 text-muted-foreground">새 guidebook 생성만 여기 두고, 세부 운영은 admin과 settings로 분리했습니다.</p>
             <form action={createGuidebookAction} className="mt-5 space-y-4">
               <label className="block">
                 <span className="text-sm font-medium text-foreground">Guidebook 이름</span>

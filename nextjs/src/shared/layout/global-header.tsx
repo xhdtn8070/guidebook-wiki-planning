@@ -328,7 +328,7 @@ export function GlobalHeader({ viewer, preferredTenantId = null }: GlobalHeaderP
               </div>
             </>
           ) : (
-            <Link href={loginHref} className={buttonStyles({ size: "sm" })}>
+            <Link href={loginHref} prefetch={false} className={buttonStyles({ size: "sm" })}>
               로그인
             </Link>
           )}

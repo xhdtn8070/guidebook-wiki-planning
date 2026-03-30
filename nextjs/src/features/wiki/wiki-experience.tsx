@@ -4,11 +4,12 @@ import Link from "next/link";
 import type { Route } from "next";
 import { useState } from "react";
 import { clsx } from "clsx";
-import type { GuidebookSection, NavItem, PageDetail, ViewerSession, WikiNavTree } from "@/shared/lib/api-types";
-import { buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
+import type { FileAccessUrlResolved, GuidebookSection, NavItem, PageDetail, ViewerSession, WikiNavTree } from "@/shared/lib/api-types";
+import { buildAdminPageHref, buildLoginHref, buildOnboardingHref, buildPageHref, buildSearchHref, buildTenantHref, toFrontendHref } from "@/shared/lib/routes";
 import { extractTableOfContents } from "@/shared/lib/sections";
-import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Lock, PanelLeft, Pencil } from "@/shared/icons";
+import { ArrowLeft, ArrowRight, BookOpen, ChevronRight, Lock, PanelLeft, Pencil, Search as SearchIcon } from "@/shared/icons";
 import { StatusPanel } from "@/shared/ui/status-panel";
+import { PageStarToggle } from "@/features/wiki/page-star-toggle";
 
 type WikiExperienceProps = {
   viewer: ViewerSession;
@@ -17,13 +18,15 @@ type WikiExperienceProps = {
   pageId: number;
   detail: PageDetail | null;
   nav: WikiNavTree | null;
+  starredPageIds: number[];
+  fileAccessById: Record<string, FileAccessUrlResolved>;
   error?: {
     code: string;
     message: string;
   } | null;
 };
 
-export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, nav, error }: WikiExperienceProps) {
+export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, nav, starredPageIds, fileAccessById, error }: WikiExperienceProps) {
   if (!viewer.user) {
     return (
       <StatusPanel
@@ -56,6 +59,8 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
 
   const page = detail.page;
   const toc = extractTableOfContents(page.sections);
+  const isStarred = starredPageIds.includes(page.pageId);
+  const returnTo = buildPageHref({ guidebookId: page.guidebookId, pageId: page.pageId, tenantId });
 
   return (
     <div className="space-y-6">
@@ -88,12 +93,15 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
                 <span>status {page.status}</span>
                 <span>access {page.accessPolicy}</span>
               </div>
-              <p className="mt-4 max-w-3xl text-sm leading-7 text-foreground/72">
-                reader는 page id 기준 canonical route를 유지하고, 좌측 nav와 우측 toc는 같은 tenant/session context 위에서 움직입니다.
-              </p>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-foreground/72">reader는 현재 tenant 문맥을 유지한 채 breadcrumb, toc, 이전/다음 문서, 별표 토글과 관리 진입까지 이어지는 읽기 표면으로 동작합니다.</p>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              <PageStarToggle pageId={page.pageId} starred={isStarred} returnTo={returnTo} />
+              <Link href={buildSearchHref("", tenantId, page.guidebookId) as Route} className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/35 px-4 py-2 text-sm font-medium text-foreground hover:bg-background/55">
+                <SearchIcon className="h-4 w-4" />
+                Search in guidebook
+              </Link>
               <span className="inline-flex items-center gap-2 rounded-xl border border-border bg-background/35 px-4 py-2 text-sm text-muted-foreground">
                 <Lock className="h-4 w-4 text-primary" />
                 Reader ready
@@ -127,7 +135,7 @@ export function WikiExperience({ viewer, tenantId, guidebookId, pageId, detail, 
             </ol>
           </div>
 
-          <SectionRenderer sections={page.sections} />
+          <SectionRenderer sections={page.sections} fileAccessById={fileAccessById} />
         </div>
       </article>
 
@@ -278,7 +286,13 @@ function PagePagerCard({
   );
 }
 
-function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
+function SectionRenderer({
+  sections,
+  fileAccessById,
+}: {
+  sections: GuidebookSection[];
+  fileAccessById: Record<string, FileAccessUrlResolved>;
+}) {
   return (
     <div className="space-y-8">
       {sections.map((section, index) => {
@@ -353,25 +367,54 @@ function SectionRenderer({ sections }: { sections: GuidebookSection[] }) {
         }
 
         if (section.type === "IMAGE") {
+          const resolved = section.fileId != null ? fileAccessById[String(section.fileId)] : null;
+          const imageUrl = resolved?.status === "OK" ? resolved.url : section.url;
+
+          if (imageUrl) {
+            return (
+              <figure key={`image-${index}`} className="overflow-hidden rounded-[28px] border border-border bg-background/35 shadow-theme-sm">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={imageUrl}
+                  alt={section.alt ?? "Guidebook image"}
+                  width={section.width ?? undefined}
+                  height={section.height ?? undefined}
+                  className="max-h-[640px] w-full object-cover"
+                />
+                <figcaption className="border-t border-border px-4 py-3 text-sm text-muted-foreground">
+                  {section.alt || `image asset ${section.fileId ?? "external"}`}
+                </figcaption>
+              </figure>
+            );
+          }
+
           return (
             <div key={`image-${index}`} className="rounded-[24px] border border-dashed border-border bg-background/35 px-5 py-8 text-sm text-muted-foreground">
-              이미지 섹션
+              이미지에 접근할 수 없습니다.
               {section.alt ? ` · ${section.alt}` : ""}
-              {section.url ? ` · ${section.url}` : ""}
+              {section.fileId ? ` · file #${section.fileId}` : ""}
             </div>
           );
         }
 
         if (section.type === "VIDEO") {
+          const resolved = section.fileId != null ? fileAccessById[String(section.fileId)] : null;
           return (
-            <div key={`video-${index}`} className="rounded-[24px] border border-dashed border-border bg-background/35 px-5 py-8 text-sm text-muted-foreground">
-              비디오 섹션 · file #{section.fileId}
+            <div key={`video-${index}`} className="rounded-[28px] border border-dashed border-border bg-background/35 px-5 py-6 text-sm text-muted-foreground">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Video placeholder</p>
+              <p className="mt-2 text-base font-semibold text-foreground">{section.title ?? `file #${section.fileId ?? "unknown"}`}</p>
+              <p className="mt-2 leading-7">이 라운드에서는 비디오 authoring/player 대신 문맥과 접근 상태만 유지합니다.</p>
+              {resolved?.status === "OK" && resolved.url ? (
+                <a href={resolved.url} target="_blank" rel="noreferrer" className="mt-4 inline-flex rounded-xl border border-border px-3 py-2 text-xs font-medium text-foreground hover:bg-background">
+                  비디오 파일 열기
+                </a>
+              ) : null}
             </div>
           );
         }
 
         if (section.type === "TABS") {
-          return <TabsBlock key={`tabs-${index}`} items={section.items} />;
+          return <TabsBlock key={`tabs-${index}`} items={section.items} fileAccessById={fileAccessById} />;
         }
 
         return (
@@ -460,7 +503,13 @@ function MarkdownBlock({ content }: { content: string }) {
   );
 }
 
-function TabsBlock({ items }: { items: { key: string; label: string; content: GuidebookSection[] }[] }) {
+function TabsBlock({
+  items,
+  fileAccessById,
+}: {
+  items: { key: string; label: string; content: GuidebookSection[] }[];
+  fileAccessById: Record<string, FileAccessUrlResolved>;
+}) {
   const [activeKey, setActiveKey] = useState(items[0]?.key);
   const active = items.find((item) => item.key === activeKey) ?? items[0];
 
@@ -486,7 +535,7 @@ function TabsBlock({ items }: { items: { key: string; label: string; content: Gu
         ))}
       </div>
       <div className="px-4 py-5">
-        <SectionRenderer sections={active.content} />
+        <SectionRenderer sections={active.content} fileAccessById={fileAccessById} />
       </div>
     </div>
   );

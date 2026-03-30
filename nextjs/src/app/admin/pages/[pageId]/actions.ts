@@ -11,6 +11,35 @@ function readValue(formData: FormData, key: string) {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function parseSections(formData: FormData) {
+  const raw = readValue(formData, "sectionsJson");
+  if (!raw) {
+    return {
+      ok: true as const,
+      value: null,
+    };
+  }
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) {
+      return {
+        ok: false as const,
+        code: "INVALID_SECTIONS_JSON",
+      };
+    }
+    return {
+      ok: true as const,
+      value: parsed as PageUpdateRequest["sections"],
+    };
+  } catch {
+    return {
+      ok: false as const,
+      code: "INVALID_SECTIONS_JSON",
+    };
+  }
+}
+
 function buildPageFlashHref(pageId: number, tenantId: number | null, status?: "updated" | "error", code?: string | null) {
   const base = buildAdminPageHref(pageId, tenantId);
   if (!status) {
@@ -30,6 +59,11 @@ export async function updatePageAction(pageId: number, tenantId: number | null, 
   const status = (readValue(formData, "status") || null) as PageUpdateRequest["status"];
   const accessPolicy = (readValue(formData, "accessPolicy") || null) as PageUpdateRequest["accessPolicy"];
   const isUsable = readValue(formData, "isUsable");
+  const sections = parseSections(formData);
+
+  if (!sections.ok) {
+    redirect(buildPageFlashHref(pageId, tenantId, "error", sections.code) as Route);
+  }
 
   const result = await requestBackend<PageDetail["page"]>({
     path: `/api/pages/${pageId}`,
@@ -40,6 +74,7 @@ export async function updatePageAction(pageId: number, tenantId: number | null, 
       status,
       accessPolicy,
       isUsable: isUsable ? isUsable === "true" : null,
+      sections: sections.value,
     } satisfies PageUpdateRequest,
   });
 

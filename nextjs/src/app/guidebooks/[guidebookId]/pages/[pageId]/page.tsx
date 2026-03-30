@@ -1,6 +1,7 @@
 import { AppShell } from "@/shared/layout/app-shell";
 import { WikiExperience, WikiSidebarPanel, WikiTocPanel } from "@/features/wiki/wiki-experience";
-import { getActiveTenantId, loadGuidebookNav, loadPageDetail, loadViewerSession } from "@/server/api";
+import { collectSectionFileIds } from "@/shared/lib/sections";
+import { getActiveTenantId, loadFileAccessUrls, loadGuidebookNav, loadPageDetail, loadStarredPages, loadViewerSession } from "@/server/api";
 
 type GuidebookPageProps = {
   params: Promise<{ guidebookId: string; pageId: string }>;
@@ -16,10 +17,11 @@ export default async function GuidebookPage({ params, searchParams }: GuidebookP
   const guidebookId = Number(resolvedParams.guidebookId);
 
   const detailResult = await loadPageDetail(pageId, tenantId);
-  const navResult =
-    detailResult.ok && tenantId
-      ? await loadGuidebookNav(detailResult.data.page.guidebookId || guidebookId, tenantId)
-      : null;
+  const [navResult, starredResult, fileAccessResult] = await Promise.all([
+    detailResult.ok && tenantId ? loadGuidebookNav(detailResult.data.page.guidebookId || guidebookId, tenantId) : Promise.resolve(null),
+    viewer.user ? loadStarredPages(null, 200) : Promise.resolve(null),
+    detailResult.ok ? loadFileAccessUrls(collectSectionFileIds(detailResult.data.page.sections)) : Promise.resolve(null),
+  ]);
 
   return (
     <AppShell
@@ -35,6 +37,8 @@ export default async function GuidebookPage({ params, searchParams }: GuidebookP
         pageId={pageId}
         detail={detailResult.ok ? detailResult.data : null}
         nav={navResult?.ok ? navResult.data : null}
+        starredPageIds={starredResult?.ok ? starredResult.data.items.map((item) => item.pageId) : []}
+        fileAccessById={fileAccessResult?.ok ? fileAccessResult.data.byId : {}}
         error={detailResult.ok ? null : detailResult.error}
       />
     </AppShell>

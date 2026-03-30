@@ -37,7 +37,7 @@ export default async function TenantWorkspacePage({ params, searchParams }: Tena
     <AppShell
       viewer={viewer}
       preferredTenantId={tenantId}
-      sidebar={viewer.user ? <WorkspaceRail viewer={viewer} activeItem="workspaces" activeTenantId={tenantId} adminHref={adminHref} /> : undefined}
+      sidebar={viewer.user ? <WorkspaceRail viewer={viewer} activeItem="directory" activeTenantId={tenantId} adminHref={adminHref} /> : undefined}
     >
       <TenantWorkspaceExperience
         viewer={viewer}

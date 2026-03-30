@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import type { HomeResponse, ViewerSession } from "@/shared/lib/api-types";
-import { Bell, External, Layers, Star } from "@/shared/icons";
+import { Bell, External, Layers, Search as SearchIcon, Star } from "@/shared/icons";
 import { buildTenantHref, buildTenantSettingsHref, toFrontendHref } from "@/shared/lib/routes";
 
 type HomeDashboardProps = {
@@ -26,9 +26,7 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
             <h1 className="mt-3 text-2xl font-bold tracking-tight text-foreground">
               {primaryRecent ? `${home.me.displayName}님, 최근 흐름부터 다시 열면 됩니다.` : `${home.me.displayName}님의 작업 재개 화면입니다.`}
             </h1>
-            <p className="mt-2 text-sm leading-7 text-muted-foreground">
-              소개보다 재개가 먼저 보이도록 최근 문서, 즐겨찾기, 알림, 워크스페이스만 남겼습니다.
-            </p>
+            <p className="mt-2 text-sm leading-7 text-muted-foreground">최근 문서, 중요 문서, 알림, 워크스페이스만 먼저 보여줍니다.</p>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -43,6 +41,12 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
               >
                 최근 문서 열기
                 <External className="h-4 w-4" />
+              </Link>
+            ) : null}
+            {activeTenantId ? (
+              <Link href={`/search?tenantId=${activeTenantId}` as Route} className="inline-flex h-11 items-center gap-2 rounded-xl border border-border px-4 text-sm font-medium text-foreground">
+                검색 열기
+                <SearchIcon className="h-4 w-4" />
               </Link>
             ) : null}
             {activeTenantId ? (
@@ -88,7 +92,7 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
             id="recent"
             eyebrow="Resume"
             title="최근 이어서 보기"
-            description="어제 멈춘 문서와 최근에 열었던 흐름만 먼저 보여줍니다."
+            description="바로 다시 열 문서만 먼저 보여줍니다."
             items={home.recentPages.map((item) => ({
               href: toFrontendHref(item.url, {
                 tenantId: item.tenantId,
@@ -105,7 +109,7 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
             id="starred"
             eyebrow="Pinned"
             title="즐겨찾기"
-            description="나중에 다시 볼 문서를 개인 홈과 워크스페이스 허브에서 같은 기준으로 다시 좁혀 봅니다."
+            description="나중에 다시 볼 문서를 개인 홈 기준으로 모아 둡니다."
             items={home.starredPages.map((item) => ({
               href: toFrontendHref(item.url, {
                 tenantId: item.tenantId,
@@ -176,6 +180,11 @@ export function HomeDashboard({ home, viewer }: HomeDashboardProps) {
               <p>세부 운영은 각 워크스페이스 허브와 guidebook 관리 화면에서 이어집니다.</p>
             </div>
             <div className="mt-5 flex flex-wrap gap-2">
+              {activeTenantId ? (
+                <Link href={`/search?tenantId=${activeTenantId}` as Route} className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
+                  검색
+                </Link>
+              ) : null}
               <Link href="/me" className="rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground">
                 마이페이지
               </Link>

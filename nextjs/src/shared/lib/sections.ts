@@ -71,6 +71,31 @@ export function summarizeSections(sections: GuidebookSection[]) {
     .trim();
 }
 
+export function collectSectionFileIds(sections: GuidebookSection[]) {
+  const ids = new Set<number>();
+
+  const walk = (entries: GuidebookSection[]) => {
+    entries.forEach((section) => {
+      switch (section.type) {
+        case "IMAGE":
+        case "VIDEO":
+          if (typeof section.fileId === "number") {
+            ids.add(section.fileId);
+          }
+          break;
+        case "TABS":
+          section.items.forEach((item) => walk(item.content));
+          break;
+        default:
+          break;
+      }
+    });
+  };
+
+  walk(sections);
+  return [...ids];
+}
+
 function headingId(section: HeadingSection, index: number) {
   const base = section.text
     .toLowerCase()

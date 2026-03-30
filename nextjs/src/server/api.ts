@@ -1,11 +1,13 @@
 import { cookies } from "next/headers";
 import type {
   BackendResult,
+  FileAccessUrlsResponse,
   GuidebookListResponse,
   HomeResponse,
   PageDetail,
   PageListResponse,
   PageSearchResponse,
+  PageStarListResponse,
   PermissionGateState,
   TenantResponse,
   TenantMeResponse,
@@ -93,6 +95,17 @@ export async function loadSearch(input: {
   });
 }
 
+export async function loadStarredPages(cursor?: string | null, size = 100) {
+  return requestBackend<PageStarListResponse>({
+    path: "/api/pages/starred",
+    tenantId: null,
+    query: {
+      cursor: cursor ?? null,
+      size,
+    },
+  });
+}
+
 export async function loadGuidebookPages(guidebookId: number, tenantId: number | null) {
   return requestBackend<PageListResponse>({
     path: `/api/guidebooks/${guidebookId}/pages`,
@@ -111,6 +124,30 @@ export async function loadTenant(tenantId: number) {
   return requestBackend<TenantResponse>({
     path: `/api/tenants/${tenantId}`,
     tenantId: null,
+  });
+}
+
+export async function loadFileAccessUrls(fileIds: number[], expiresInSeconds = 900) {
+  if (fileIds.length === 0) {
+    return {
+      ok: true as const,
+      status: 200,
+      data: {
+        items: [],
+        byId: {},
+      } satisfies FileAccessUrlsResponse,
+      error: null,
+    };
+  }
+
+  return requestBackend<FileAccessUrlsResponse>({
+    path: "/api/files/access-urls",
+    method: "POST",
+    tenantId: null,
+    body: {
+      fileIds,
+      expiresInSeconds,
+    },
   });
 }
 
